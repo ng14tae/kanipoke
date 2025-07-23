@@ -1,5 +1,5 @@
 class Admin::UsersController < ApplicationController
-  before_action :set_user, only: [:show, :destroy]
+  before_action :set_user, only: [ :show, :destroy ]
 
   def index
     @users = User.all
@@ -11,7 +11,7 @@ class Admin::UsersController < ApplicationController
 
   def destroy
     @user.destroy
-    redirect_to admin_users_path, notice: 'ユーザーを削除しました'
+    redirect_to admin_users_path, notice: "ユーザーを削除しました"
   end
 
   private

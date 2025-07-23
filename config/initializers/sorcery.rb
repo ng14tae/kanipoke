@@ -2,7 +2,7 @@ Rails.application.config.sorcery.submodules = []
 
 Rails.application.config.sorcery.configure do |config|
   config.user_config do |user|
-    user.username_attribute_names = [:first_name, :last_name] # またはカスタム
+    user.username_attribute_names = [ :first_name, :last_name ] # またはカスタム
     user.password_attribute_name = :password
     user.crypted_password_attribute_name = :crypted_password
   end

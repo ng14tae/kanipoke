@@ -1,5 +1,5 @@
 class Admin::CharactersController < Admin::BaseController
-  before_action :set_character, only: [:show, :edit, :update, :destroy]
+  before_action :set_character, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @characters = Character.all
@@ -16,7 +16,7 @@ class Admin::CharactersController < Admin::BaseController
   def create
     @character = Character.new(character_params)
     if @character.save
-      redirect_to admin_character_path(@character), notice: 'キャラクターを作成しました'
+      redirect_to admin_character_path(@character), notice: "キャラクターを作成しました"
     else
       render :new
     end
@@ -27,7 +27,7 @@ class Admin::CharactersController < Admin::BaseController
 
   def update
     if @character.update(character_params)
-      redirect_to admin_character_path(@character), notice: 'キャラクターを更新しました'
+      redirect_to admin_character_path(@character), notice: "キャラクターを更新しました"
     else
       render :edit
     end
@@ -35,7 +35,7 @@ class Admin::CharactersController < Admin::BaseController
 
   def destroy
     @character.destroy
-    redirect_to admin_characters_path, notice: 'キャラクターを削除しました'
+    redirect_to admin_characters_path, notice: "キャラクターを削除しました"
   end
 
   private

@@ -58,10 +58,10 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem 'rails_admin', '~> 3.3'
-gem 'rails_admin-i18n'
+gem "rails_admin", "~> 3.3"
+gem "rails_admin-i18n"
 # gem 'devise'
-gem 'sorcery'
-gem 'tailwindcss-rails'
+gem "sorcery"
+gem "tailwindcss-rails"
 gem "sassc-rails"
-gem 'rails-i18n', '~> 7.0.0'
+gem "rails-i18n", "~> 7.0.0"

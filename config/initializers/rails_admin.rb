@@ -47,6 +47,6 @@ RailsAdmin.config do |config|
   # config.current_user_method(&:current_user)
 
   # 管理対象モデル指定
-  config.included_models = ['User', 'Character', 'Battle']
-  config.main_app_name = ["Indian Poker Battle", "Admin"]
+  config.included_models = [ "User", "Character", "Battle" ]
+  config.main_app_name = [ "Indian Poker Battle", "Admin" ]
 end
