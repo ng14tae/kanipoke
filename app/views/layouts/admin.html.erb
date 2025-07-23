@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Indian Poker Battle - Admin</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "admin", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+</head>
+
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+    <!-- AdminTEQのサイドバーとヘッダー -->
+    <%= render 'admin/shared/header' %>
+    <%= render 'admin/shared/sidebar' %>
+
+    <div class="content-wrapper">
+        <%= yield %>
+    </div>
+    </div>
+</body>
+</html>
