@@ -15,10 +15,17 @@ class BattlesController < ApplicationController
   # 勝敗判定の呼び出し
   winner_user = @battle.determine_winner
 
-  if winner_user
-    @battle.winner_id = winner_user.id
-    @battle.loser_id = winner_user == @battle.user ? @battle.opponent.id : @battle.user.id
-  end
+    if winner_user
+      @battle.winner_id = winner_user.id
+      @battle.loser_id = winner_user == @battle.user ? @battle.opponent.id : @battle.user.id
+    end
+
+    if @battle.save
+      redirect_to @battle, notice: '戦闘が完了しました！'
+    else
+      @opponents = User.where.not(id: current_user.id)
+      render :new
+    end
   end
 
   def show

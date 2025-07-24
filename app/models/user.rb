@@ -3,7 +3,7 @@ class User < ApplicationRecord
 
   validates :first_name, presence: true, uniqueness: true
   validates :last_name, presence: true
-  validates :password, presence: true, length: { minimum: 4 }
+  validates :encrypted_password, presence: true, length: { minimum: 4 }
 
   enum role: { user: 0, admin: 1 }
 

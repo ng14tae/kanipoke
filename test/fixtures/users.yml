@@ -4,8 +4,19 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
+one:
+  first_name: "大弥"
+  last_name: "宮城"
+  role: 0
+  encrypted_password: "<%= BCrypt::Password.create('password') %>"
+  salt: "test_salt"
 # column: value
 #
-two: {}
+two:
+  first_name: "龍平"
+  last_name: "曽谷"
+  role: 0
+  encrypted_password: "<%= BCrypt::Password.create('password') %>"
+  salt: "test_salt2"
+
 # column: value
