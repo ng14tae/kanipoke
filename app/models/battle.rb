@@ -25,11 +25,6 @@ def determine_winner
   end
 end
 
-  def card_strength(card)
-  # 1を14として扱う？
-  card == 1 ? 14 : card
-end
-
   private
 
   def cannot_battle_self
