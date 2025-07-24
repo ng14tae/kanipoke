@@ -1,0 +1,12 @@
+<h1>対戦相手一覧</h1>
+
+<% @users.each do |user| %>
+  <div>
+    <p><%= user.first_name %> の <%= user.last_name %></p>
+    <p>戦歴:
+      勝利 <%= user.won_battles.count %>回 /
+      敗北 <%= user.lost_battles.count %>回
+    </p>
+    <%= link_to "対戦する", new_battle_path(opponent_id: user.id) %>
+  </div>
+<% end %>
