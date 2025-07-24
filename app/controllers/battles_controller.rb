@@ -29,7 +29,7 @@ class BattlesController < ApplicationController
 
     if winner_user.nil?
       # 3回でも引き分け → ランダム決定
-      winner_user = [@battle.user, @battle.opponent].sample
+      winner_user = [ @battle.user, @battle.opponent ].sample
       message = "#{retry_count}回の引き分けの末、ランダムで#{winner_user.name}の勝利が決定しました！"
     elsif retry_count > 1
       # 再戦があった場合
