@@ -1,4 +1,16 @@
-<div>
-  <h1 class="font-bold text-4xl">Battles#show</h1>
-  <p>Find me in app/views/battles/show.html.erb</p>
+<h1>バトル結果</h1>
+
+<div class="battle-result">
+  <p>プレイヤー: <%= @battle.user.display_name %></p>
+  <p>カード: <%= @battle.user_card %></p>
+
+  <p>VS</p>
+
+  <p>対戦相手: <%= @battle.opponent.display_name %></p>
+  <p>カード: <%= @battle.opponent_card %></p>
+
+  <h2>結果: <%= @battle.winner.display_name %>の勝利！</h2>
 </div>
+
+<%= link_to "もう一度対戦", new_battle_path(opponent_id: @battle.opponent.id) %>
+<%= link_to "対戦相手一覧に戻る", users_path %>

@@ -7,23 +7,23 @@ class Battle < ApplicationRecord
 
   validate :cannot_battle_self
 
-def determine_winner
-  # 特別ルール：1 vs 13 の場合
-  if user_card == 1 && opponent_card == 13
-    return user
-  elsif opponent_card == 1 && user_card == 13
-    return opponent
-  end
+  def determine_winner
+    # 特別ルール：1 vs 13 の場合
+    if user_card == 1 && opponent_card == 13
+      return user
+    elsif opponent_card == 1 && user_card == 13
+      return opponent
+    end
 
-  # 通常の大小比較
-  if user_card > opponent_card
-    user
-  elsif opponent_card > user_card
-    opponent
-  else
-    nil # 引き分け
+    # 通常の大小比較
+    if user_card > opponent_card
+      user
+    elsif opponent_card > user_card
+      opponent
+    else
+      nil # 引き分け
+    end
   end
-end
 
   private
 

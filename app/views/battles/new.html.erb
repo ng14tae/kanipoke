@@ -1,4 +1,18 @@
-<div>
-  <h1 class="font-bold text-4xl">Battles#new</h1>
-  <p>Find me in app/views/battles/new.html.erb</p>
+<div id="battle-arena">
+  <div class="player-area">
+    <h3><%= current_user.display_name %></h3>
+    <div id="player-card" style="display: none;"></div>
+  </div>
+
+  <p>vs</p>
+
+  <div class="opponent-area">
+    <h3><%= @opponent.display_name %></h3>
+    <div id="opponent-card" style="display: none;"></div>
+  </div>
+
+  <%= form_with model: @battle, local: true do |form| %>
+  <%= form.hidden_field :opponent_id, value: @opponent.id %>
+  <%= form.submit "勝負！", id: "start-battle" %>
+  <% end %>
 </div>

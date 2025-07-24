@@ -1,12 +1,43 @@
-<h1>対戦相手一覧</h1>
+<div class="min-h-screen bg-gradient-to-b from-blue-400 to-blue-600 py-8 px-4">
+  <div class="container mx-auto max-w-4xl">
+    <!-- タイトル -->
+    <h1 class="text-6xl font-black text-yellow-300 text-center mb-12 drop-shadow-lg tracking-wider transform hover:scale-105 transition-transform duration-300" 
+        style="font-family: 'Arial Black', Arial, sans-serif; text-shadow: 3px 3px 0px rgba(0,0,0,0.3);">
+      KANIDIAN PORKER
+    </h1>
 
-<% @users.each do |user| %>
-  <div>
-    <p><%= user.first_name %> の <%= user.last_name %></p>
-    <p>戦歴:
-      勝利 <%= user.won_battles.count %>回 /
-      敗北 <%= user.lost_battles.count %>回
-    </p>
-    <%= link_to "対戦する", new_battle_path(opponent_id: user.id) %>
+    <!-- プレイヤー一覧 -->
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <% @users.each do |user| %>
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border-2 border-yellow-300/50 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+          <!-- プレイヤー名 -->
+          <p class="text-2xl font-bold text-yellow-300 mb-4 drop-shadow-md"
+            style="font-family: 'Arial Black', Arial, sans-serif; text-shadow: 2px 2px 0px rgba(0,0,0,0.3);">
+            <%= user.first_name %> の <%= user.last_name %>
+          </p>
+
+          <!-- 戦歴 -->
+          <div class="mb-6">
+            <p class="text-yellow-200 font-semibold text-lg drop-shadow-sm"
+              style="text-shadow: 1px 1px 0px rgba(0,0,0,0.3);">
+              戦歴:
+            </p>
+            <div class="mt-2 space-y-1">
+              <p class="text-green-300 font-bold" style="text-shadow: 1px 1px 0px rgba(0,0,0,0.3);">
+                勝利 <span class="text-xl"><%= user.won_battles.count %></span>回
+              </p>
+              <p class="text-red-300 font-bold" style="text-shadow: 1px 1px 0px rgba(0,0,0,0.3);">
+                敗北 <span class="text-xl"><%= user.lost_battles.count %></span>回
+              </p>
+            </div>
+          </div>
+
+          <!-- 対戦ボタン -->
+          <%= link_to "対戦する", new_battle_path(opponent_id: user.id),
+              class: "block w-full bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-black text-xl py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 hover:shadow-xl transition-all duration-200 text-center border-2 border-yellow-500 hover:border-yellow-400",
+              style: "font-family: 'Arial Black', Arial, sans-serif; text-shadow: 1px 1px 0px rgba(255,255,255,0.5);" %>
+        </div>
+      <% end %>
+    </div>
   </div>
-<% end %>
+</div>
