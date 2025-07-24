@@ -21,7 +21,7 @@ class BattlesController < ApplicationController
     end
 
     if @battle.save
-      redirect_to @battle, notice: '戦闘が完了しました！'
+      redirect_to @battle, notice: "戦闘が完了しました！"
     else
       @opponents = User.where.not(id: current_user.id)
       render :new

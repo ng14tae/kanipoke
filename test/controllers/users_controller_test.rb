@@ -6,7 +6,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     user = users(:one)  # fixtureを使用
 
     # ログイン処理
-    post login_url, params: { password: 'password' }
+    post login_url, params: { password: "password" }
 
     # テスト実行
     get users_url

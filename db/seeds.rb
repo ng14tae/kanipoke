@@ -7,7 +7,7 @@ admin_user = User.create!(
 
 # テスト用一般ユーザー
 User.create!([
-  {first_name: "ユーザー",
+  { first_name: "ユーザー",
   last_name: "テスト",
   encrypted_password: "password",
   role: "user"
@@ -29,5 +29,5 @@ User.create!([
   last_name: "たし",
   encrypted_password: "password",
   role: "user"
-  },
+  }
 ])
