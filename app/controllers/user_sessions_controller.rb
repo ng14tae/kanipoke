@@ -4,11 +4,18 @@ class UserSessionsController < ApplicationController
   def new; end
 
   def create
-    @user = login(params[:first_name], params[:last_name], params[:password])
+    puts "受信パラメーター: #{params}"  # デバッグ用
 
-    if @user
+    user = User.find_by(
+      first_name: params[:first_name],
+      last_name: params[:last_name]
+    )
+
+    if user && user.valid_password?(params[:password])
+      auto_login(user)
       redirect_to root_path
     else
+      flash[:alert] = "ログインに失敗しました"
       render :new
     end
   end

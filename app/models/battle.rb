@@ -1,29 +1,34 @@
 class Battle < ApplicationRecord
   belongs_to :user
   belongs_to :opponent, class_name: "User"
-
   belongs_to :winner, class_name: "User", optional: true
   belongs_to :loser, class_name: "User", optional: true
 
   validate :cannot_battle_self
 
-def determine_winner
-  # 特別ルール：1 vs 13 の場合
-  if user_card == 1 && opponent_card == 13
-    return user
-  elsif opponent_card == 1 && user_card == 13
-    return opponent
-  end
+  # ステータス管理
+  enum status: {
+    preparing: 0,    # カード配布済み、選択待ち
+    completed: 1     # 完了
+  }
 
-  # 通常の大小比較
-  if user_card > opponent_card
-    user
-  elsif opponent_card > user_card
-    opponent
-  else
-    nil # 引き分け
+  def determine_winner
+    # 特別ルール：1 vs 13 の場合
+    if user_card == 1 && opponent_card == 13
+      return user
+    elsif opponent_card == 1 && user_card == 13
+      return opponent
+    end
+
+    # 通常の大小比較
+    if user_card > opponent_card
+      user
+    elsif opponent_card > user_card
+      opponent
+    else
+      nil # 引き分け
+    end
   end
-end
 
   private
 

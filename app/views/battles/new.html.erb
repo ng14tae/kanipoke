@@ -1,4 +1,36 @@
-<div>
-  <h1 class="font-bold text-4xl">Battles#new</h1>
-  <p>Find me in app/views/battles/new.html.erb</p>
+<div id="battle-arena">
+  <div class="player-area">
+    <h2>🎮 カードバトル</h2>
+    <h3><%= current_user.display_name %></h3>
+        <div class="card hidden-card">
+        <span class="card-value">？</span>
+        <small>（あなたのカードは見えません）</small>
+  </div>
+
+    <div class="vs">VS</div>
+
+  <div class="opponent-area">
+    <h3><%= @opponent.display_name %></h3>
+      <div class="card visible-card">
+        <span class="card-value"><%= @opponent_card %></span>
+      </div>
+  </div>
+
+  <div class="game-info">
+    <p>カードが配られました！</p>
+    <p>「勝負！」ボタンを押して結果を見ましょう</p>
+  </div>
+
+  <%= form_with model: @battle, local: true do |f| %>
+    <%= f.hidden_field :opponent_id, value: @opponent.id %>
+    <%= f.hidden_field :user_card, value: @user_card %>
+    <%= f.hidden_field :opponent_card, value: @opponent_card %>
+
+    <div class="actions">
+      <%= f.submit "勝負する", class: "btn btn-primary btn-lg" %>
+      <%= link_to "降りる", users_path, 
+          class: "btn btn-secondary btn-lg",
+          confirm: "本当に降りますか？" %>
+    </div>
+  <% end %>
 </div>

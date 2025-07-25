@@ -2,6 +2,9 @@ class UsersController < ApplicationController
   skip_before_action :require_login, only: %i[new create]
 
   def index
+    @my_win_count = current_user.won_battles.count
+    @my_lose_count = current_user.lost_battles.count
+    @my_total_battles = @my_win_count + @my_lose_count
     @users = User.where.not(id: current_user.id)
               .includes(:won_battles, :lost_battles)
   end

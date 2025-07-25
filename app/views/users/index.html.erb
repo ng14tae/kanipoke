@@ -1,12 +1,52 @@
-<h1>対戦相手一覧</h1>
+<div class="min-h-screen py-12 px-6" style="background: #7CADED;">
+  <!-- Railsのimage_tagヘルパーを使用 -->
+  <%= image_tag "logo.png", class: "w-32 h-32 mx-auto mb-8" %>
 
-<% @users.each do |user| %>
-  <div>
-    <p><%= user.first_name %> の <%= user.last_name %></p>
-    <p>戦歴:
-      勝利 <%= user.won_battles.count %>回 /
-      敗北 <%= user.lost_battles.count %>回
-    </p>
-    <%= link_to "対戦する", new_battle_path(opponent_id: user.id) %>
+  <div class="container mx-auto max-w-6xl" style="padding: 2rem;">
+  <div class="bg-white/10 backdrop-blur-sm rounded-xl border-2 border-yellow-300/50 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" style="padding: 2.5rem;">
+  <div class="my-battle-stats mb-4">
+  <h2><%= current_user.display_name %>の戦歴</h2>
+    <div class="card">
+      <div class="card-body">
+        <p>総戦闘数: <%= @my_total_battles %>回
+        勝ち: <%= @my_win_count %>回
+        負け: <%= @my_lose_count %>回</p>
+        <% if @my_total_battles > 0 %>
+          <p>勝率: <%= (@my_win_count.to_f / @my_total_battles * 100).round(1) %>%</p>
+        <% end %>
+      </div>
+    </div>
   </div>
-<% end %>
+    <!-- プレイヤー一覧 -->
+    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <% @users.each do |user| %>
+        <div class="bg-white/10 backdrop-blur-sm rounded-xl border-2 border-yellow-300/50 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" style="padding: 2.5rem;">
+          <!-- プレイヤー名 -->
+          <p style="font-size: 1.75rem; font-weight: bold; color: #FFF691; margin-bottom: 1.5rem; font-family: Arial, sans-serif; text-align: center;">
+          <%= user.display_name %>
+          </p>
+          <!-- 戦歴 -->
+          <div style="margin-bottom: 2rem; text-align: center;">
+          <p style="color: #FFF691; font-weight: 600; font-size: 1.25rem; margin-bottom: 0.75rem;">
+          戦歴:
+          勝ち <span style="font-size: 1.5rem; font-weight: bold;"><%= user.won_battles.count %></span>回
+          負け <span style="font-size: 1.5rem; font-weight: bold;"><%= user.lost_battles.count %></span>回
+          </p>
+          </div>
+
+          <!-- 対戦ボタン -->
+          <div style="text-align: center; margin-top: 1.5rem;">
+            <%= link_to "対戦する", new_battle_path(opponent_id: user.id),
+                style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: 1.25rem; padding: 1.25rem 2.5rem; border-radius: 0.5rem; text-decoration: none; border: 4px solid #eab308; font-family: Arial, sans-serif; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transition: all 0.2s ease; transform: translateY(0);",
+                onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px rgba(0, 0, 0, 0.2)'; this.style.borderColor='#d97706';",
+                onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'; this.style.borderColor='#eab308';",
+                onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
+                onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- スペース -->
+    <div style="height: 4rem;"></div>
+  </div>

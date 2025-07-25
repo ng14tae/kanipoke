@@ -117,14 +117,6 @@ GEM
       logger
     faraday-net_http (3.4.1)
       net-http (>= 0.5.0)
-    ffi (1.17.2-aarch64-linux-gnu)
-    ffi (1.17.2-aarch64-linux-musl)
-    ffi (1.17.2-arm-linux-gnu)
-    ffi (1.17.2-arm-linux-musl)
-    ffi (1.17.2-arm64-darwin)
-    ffi (1.17.2-x86_64-darwin)
-    ffi (1.17.2-x86_64-linux-gnu)
-    ffi (1.17.2-x86_64-linux-musl)
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashie (5.0.0)
@@ -140,7 +132,7 @@ GEM
       activesupport (>= 5.0.0)
     jsbundling-rails (1.3.1)
       railties (>= 6.0.0)
-    json (2.13.0)
+    json (2.13.1)
     jwt (3.1.2)
       base64
     kaminari (1.2.2)
@@ -289,7 +281,7 @@ GEM
     reline (0.6.2)
       io-console (~> 0.5)
     rexml (3.4.1)
-    rubocop (1.78.0)
+    rubocop (1.79.0)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -297,8 +289,9 @@ GEM
       parser (>= 3.3.0.2)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 2.9.3, < 3.0)
-      rubocop-ast (>= 1.45.1, < 2.0)
+      rubocop-ast (>= 1.46.0, < 2.0)
       ruby-progressbar (~> 1.7)
+      tsort (>= 0.2.0)
       unicode-display_width (>= 2.4.0, < 4.0)
     rubocop-ast (1.46.0)
       parser (>= 3.3.7.2)
@@ -319,14 +312,6 @@ GEM
       rubocop-rails (>= 2.30)
     ruby-progressbar (1.13.0)
     rubyzip (2.4.1)
-    sassc (2.4.0)
-      ffi (~> 1.9)
-    sassc-rails (2.1.2)
-      railties (>= 4.0.0)
-      sassc (>= 2.0)
-      sprockets (> 3.0)
-      sprockets-rails
-      tilt
     securerandom (0.4.1)
     selenium-webdriver (4.34.0)
       base64 (~> 0.2)
@@ -352,19 +337,19 @@ GEM
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stringio (3.1.7)
-    tailwindcss-rails (4.3.0)
+    tailwindcss-rails (2.7.9-aarch64-linux)
       railties (>= 7.0.0)
-      tailwindcss-ruby (~> 4.0)
-    tailwindcss-ruby (4.1.11)
-    tailwindcss-ruby (4.1.11-aarch64-linux-gnu)
-    tailwindcss-ruby (4.1.11-aarch64-linux-musl)
-    tailwindcss-ruby (4.1.11-arm64-darwin)
-    tailwindcss-ruby (4.1.11-x86_64-darwin)
-    tailwindcss-ruby (4.1.11-x86_64-linux-gnu)
-    tailwindcss-ruby (4.1.11-x86_64-linux-musl)
+    tailwindcss-rails (2.7.9-arm-linux)
+      railties (>= 7.0.0)
+    tailwindcss-rails (2.7.9-arm64-darwin)
+      railties (>= 7.0.0)
+    tailwindcss-rails (2.7.9-x86_64-darwin)
+      railties (>= 7.0.0)
+    tailwindcss-rails (2.7.9-x86_64-linux)
+      railties (>= 7.0.0)
     thor (1.4.0)
-    tilt (2.6.1)
     timeout (0.4.3)
+    tsort (0.2.0)
     turbo-rails (2.0.16)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
@@ -393,6 +378,7 @@ GEM
 PLATFORMS
   aarch64-linux-gnu
   aarch64-linux-musl
+  arm-linux
   arm-linux-gnu
   arm-linux-musl
   arm64-darwin
@@ -416,12 +402,11 @@ DEPENDENCIES
   rails_admin (~> 3.3)
   rails_admin-i18n
   rubocop-rails-omakase
-  sassc-rails
   selenium-webdriver
   sorcery
   sprockets-rails
   stimulus-rails
-  tailwindcss-rails
+  tailwindcss-rails (~> 2.0)
   turbo-rails
   tzinfo-data
   web-console
