@@ -1,4 +1,36 @@
-<div>
-  <h1 class="font-bold text-4xl">Home#index</h1>
-  <p>Find me in app/views/home/index.html.erb</p>
+<%# <% flash.each do |message_type, message| %>
+  <%# <div class="alert alert-<%= message_type %>
+    <%# <%= message %>
+  <%# </div> %>
+<%# <% end %>
+<div class="min-h-screen py-12 px-6" style="background: #7CADED;">
+  <!-- Railsのimage_tagヘルパーを使用 -->
+  <%= image_tag "logo.png", class: "w-32 h-32 mx-auto mb-8" %>
+
+  <div class="container mx-auto max-w-6xl" style="padding: 2rem;">
+  <div class="text-center py-12 px-4">
+  <!-- ロゴ + キャッチコピー -->
+  <h1 class="text-3xl md:text-5xl font-bold text-neutral mb-4">ゲーム説明</h1>
+  <p class="text-lg md:text-xl text-gray-600 mb-4">
+    <br>「インディアンポーカー」をさらにシンプルにしたカードゲームです。
+    <br>対戦相手を指名しゲームを開始したら、カードが一枚ずつ配られます。
+    <br>相手の手札を見て自分の手札の強さを推測します。
+    <br>自分の手札は見られません。
+    <br>数字の大きいカードが勝利しますが、13はAに負けます。
+    <br>相手に勝てると思ったら「勝負」、勝てないと判断したら「降りる」を選択してください。
+    <br>「引き分け」は自動再戦になり、3回引き分けが続いたらランダムで勝敗が決まります。
+    <br>「降りる」は「引き分け」と同じ処理になります。
+  </p> <br> <br> <br>
+
+  <!-- サインアップ + ログイン -->
+      <% if current_user %>
+      <!-- ログイン済みの表示 -->
+      <%= link_to "対戦相手を選ぶ", users_path, class: "btn btn-primary" %>
+      <% else %>
+      <!-- 未ログインの表示 -->
+      <%= link_to "ログイン", new_user_session_path, class: "btn btn-success" %>
+      <% end %>
+
+</div>
+</div>
 </div>

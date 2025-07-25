@@ -4,20 +4,20 @@ class UserSessionsController < ApplicationController
   def new; end
 
   def create
-  puts "受信パラメーター: #{params}"  # デバッグ用
+    puts "受信パラメーター: #{params}"  # デバッグ用
 
-  user = User.find_by(
-    first_name: params[:first_name],
-    last_name: params[:last_name]
-  )
+    user = User.find_by(
+      first_name: params[:first_name],
+      last_name: params[:last_name]
+    )
 
-  if user && user.valid_password?(params[:password])
-    auto_login(user)
-    redirect_to users_index_path
-  else
-    flash[:alert] = "ログインに失敗しました"
-    render :new
-  end
+    if user && user.valid_password?(params[:password])
+      auto_login(user)
+      redirect_to root_path
+    else
+      flash[:alert] = "ログインに失敗しました"
+      render :new
+    end
   end
 
   def destroy

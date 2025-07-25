@@ -3,25 +3,35 @@
   <%= image_tag "logo.png", class: "w-32 h-32 mx-auto mb-8" %>
 
   <div class="container mx-auto max-w-6xl" style="padding: 2rem;">
+  <div class="bg-white/10 backdrop-blur-sm rounded-xl border-2 border-yellow-300/50 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" style="padding: 2.5rem;">
+  <div class="my-battle-stats mb-4">
+  <h2><%= current_user.display_name %>の戦歴</h2>
+    <div class="card">
+      <div class="card-body">
+        <p>総戦闘数: <%= @my_total_battles %>回
+        勝ち: <%= @my_win_count %>回
+        負け: <%= @my_lose_count %>回</p>
+        <% if @my_total_battles > 0 %>
+          <p>勝率: <%= (@my_win_count.to_f / @my_total_battles * 100).round(1) %>%</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
     <!-- プレイヤー一覧 -->
     <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
       <% @users.each do |user| %>
         <div class="bg-white/10 backdrop-blur-sm rounded-xl border-2 border-yellow-300/50 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" style="padding: 2.5rem;">
           <!-- プレイヤー名 -->
           <p style="font-size: 1.75rem; font-weight: bold; color: #FFF691; margin-bottom: 1.5rem; font-family: Arial, sans-serif; text-align: center;">
-            <%= user.display_name %>
+          <%= user.display_name %>
           </p>
           <!-- 戦歴 -->
           <div style="margin-bottom: 2rem; text-align: center;">
-            <p style="color: #FFF691; font-weight: 600; font-size: 1.25rem; margin-bottom: 0.75rem;">
-              戦歴:
-            </p>
-            <p style="color: #FFF691; font-weight: 600; font-size: 1.125rem;">
-              勝利 <span style="font-size: 1.5rem; font-weight: bold;"><%= user.won_battles.count %></span>回
-            </p>
-            <p style="color: #FFF691; font-weight: 600; font-size: 1.125rem;">
-              敗北 <span style="font-size: 1.5rem; font-weight: bold;"><%= user.lost_battles.count %></span>回
-            </p>
+          <p style="color: #FFF691; font-weight: 600; font-size: 1.25rem; margin-bottom: 0.75rem;">
+          戦歴:
+          勝ち <span style="font-size: 1.5rem; font-weight: bold;"><%= user.won_battles.count %></span>回
+          負け <span style="font-size: 1.5rem; font-weight: bold;"><%= user.lost_battles.count %></span>回
+          </p>
           </div>
 
           <!-- 対戦ボタン -->
