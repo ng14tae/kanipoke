@@ -1,12 +1,16 @@
 class User < ApplicationRecord
   authenticates_with_sorcery!
 
+  attr_accessor :password_confirmation
+
   validates :first_name, presence: true, uniqueness: true
   validates :last_name, presence: true
   validates :last_name, uniqueness: { scope: :first_name, message: "その組み合わせは既に使用されています" }
   validates :password, length: { minimum: 4 }, if: -> { new_record? || changes[:crypted_password] }
+  validates :password, confirmation: true, if: -> { new_record? || changes[:crypted_password] }
+  validates :password_confirmation, presence: true, if: -> { new_record? || changes[:crypted_password] }
 
-  enum role: { user: 0, admin: 1 }
+  enum :role, { user: 0, admin: 1 }
 
   def display_name
     "#{first_name}の#{last_name}"
