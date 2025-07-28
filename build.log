@@ -1,0 +1,243 @@
+Compose can now delegate builds to bake for better performance.
+To do so, set COMPOSE_BAKE=true.
+#0 building with "hungry_hellman" instance using docker-container driver
+
+#1 [web internal] load build definition from Dockerfile.dev
+#1 transferring dockerfile: 900B done
+#1 DONE 0.0s
+
+#2 [web internal] load metadata for docker.io/library/ruby:3.1.4
+#2 DONE 2.8s
+
+#3 [web internal] load .dockerignore
+#3 transferring context: 933B done
+#3 DONE 0.0s
+
+#4 [web 1/7] FROM docker.io/library/ruby:3.1.4@sha256:8ebc619f459ec62a7d0763f910e50787cc7999de3c09632536b22aaf8725d3f1
+#4 resolve docker.io/library/ruby:3.1.4@sha256:8ebc619f459ec62a7d0763f910e50787cc7999de3c09632536b22aaf8725d3f1 done
+#4 CACHED
+
+#5 [web internal] load build context
+#5 transferring context: 16.26kB 0.2s done
+#5 DONE 0.2s
+
+#6 [web 2/7] RUN apt-get update -qq && apt-get install -y ca-certificates curl gnupg && mkdir -p /etc/apt/keyrings && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && NODE_MAJOR=20 && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && wget --quiet -O - /tmp/pubkey.gpg https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+#6 39.11 Reading package lists...
+#6 39.30 Building dependency tree...
+#6 39.35 Reading state information...
+#6 39.40 gnupg is already the newest version (2.2.40-1.1).
+#6 39.40 The following additional packages will be installed:
+#6 39.40   libcurl3-gnutls libcurl4 libcurl4-openssl-dev
+#6 39.40 Suggested packages:
+#6 39.40   libcurl4-doc libidn-dev libldap2-dev librtmp-dev libssh2-1-dev
+#6 39.42 The following packages will be upgraded:
+#6 39.42   ca-certificates curl libcurl3-gnutls libcurl4 libcurl4-openssl-dev
+#6 39.52 5 upgraded, 0 newly installed, 0 to remove and 137 not upgraded.
+#6 39.52 Need to get 1670 kB of archives.
+#6 39.52 After this operation, 61.4 kB of additional disk space will be used.
+#6 39.52 Get:1 http://deb.debian.org/debian bookworm-updates/main arm64 ca-certificates all 20230311+deb12u1 [155 kB]
+#6 39.93 Get:2 http://deb.debian.org/debian bookworm/main arm64 libcurl4-openssl-dev arm64 7.88.1-10+deb12u12 [476 kB]
+#6 41.79 Get:3 http://deb.debian.org/debian bookworm/main arm64 curl arm64 7.88.1-10+deb12u12 [309 kB]
+#6 42.81 Get:4 http://deb.debian.org/debian bookworm/main arm64 libcurl4 arm64 7.88.1-10+deb12u12 [367 kB]
+#6 43.55 Get:5 http://deb.debian.org/debian bookworm/main arm64 libcurl3-gnutls arm64 7.88.1-10+deb12u12 [362 kB]
+#6 44.14 debconf: delaying package configuration, since apt-utils is not installed
+#6 44.15 Fetched 1670 kB in 5s (361 kB/s)
+#6 44.16 (Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 23271 files and directories currently installed.)
+#6 44.16 Preparing to unpack .../ca-certificates_20230311+deb12u1_all.deb ...
+#6 44.16 Unpacking ca-certificates (20230311+deb12u1) over (20230311) ...
+#6 44.25 Preparing to unpack .../libcurl4-openssl-dev_7.88.1-10+deb12u12_arm64.deb ...
+#6 44.25 Unpacking libcurl4-openssl-dev:arm64 (7.88.1-10+deb12u12) over (7.88.1-10+deb12u5) ...
+#6 44.29 Preparing to unpack .../curl_7.88.1-10+deb12u12_arm64.deb ...
+#6 44.29 Unpacking curl (7.88.1-10+deb12u12) over (7.88.1-10+deb12u5) ...
+#6 44.31 Preparing to unpack .../libcurl4_7.88.1-10+deb12u12_arm64.deb ...
+#6 44.32 Unpacking libcurl4:arm64 (7.88.1-10+deb12u12) over (7.88.1-10+deb12u5) ...
+#6 44.34 Preparing to unpack .../libcurl3-gnutls_7.88.1-10+deb12u12_arm64.deb ...
+#6 44.35 Unpacking libcurl3-gnutls:arm64 (7.88.1-10+deb12u12) over (7.88.1-10+deb12u5) ...
+#6 44.37 Setting up libcurl3-gnutls:arm64 (7.88.1-10+deb12u12) ...
+#6 44.37 Setting up ca-certificates (20230311+deb12u1) ...
+#6 44.40 debconf: unable to initialize frontend: Dialog
+#6 44.40 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#6 44.40 debconf: falling back to frontend: Readline
+#6 44.40 debconf: unable to initialize frontend: Readline
+#6 44.40 debconf: (This frontend requires a controlling tty.)
+#6 44.40 debconf: falling back to frontend: Teletype
+#6 44.76 Updating certificates in /etc/ssl/certs...
+#6 44.96 rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+#6 44.96 2 added, 0 removed; done.
+#6 44.97 Setting up libcurl4:arm64 (7.88.1-10+deb12u12) ...
+#6 44.98 Setting up curl (7.88.1-10+deb12u12) ...
+#6 44.98 Setting up libcurl4-openssl-dev:arm64 (7.88.1-10+deb12u12) ...
+#6 44.98 Processing triggers for libc-bin (2.36-9+deb12u4) ...
+#6 44.99 Processing triggers for ca-certificates (20230311+deb12u1) ...
+#6 44.99 Updating certificates in /etc/ssl/certs...
+#6 45.12 0 added, 0 removed; done.
+#6 45.12 Running hooks in /etc/ca-certificates/update.d...
+#6 45.12 done.
+#6 45.36 deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main
+#6 45.38 Warning: apt-key is deprecated. Manage keyring files in trusted.gpg.d instead (see apt-key(8)).
+#6 46.13 OK
+#6 46.14 deb https://dl.yarnpkg.com/debian/ stable main
+#6 DONE 46.2s
+
+#7 [web 3/7] RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs yarn vim
+#7 1.315 W: https://dl.yarnpkg.com/debian/dists/stable/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
+#7 1.319 Reading package lists...
+#7 1.503 Building dependency tree...
+#7 1.549 Reading state information...
+#7 1.604 The following additional packages will be installed:
+#7 1.604   libgpm2 libpq5 libsodium23 vim-common vim-runtime xxd
+#7 1.604 Suggested packages:
+#7 1.604   gpm postgresql-doc-15 ctags vim-doc vim-scripts
+#7 1.651 The following NEW packages will be installed:
+#7 1.651   build-essential libgpm2 libsodium23 nodejs vim vim-common vim-runtime xxd
+#7 1.651   yarn
+#7 1.651 The following packages will be upgraded:
+#7 1.651   libpq-dev libpq5
+#7 1.763 2 upgraded, 9 newly installed, 0 to remove and 135 not upgraded.
+#7 1.763 Need to get 41.1 MB of archives.
+#7 1.763 After this operation, 245 MB of additional disk space will be used.
+#7 1.763 Get:1 http://deb.debian.org/debian bookworm/main arm64 vim-common all 2:9.0.1378-2+deb12u2 [125 kB]
+#7 1.956 Get:2 https://deb.nodesource.com/node_20.x nodistro/main arm64 nodejs arm64 20.19.4-1nodesource1 [31.1 MB]
+#7 2.021 Get:3 http://deb.debian.org/debian bookworm/main arm64 build-essential arm64 12.9 [7704 B]
+#7 2.025 Get:4 http://deb.debian.org/debian bookworm/main arm64 libgpm2 arm64 1.20.7-10+b1 [14.4 kB]
+#7 2.043 Get:5 http://deb.debian.org/debian bookworm/main arm64 libpq-dev arm64 15.13-0+deb12u1 [143 kB]
+#7 2.223 Get:6 https://dl.yarnpkg.com/debian stable/main arm64 yarn all 1.22.22-1 [896 kB]
+#7 2.390 Get:7 http://deb.debian.org/debian bookworm/main arm64 libpq5 arm64 15.13-0+deb12u1 [184 kB]
+#7 2.692 Get:8 http://deb.debian.org/debian bookworm/main arm64 libsodium23 arm64 1.0.18-1 [119 kB]
+#7 2.884 Get:9 http://deb.debian.org/debian bookworm/main arm64 vim-runtime all 2:9.0.1378-2+deb12u2 [7027 kB]
+#7 26.46 Get:10 http://deb.debian.org/debian bookworm/main arm64 vim arm64 2:9.0.1378-2+deb12u2 [1428 kB]
+#7 31.37 Get:11 http://deb.debian.org/debian bookworm/main arm64 xxd arm64 2:9.0.1378-2+deb12u2 [83.8 kB]
+#7 108.2 debconf: delaying package configuration, since apt-utils is not installed
+#7 108.2 Fetched 41.1 MB in 1min 46s (387 kB/s)
+#7 108.2 Selecting previously unselected package vim-common.
+#7 108.2 (Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 23273 files and directories currently installed.)
+#7 108.2 Preparing to unpack .../00-vim-common_2%3a9.0.1378-2+deb12u2_all.deb ...
+#7 108.2 Unpacking vim-common (2:9.0.1378-2+deb12u2) ...
+#7 108.2 Selecting previously unselected package build-essential.
+#7 108.2 Preparing to unpack .../01-build-essential_12.9_arm64.deb ...
+#7 108.2 Unpacking build-essential (12.9) ...
+#7 108.2 Selecting previously unselected package libgpm2:arm64.
+#7 108.2 Preparing to unpack .../02-libgpm2_1.20.7-10+b1_arm64.deb ...
+#7 108.2 Unpacking libgpm2:arm64 (1.20.7-10+b1) ...
+#7 108.2 Preparing to unpack .../03-libpq-dev_15.13-0+deb12u1_arm64.deb ...
+#7 108.3 Unpacking libpq-dev (15.13-0+deb12u1) over (15.6-0+deb12u1) ...
+#7 108.3 Preparing to unpack .../04-libpq5_15.13-0+deb12u1_arm64.deb ...
+#7 108.3 Unpacking libpq5:arm64 (15.13-0+deb12u1) over (15.6-0+deb12u1) ...
+#7 108.3 Selecting previously unselected package libsodium23:arm64.
+#7 108.3 Preparing to unpack .../05-libsodium23_1.0.18-1_arm64.deb ...
+#7 108.3 Unpacking libsodium23:arm64 (1.0.18-1) ...
+#7 108.3 Selecting previously unselected package nodejs.
+#7 108.3 Preparing to unpack .../06-nodejs_20.19.4-1nodesource1_arm64.deb ...
+#7 108.3 Unpacking nodejs (20.19.4-1nodesource1) ...
+#7 109.1 Selecting previously unselected package vim-runtime.
+#7 109.1 Preparing to unpack .../07-vim-runtime_2%3a9.0.1378-2+deb12u2_all.deb ...
+#7 109.1 Adding 'diversion of /usr/share/vim/vim90/doc/help.txt to /usr/share/vim/vim90/doc/help.txt.vim-tiny by vim-runtime'
+#7 109.1 Adding 'diversion of /usr/share/vim/vim90/doc/tags to /usr/share/vim/vim90/doc/tags.vim-tiny by vim-runtime'
+#7 109.1 Unpacking vim-runtime (2:9.0.1378-2+deb12u2) ...
+#7 109.4 Selecting previously unselected package vim.
+#7 109.4 Preparing to unpack .../08-vim_2%3a9.0.1378-2+deb12u2_arm64.deb ...
+#7 109.4 Unpacking vim (2:9.0.1378-2+deb12u2) ...
+#7 109.4 Selecting previously unselected package xxd.
+#7 109.4 Preparing to unpack .../09-xxd_2%3a9.0.1378-2+deb12u2_arm64.deb ...
+#7 109.4 Unpacking xxd (2:9.0.1378-2+deb12u2) ...
+#7 109.4 Selecting previously unselected package yarn.
+#7 109.4 Preparing to unpack .../10-yarn_1.22.22-1_all.deb ...
+#7 109.4 Unpacking yarn (1.22.22-1) ...
+#7 109.5 Setting up libsodium23:arm64 (1.0.18-1) ...
+#7 109.5 Setting up libgpm2:arm64 (1.20.7-10+b1) ...
+#7 109.5 Setting up libpq5:arm64 (15.13-0+deb12u1) ...
+#7 109.5 Setting up libpq-dev (15.13-0+deb12u1) ...
+#7 109.5 Setting up nodejs (20.19.4-1nodesource1) ...
+#7 109.5 Setting up xxd (2:9.0.1378-2+deb12u2) ...
+#7 109.5 Setting up vim-common (2:9.0.1378-2+deb12u2) ...
+#7 109.5 Setting up build-essential (12.9) ...
+#7 109.5 Setting up yarn (1.22.22-1) ...
+#7 109.5 Setting up vim-runtime (2:9.0.1378-2+deb12u2) ...
+#7 109.5 Setting up vim (2:9.0.1378-2+deb12u2) ...
+#7 109.5 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/editor (editor) in auto mode
+#7 109.5 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/ex (ex) in auto mode
+#7 109.5 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/rview (rview) in auto mode
+#7 109.5 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/rvim (rvim) in auto mode
+#7 109.5 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vi (vi) in auto mode
+#7 109.5 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/view (view) in auto mode
+#7 109.5 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vim (vim) in auto mode
+#7 109.5 update-alternatives: using /usr/bin/vim.basic to provide /usr/bin/vimdiff (vimdiff) in auto mode
+#7 109.5 Processing triggers for libc-bin (2.36-9+deb12u4) ...
+#7 109.6 Processing triggers for hicolor-icon-theme (0.17-2) ...
+#7 DONE 109.7s
+
+#8 [web 4/7] RUN mkdir /myapp
+#8 DONE 0.1s
+
+#9 [web 5/7] WORKDIR /myapp
+#9 DONE 0.0s
+
+#10 [web 6/7] RUN gem install bundler
+#10 3.885 Successfully installed bundler-2.6.9
+#10 3.885 1 gem installed
+#10 DONE 3.9s
+
+#11 [web 7/7] COPY . /myapp
+#11 DONE 0.0s
+
+#12 [web] exporting to oci image format
+#12 exporting layers
+#12 exporting layers 3.9s done
+#12 exporting manifest sha256:ceb5183b51b7b21adacaf94db79e0c6666e34903ba161e3d5015c405e7addf45
+#12 exporting manifest sha256:ceb5183b51b7b21adacaf94db79e0c6666e34903ba161e3d5015c405e7addf45 done
+#12 exporting config sha256:32a1b8118fbe7e6eaffce76b46dbc0c64a9ff6c29841ca06d719e7d89c64e9cd 0.0s done
+#12 sending tarball
+#12 ...
+
+#13 [web] importing to docker
+#13 DONE 0.0s
+
+#12 [web] exporting to oci image format
+#12 sending tarball 8.0s done
+#12 DONE 11.8s
+
+#14 [web] resolving provenance for metadata file
+#14 DONE 0.0s
+ web  Built

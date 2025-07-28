@@ -6,12 +6,6 @@ class Battle < ApplicationRecord
 
   validate :cannot_battle_self
 
-  # ステータス管理
-  enum status: {
-    preparing: 0,    # カード配布済み、選択待ち
-    completed: 1     # 完了
-  }
-
   def determine_winner
     # 特別ルール：1 vs 13 の場合
     if user_card == 1 && opponent_card == 13

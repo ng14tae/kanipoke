@@ -4,16 +4,14 @@ class UserSessionsController < ApplicationController
   def new; end
 
   def create
-    puts "受信パラメーター: #{params}"  # デバッグ用
+    Rails.logger.info "受信パラメーター: #{params.inspect}"
 
-    user = User.find_by(
-      first_name: params[:first_name],
-      last_name: params[:last_name]
-    )
+    # Sorceryでのログイン処理
+    user = User.find_by(first_name: params[:first_name], last_name: params[:last_name])
 
     if user && user.valid_password?(params[:password])
       auto_login(user)
-      redirect_to root_path
+      redirect_to root_path, notice: "ログインしました"
     else
       flash[:alert] = "ログインに失敗しました"
       render :new
