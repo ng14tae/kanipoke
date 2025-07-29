@@ -35,15 +35,15 @@
 
     <div style="text-align: center; margin-top: 1.5rem;">
     <br><%= link_to "もう一度対戦", new_battle_path(opponent_id: @battle.opponent.id),
-          style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: 1.25rem; padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; font-family: DotGothic16, sans-serif; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transition: all 0.2s ease; transform: translateY(0); margin-right: 1rem; ",
-          onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px rgba(0, 0, 0, 0.2)'; this.style.borderColor='#d97706';",
-          onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'; this.style.borderColor='#eab308';",
+          style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: 1.25rem; padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; font-family: DotGothic16, sans-serif; box-shadow: 0 10px 15px -3px #00000019; transition: all 0.2s ease; transform: translateY(0); margin-right: 1rem; ",
+          onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#d97706';",
+          onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #00000019'; this.style.borderColor='#eab308';",
           onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
           onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';" %>
   <%= link_to "対戦相手一覧に戻る", users_path,
-          style: "display: inline-block; background-color: #6b7280; color: #ffffff; font-weight: 900; font-size: 1.25rem; padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #4b5563; font-family: DotGothic16, sans-serif; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transition: all 0.2s ease; transform: translateY(0);",
-          onmouseover: "this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px rgba(0, 0, 0, 0.2)'; this.style.borderColor='#374151';",
-          onmouseout: "this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'; this.style.borderColor='#4b5563';",
+          style: "display: inline-block; background-color: #6b7280; color: #ffffff; font-weight: 900; font-size: 1.25rem; padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #4b5563; font-family: DotGothic16, sans-serif; box-shadow: 0 10px 15px -3px #00000019; transition: all 0.2s ease; transform: translateY(0);",
+          onmouseover: "this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#374151';",
+          onmouseout: "this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #00000019'; this.style.borderColor='#4b5563';",
           onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
           onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';" %>
   </div>
