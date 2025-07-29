@@ -5,8 +5,9 @@ ja:
       submit: 保存
       update: 更新
     label:
-      email: メールアドレス
-      password: パスワード
+      first_name: 二つ名
+      last_name: ニックネーム
+      password: パスワード（4文字以上）
   user_sessions:
     new:
       title: ログイン
