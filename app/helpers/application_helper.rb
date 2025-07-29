@@ -9,7 +9,7 @@ module ApplicationHelper
     if battle.winner == current_user
       "🦀🎉 カニポカで#{battle.opponent.display_name}に勝利！
       #カニポカ #KANIDIAN_POKER"
-    else battle.winner == battle.opponent
+    elsif battle.winner == battle.opponent
       "🦀💭 カニポカで#{battle.opponent.display_name}に敗北...次は勝つ！
       #カニポカ #KANIDIAN_POKER"
     end
@@ -17,7 +17,7 @@ module ApplicationHelper
 
   # カード画像のパスを返すメソッド
   def card_image_path(card_number)
-    "cards/#{card_number}.png"
+    "/images/cards/#{card_number}.png"
   end
 
   # カード画像タグを生成するメソッド
