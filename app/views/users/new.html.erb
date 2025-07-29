@@ -15,7 +15,7 @@
 
     <!-- ユーザー登録フォーム -->
     <div class="flex justify-center">
-        <div class="w-full max-w-md lg:max-w-lg bg-white rounded-lg shadow-lg p-8" style="background-color: rgba(255, 255, 255, 0.95);">
+        <div class="w-full max-w-md lg:max-w-lg bg-white rounded-lg shadow-lg p-8" style="background-color: #ffffff;">
         <h1 class="text-2xl font-bold text-gray-900 mb-6 text-center" style="font-family: DotGothic16, sans-serif;">ユーザー登録</h1>
 
         <%= form_with model: @user, class: "space-y-4" do |f| %>
@@ -43,9 +43,9 @@
             </div>
 
             <%= f.submit "登録",
-                style: "display: inline-block; width: 100%; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: 1.25rem; padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; font-family: DotGothic16, sans-serif; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); transition: all 0.2s ease; transform: translateY(0); cursor: pointer;",
-                onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px rgba(0, 0, 0, 0.2)'; this.style.borderColor='#d97706';",
-                onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'; this.style.borderColor='#eab308';",
+                style: "display: inline-block; width: 100%; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: 1.25rem; padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; font-family: DotGothic16, sans-serif; box-shadow: 0 10px 15px -3px #00000019; transition: all 0.2s ease; transform: translateY(0); cursor: pointer;",
+                onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#d97706';",
+                onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #00000019'; this.style.borderColor='#eab308';",
                 onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
                 onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';" %>
         <% end %>
