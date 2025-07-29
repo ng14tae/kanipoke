@@ -63,5 +63,4 @@ gem "rails_admin-i18n"
 # gem 'devise'
 gem "sorcery"
 gem "tailwindcss-rails", "~> 2.0"
-gem "sassc-rails"
 gem "rails-i18n"
