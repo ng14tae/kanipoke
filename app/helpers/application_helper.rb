@@ -12,7 +12,7 @@ module ApplicationHelper
     else battle.winner == battle.opponent
       "🦀💭 カニポカで#{battle.opponent.display_name}に敗北...次は勝つ！
       #カニポカ #KANIDIAN_POKER"
-    end
+    endg
   end
 
   # カード画像のパスを返すメソッド

@@ -3,9 +3,10 @@
 <div class='container'>
     <div class='row'>
     <div class='col-sm-6 col-12'>
+        <%= link_to 'ログアウト', logout_path, class: 'dropdown-item text-white underline', data: { turbo_method: :delete } %>
         <div class='copyright'>
-        <%= link_to "©️ KANIDIAN POKER", root_path,
-        class: "text-white underline font-bold" %>
+        <%= link_to "©︎ KANIDIAN POKER", root_path,
+        class: "text-white underline" %>
         </div>
     </div>
     </div>
