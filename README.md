@@ -1,24 +1,27 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+「インディアンポーカー」を模したトランプゲームです。
 
-Things you may want to cover:
+まず、ユーザー登録を行なってください。
+ミニアプリなので、「二つ名」「ニックネーム」「パスワード」での認証になっています。
+（※パスワード再設定・名前変更機能は現在実装されておりませんのでご注意ください。）
 
-* Ruby version
+登録がためらわれる方は
+二つ名：テスト
+ニックネーム：ユーザー
+パスワード：1234
+でお楽しみください。
 
-* System dependencies
+登録されているユーザーを指名して勝負を申し込みます。
+カードの数が大きい方が勝利です。
+ただし、KはA負けます。
+引き分けは3回まで行えますが、それ以降はランダムで勝敗が決まります。
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+▶︎拡張機能(予定)
+- 対戦相手のスワイプ機能
+- 対戦相手の検索機能
+- アイコン
+- マイページ
+- 対戦履歴(battle_history)
+- ランキング機能
+- ユーザー一覧のページネーション
