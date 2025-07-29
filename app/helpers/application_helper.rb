@@ -13,7 +13,7 @@ module ApplicationHelper
       "🦀💭 カニポカで#{battle.opponent.display_name}に敗北...次は勝つ！
       #カニポカ #KANIDIAN_POKER"
     endg
-  end
+git   end
 
   # カード画像のパスを返すメソッド
   def card_image_path(card_number)
