@@ -1,14 +1,19 @@
 <div style="background: #7CADED;">
 <footer id='footer' class='footer-bottom'>
-<div class='container'>
-    <div class='row'>
-    <div class='col-sm-6 col-12'>
-        <%= link_to 'ログアウト', logout_path, class: 'dropdown-item text-white underline', data: { turbo_method: :delete } %>
+    <div class='container' style="max-width: 1140px; margin: 0 auto; padding: 0 15px;">
+    <div style="display: flex; flex-wrap: wrap; margin: 0 -15px;">
+        <div style="margin: 0 auto; padding: 0 15px;">
+        <%= link_to 'ログアウト', logout_path,
+            class: 'text-white',
+            style: "color: white; text-decoration: underline; display: inline-block; margin-bottom: 1rem;", 
+            data: { turbo_method: :delete } %>
         <div class='copyright'>
-        <%= link_to "©︎ KANIDIAN POKER", root_path,
-        class: "text-white underline" %>
+            <%= link_to "©︎ KANIDIAN POKER", root_path,
+                class: "text-white",
+                style: "color: white; text-decoration: underline;" %>
+        </div>
         </div>
     </div>
     </div>
-</div>
 </footer>
+</div>

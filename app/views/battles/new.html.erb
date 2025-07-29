@@ -1,63 +1,103 @@
 <div class="min-h-screen py-12 px-6" style="background: #7CADED;">
-<!-- ロゴをセンターに配置 -->
-<div class="text-center mb-8">
-    <%= image_tag "logo.png", class: "mx-auto max-w-xs md:max-w-sm lg:max-w-md" %>
-</div>
-
-<div class="text-center mt-8">
-  <h1 class="text-2xl font-bold" style="color: #FFF691; font-family: DotGothic16, sans-serif;">
-  🎮🦀 勝負 🦀🎮
-  </h1>
-</div>
-<div id="battle-arena">
-  <div class="battle-cards-reveal flex justify-around items-center my-8">
-  <!-- プレイヤーのカード（非公開） -->
-  <div class="player-card-section text-center">
-    <h3 style="font-family: DotGothic16, sans-serif;"><%= current_user.display_name || current_user.name %></h3>
-    <!-- 裏カード画像 -->
-    <%= card_image_tag(0, class: "hidden-card", style: "margin: 0 auto;") %>
-    <p class="text-sm mt-2" style="font-family: DotGothic16, sans-serif; ">(自分の手札は見えません)</p>
-  </div>
-  <!-- VS表示 -->
-  <div class="vs-section text-center">
-    <h2 class="text-4xl font-bold" style="color: #FFF691; font-family: DotGothic16, sans-serif;">VS</h2>
+  <!-- ロゴをセンターに配置 -->
+  <div class="text-center mb-8">
+    <%= image_tag "logo.png", class: "mx-auto", style: "max-width: 240px; width: 100%;" %>
   </div>
 
-  <!-- 対戦相手のカード（公開） -->
-  <div class="opponent-card-section text-center">
-    <h3 style="font-family: DotGothic16, sans-serif;"><%= @opponent.display_name || @opponent.name %></h3>
-    <%= card_image_tag(@opponent_card, class: "revealed-card", style: "margin: 0 auto;") %>
-    <p class="card-number text-lg font-bold mt-2" style="font-family: DotGothic16, sans-serif;">カード: <%= @opponent_card %></p>
-  </div>
-</div>
-
-
-  <div class="game-info">
-    <p style="font-size: 1.1rem; color: #FFF691; margin-bottom: 1.5rem; font-family: DotGothic16, sans-serif; text-align: center; ">
-    カードが配られました！<br>「勝負！」ボタンを押して結果を見ましょう</p>
+  <div class="text-center mt-8">
+    <h1 class="text-2xl font-bold" style="color: #FFF691; font-family: DotGothic16, sans-serif; font-size: clamp(1.5rem, 4vw, 2rem);">
+      🎮🦀 勝負 🦀🎮
+    </h1>
   </div>
 
-  <%= form_with model: @battle, local: true do |f| %>
-    <%= f.hidden_field :opponent_id, value: @opponent.id %>
-    <%= f.hidden_field :user_card, value: @user_card %>
-    <%= f.hidden_field :opponent_card, value: @opponent_card %>
+  <div id="battle-arena">
+    <div class="battle-cards-reveal my-8">
+      <!-- デスクトップ用レイアウト -->
+      <div style="display: flex; justify-content: space-around; align-items: center;">
+        <!-- プレイヤーのカード（非公開） -->
+        <div class="player-card-section text-center" style="flex: 1; min-width: 0;">
+          <h3 style="font-family: DotGothic16, sans-serif; font-size: clamp(0.875rem, 3vw, 1.125rem); margin-bottom: 1rem;"><%= current_user.display_name || current_user.name %></h3>
+          <!-- 裏カード画像 -->
+          <%= card_image_tag(0, class: "hidden-card", style: "margin: 0 auto; display: block; max-width: 120px; width: 100%; height: auto;") %>
+          <p class="text-sm mt-2" style="font-family: DotGothic16, sans-serif; font-size: clamp(0.75rem, 2.5vw, 0.875rem);">(自分の手札は見えません)</p>
+        </div>
 
-    <div class="actions">
-      <div style="text-align: center; margin-top: 1.5rem;">
-      <%= f.submit "勝負！",
-          style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: 1.25rem; padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; font-family: DotGothic16, sans-serif; box-shadow: 0 10px 15px -3px #00000019; transition: all 0.2s ease; transform: translateY(0); cursor: pointer; margin-right: 1rem;",
-          onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#d97706';",
-          onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #00000019'; this.style.borderColor='#eab308';",
-          onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
-          onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';" %>
-      <%= link_to "降りる", users_path,
-          style: "display: inline-block; background-color: #6b7280; color: #ffffff; font-weight: 900; font-size: 1.25rem; padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #4b5563; font-family: DotGothic16, sans-serif; box-shadow: 0 10px 15px -3px #00000019; transition: all 0.2s ease; transform: translateY(0);",
-          onmouseover: "this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#374151';",
-          onmouseout: "this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #00000019'; this.style.borderColor='#4b5563';",
-          onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
-          onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';",
-          confirm: "本当に降りますか？" %>
-    </div></div>
-  <% end %>
-</div>
+        <!-- VS表示 -->
+        <div class="vs-section text-center" style="flex: 0 0 auto; margin: 0 1rem;">
+          <h2 class="text-4xl font-bold" style="color: #FFF691; font-family: DotGothic16, sans-serif; font-size: clamp(2rem, 6vw, 3rem);">VS</h2>
+        </div>
+
+        <!-- 対戦相手のカード（公開） -->
+        <div class="opponent-card-section text-center" style="flex: 1; min-width: 0;">
+          <h3 style="font-family: DotGothic16, sans-serif; font-size: clamp(0.875rem, 3vw, 1.125rem); margin-bottom: 1rem;"><%= @opponent.display_name || @opponent.name %></h3>
+          <%= card_image_tag(@opponent_card, class: "revealed-card", style: "margin: 0 auto; display: block; max-width: 120px; width: 100%; height: auto;") %>
+          <p class="card-number text-lg font-bold mt-2" style="font-family: DotGothic16, sans-serif; font-size: clamp(0.875rem, 3vw, 1.125rem);">カード: <%= @opponent_card %></p>
+        </div>
+      </div>
+
+      <!-- モバイル用レイアウト（768px以下で表示） -->
+      <div style="display: none;">
+        <style>
+          @media (max-width: 768px) {
+            .desktop-layout { display: none !important; }
+            .mobile-layout { display: block !important; }
+          }
+        </style>
+        <div class="mobile-layout" style="display: none;">
+          <!-- 対戦相手のカード（上部） -->
+          <div class="opponent-card-section text-center" style="margin-bottom: 2rem;">
+            <h3 style="font-family: DotGothic16, sans-serif; font-size: 1rem; margin-bottom: 1rem;"><%= @opponent.display_name || @opponent.name %></h3>
+            <%= card_image_tag(@opponent_card, class: "revealed-card", style: "margin: 0 auto; display: block; max-width: 100px; width: 100%; height: auto;") %>
+            <p class="card-number text-lg font-bold mt-2" style="font-family: DotGothic16, sans-serif; font-size: 1rem;">カード: <%= @opponent_card %></p>
+          </div>
+
+          <!-- VS表示（中央） -->
+          <div class="vs-section text-center" style="margin: 1.5rem 0;">
+            <h2 class="text-4xl font-bold" style="color: #FFF691; font-family: DotGothic16, sans-serif; font-size: 2rem;">VS</h2>
+          </div>
+
+          <!-- プレイヤーのカード（下部） -->
+          <div class="player-card-section text-center">
+            <h3 style="font-family: DotGothic16, sans-serif; font-size: 1rem; margin-bottom: 1rem;"><%= current_user.display_name || current_user.name %></h3>
+            <%= card_image_tag(0, class: "hidden-card", style: "margin: 0 auto; display: block; max-width: 100px; width: 100%; height: auto;") %>
+            <p class="text-sm mt-2" style="font-family: DotGothic16, sans-serif; font-size: 0.875rem;">(自分の手札は見えません)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-info">
+      <p style="font-size: clamp(1rem, 3vw, 1.1rem); color: #FFF691; margin-bottom: 1.5rem; font-family: DotGothic16, sans-serif; text-align: center; line-height: 1.5;">
+        カードが配られました！<br>「勝負！」ボタンを押して結果を見ましょう
+      </p>
+    </div>
+
+    <%= form_with model: @battle, local: true do |f| %>
+      <%= f.hidden_field :opponent_id, value: @opponent.id %>
+      <%= f.hidden_field :user_card, value: @user_card %>
+      <%= f.hidden_field :opponent_card, value: @opponent_card %>
+
+      <div class="actions">
+        <div style="text-align: center; margin-top: 1.5rem;">
+          <!-- デスクトップ用ボタン（横並び） -->
+          <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <%= f.submit "勝負！",
+                style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: clamp(1rem, 3vw, 1.25rem); padding: 0.875rem 2rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; font-family: DotGothic16, sans-serif; box-shadow: 0 10px 15px -3px #0000001a; transition: all 0.2s ease; transform: translateY(0); cursor: pointer; min-width: 120px; margin: 0.5rem;",
+                onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#d97706';",
+                onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #0000001a'; this.style.borderColor='#eab308';",
+                onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
+                onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';" %>
+            <%= link_to "降りる", users_path,
+                style: "display: inline-block; background-color: #6b7280; color: #ffffff; font-weight: 900; font-size: clamp(1rem, 3vw, 1.25rem); padding: 0.875rem 2rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #4b5563; font-family: DotGothic16, sans-serif; box-shadow: 0 10px 15px -3px #0000001a; transition: all 0.2s ease; transform: translateY(0); min-width: 120px; margin: 0.5rem;",
+                onmouseover: "this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#374151';",
+                onmouseout: "this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #0000001a'; this.style.borderColor='#4b5563';",
+                onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
+                onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';",
+                confirm: "本当に降りますか？" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
 </div>
