@@ -1,0 +1,23 @@
+{
+"name": "KANIDIAN POKER",
+"short_name": "KANIPOKE",
+"icons": [
+    {
+    "src": "/icon.png",
+    "type": "image/png",
+    "sizes": "512x512"
+    },
+    {
+    "src": "/icon.png",
+    "type": "image/png",
+    "sizes": "512x512",
+    "purpose": "maskable"
+    }
+],
+"start_url": "/",
+"display": "standalone",
+"scope": "/",
+"description": "Myapp.",
+"theme_color": "#7CADED",
+"background_color": "#7CADED"
+}
