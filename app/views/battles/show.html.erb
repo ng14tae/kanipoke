@@ -96,7 +96,7 @@
 
   <br>
   <div style="text-align: center; margin-top: 1.5rem;">
-    <%= link_to "https://twitter.com/intent/tweet?text=#{CGI.escape(battle_share_text(@battle))}&url=#{CGI.escape(request.original_url)}",
+    <%= link_to "https://twitter.com/intent/tweet?text=#{CGI.escape(battle_share_text(@battle))}&url=#{CGI.escape(root_url)}",
       target: "_blank", rel: "noopener noreferrer",
       style: "display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background-color: #000000; color: #ffffff; font-weight: 700; font-size: clamp(0.9rem, 2.5vw, 1rem); border-radius: 0.75rem; text-decoration: none; transition: all 0.2s ease; transform: translateY(0); box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000d; border: 2px solid #374151; max-width: 300px;",
       onmouseover: "this.style.backgroundColor='#1f2937'; this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000d'; this.style.borderColor='#4b5563';",
