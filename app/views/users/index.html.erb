@@ -61,11 +61,6 @@
               戦歴:
               勝ち <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold;"><%= user.won_battles.count %></span>回
               負け <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold;"><%= user.lost_battles.count %></span>回
-              <br><% if @my_total_battles > 0 %>
-              勝率: <%= (@my_win_count.to_f / @my_total_battles * 100).round(1) %>%
-              <% else %>
-                勝率: ---%
-              <% end %>
             </p>
           </div>
 
@@ -96,11 +91,6 @@
           <div style="margin-bottom: 1.5rem; text-align: center;">
             <p style="color: #FFF691; font-weight: 400; font-size: 1rem; margin-bottom: 0.5rem;">
               戦歴: 勝ち <span style="font-weight: bold;"><%= user.won_battles.count %></span>回 負け <span style="font-weight: bold;"><%= user.lost_battles.count %></span>回
-              <br><% if @my_total_battles > 0 %>
-              勝率: <%= (@my_win_count.to_f / @my_total_battles * 100).round(1) %>%
-              <% else %>
-                勝率: ---%
-              <% end %>
             </p>
           </div>
 
