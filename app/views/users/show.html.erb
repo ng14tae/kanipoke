@@ -10,23 +10,6 @@
             style: "text-decoration: underline;"%>
         </div>
 
-        <!-- 統計情報 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-gray-100 p-4 rounded-lg text-center">
-            <h3 class="text-lg font-semibold">総対戦数</h3>
-            <p class="text-2xl font-bold text-blue-600"><%= @battles.count %></p>
-        </div>
-        <div class="bg-gradient-to-r from-green-100 to-green-200 p-4 rounded-lg text-center">
-            <h3 class="text-lg font-semibold">勝率</h3>
-            <p class="text-2xl font-bold text-green-600"><%= @win_rate %>%</p>
-        </div>
-        <div class="bg-gradient-to-r from-purple-100 to-purple-200 p-4 rounded-lg text-center">
-            <h3 class="text-lg font-semibold">勝利数</h3>
-            <p class="text-2xl font-bold text-purple-600"><%= Battle.where(winner_id: @user.id).count %></p>
-        </div>
-        </div>
-    </div>
-
     <!-- 最近の対戦履歴 -->
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="bg-gray-100 p-4 rounded-lg text-center">
