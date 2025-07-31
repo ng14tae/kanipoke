@@ -1,0 +1,28 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-20">
+        <div class="flex items-center">
+            <%= link_to root_path, class: "text-white text-xl font-bold hover:text-gray-300" do %>
+            🦀 KANIDAN POKER 🦀
+            <% end %>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <%= link_to "対戦相手一覧", users_index_path, class: "text-white hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" %>
+            <% if current_user %>
+            <%= link_to "マイページ", user_path(current_user), class: "text-white hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" %>
+        <% else %>
+            <%= link_to "ログイン", login_path, class: "text-white hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium" %>
+        <% end %>
+            <!-- 今後追加予定の機能 -->
+            <%# <div class="relative group">
+            <button class="text-white hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">
+                メニュー ▼
+            </button>
+            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <%= link_to "ランキング", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                <%# <%= link_to "設定", "#", class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+            <%# </div>
+            </div> %>
+        </div>
+    </div>
+</div>

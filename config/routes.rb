@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   # 一般ユーザー画面
   resources :battles, only: [ :new, :create, :show, :index ]
-  resources :users, only: [ :index, :create, :show, :new ]
+  resources :users, only: [ :index, :create, :show, :new, :edit, :update ]
 
 
   # 管理画面（名前空間分離）

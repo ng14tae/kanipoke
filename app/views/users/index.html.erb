@@ -1,4 +1,4 @@
-<div class="min-h-screen py-12 px-6" style="background: #7CADED;">
+<div class="min-h-screen py-12 px-6">
   <!-- ロゴをセンターに配置 -->
   <div class="text-center mb-8">
     <%= image_tag "logo.png", class: "mx-auto", style: "max-width;" %>
@@ -6,14 +6,14 @@
 
   <div class="container mx-auto" style="max-width: 1152px; padding: 2rem;">
     <div class="my-battle-stats mb-4">
-      <h2 style="font-size: clamp(1.5rem, 4vw, 1.75rem); font-weight: bold; color: #FFF691; margin-bottom: 1.5rem; font-family: DotGothic16, sans-serif;">
+      <h2 style="font-size: clamp(1.5rem, 4vw, 1.75rem); font-weight: bold; margin-bottom: 1.5rem; ">
         <%= current_user.display_name %>の戦歴
       </h2>
       <div class="card">
         <div class="card-body">
           <!-- デスクトップ用戦歴表示 -->
           <div class="desktop-stats" style="display: block;">
-            <p style="font-size: clamp(1.2rem, 3vw, 1.75rem); color: #FFF691; margin-bottom: 1.5rem; font-family: DotGothic16, sans-serif;">
+            <p style="font-size: clamp(1.2rem, 3vw, 1.75rem); margin-bottom: 1.5rem; ">
               総戦闘数: <%= @my_total_battles %>回 ／ 
               勝ち: <%= @my_win_count %>回 ／ 
               負け: <%= @my_lose_count %>回 ／ 
@@ -25,14 +25,14 @@
 
           <!-- モバイル用戦歴表示 -->
           <div class="mobile-stats" style="display: none;">
-            <p style="font-size: 1rem; color: #FFF691; margin-bottom: 1rem; font-family: DotGothic16, sans-serif; text-align: center;">
+            <p style="font-size: 1rem; margin-bottom: 1rem; text-align: center;">
               総戦闘数: <%= @my_total_battles %>回
             </p>
-            <p style="font-size: 1rem; color: #FFF691; margin-bottom: 1rem; font-family: DotGothic16, sans-serif; text-align: center;">
+            <p style="font-size: 1rem; margin-bottom: 1rem; text-align: center;">
               勝ち: <%= @my_win_count %>回 ／ 負け: <%= @my_lose_count %>回
             </p>
             <% if @my_total_battles > 0 %>
-              <p style="font-size: 1rem; color: #FFF691; margin-bottom: 1rem; font-family: DotGothic16, sans-serif; text-align: center;">
+              <p style="font-size: 1rem; margin-bottom: 1rem; text-align: center;">
                 勝率: <%= (@my_win_count.to_f / @my_total_battles * 100).round(1) %>%
               </p>
             <% end %>
@@ -51,13 +51,13 @@
             onmouseout="this.style.boxShadow='0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000d'; this.style.transform='scale(1)';">
 
           <!-- プレイヤー名 -->
-          <p style="font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: bold; color: #FFF691; margin-bottom: 1.5rem; font-family: DotGothic16, sans-serif; text-align: center;">
+          <p style="font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: bold; margin-bottom: 1.5rem; text-align: center;">
             <%= user.display_name %>
           </p>
 
           <!-- 戦歴 -->
           <div style="margin-bottom: 2rem; text-align: center;">
-            <p style="color: #FFF691; font-weight: 400; font-size: clamp(1rem, 2.5vw, 1.25rem); margin-bottom: 0.75rem;">
+            <p style="font-weight: 400; font-size: clamp(1rem, 2.5vw, 1.25rem); margin-bottom: 0.75rem;">
               戦歴:
               勝ち <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold;"><%= user.won_battles.count %></span>回
               負け <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold;"><%= user.lost_battles.count %></span>回
@@ -67,7 +67,7 @@
           <!-- 対戦ボタン -->
           <div style="text-align: center; margin-top: 1.5rem;">
             <%= link_to "対戦する", new_battle_path(opponent_id: user.id),
-                style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: clamp(1rem, 3vw, 1.25rem); padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; font-family: DotGothic16, sans-serif; box-shadow: 0 10px 15px -3px #0000001a; transition: all 0.2s ease; transform: translateY(0);",
+                style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: clamp(1rem, 3vw, 1.25rem); padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; box-shadow: 0 10px 15px -3px #0000001a; transition: all 0.2s ease; transform: translateY(0);",
                 onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#d97706';",
                 onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #0000001a'; this.style.borderColor='#eab308';",
                 onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
@@ -83,13 +83,13 @@
         <div style="background-color: #ffffff1a; backdrop-filter: blur(4px); border-radius: 0.75rem; border: 2px solid #fde04780; box-shadow: 0 4px 6px -1px #0000001a; padding: 1.5rem; margin-bottom: 1rem; transition: all 0.2s ease;">
 
           <!-- プレイヤー名 -->
-          <p style="font-size: 1.25rem; font-weight: bold; color: #FFF691; margin-bottom: 1rem; font-family: DotGothic16, sans-serif; text-align: center;">
+          <p style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem; text-align: center;">
             <%= user.display_name %>
           </p>
 
           <!-- 戦歴 -->
           <div style="margin-bottom: 1.5rem; text-align: center;">
-            <p style="color: #FFF691; font-weight: 400; font-size: 1rem; margin-bottom: 0.5rem;">
+            <p style="font-weight: 400; font-size: 1rem; margin-bottom: 0.5rem;">
               戦歴: 勝ち <span style="font-weight: bold;"><%= user.won_battles.count %></span>回 負け <span style="font-weight: bold;"><%= user.lost_battles.count %></span>回
             </p>
           </div>
@@ -97,7 +97,7 @@
           <!-- 対戦ボタン -->
           <div style="text-align: center;">
             <%= link_to "対戦する", new_battle_path(opponent_id: user.id),
-                style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: 1.1rem; padding: 0.875rem 2rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; font-family: DotGothic16, sans-serif; box-shadow: 0 4px 6px -1px #0000001a; transition: all 0.2s ease; transform: translateY(0); width: 80%; max-width: 200px;",
+                style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: 1.1rem; padding: 0.875rem 2rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; box-shadow: 0 4px 6px -1px #0000001a; transition: all 0.2s ease; transform: translateY(0); width: 80%; max-width: 200px;",
                 onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 10px 15px -3px #0000001a'; this.style.borderColor='#d97706';",
                 onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 6px -1px #0000001a'; this.style.borderColor='#eab308';",
                 onmousedown: "this.style.transform='translateY(-1px) scale(0.98)';",
