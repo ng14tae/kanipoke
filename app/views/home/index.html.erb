@@ -2,18 +2,52 @@
   <!-- ロゴをセンターに配置 -->
   <div class="text-center mb-8">
     <%= image_tag "logo.png", class: "mx-auto", style: "max-width: clamp(280px, 60vw, 500px); width: 100%;" %>
-  </div>
-
-  <div class="container mx-auto max-w-6xl" style="padding: 1rem;">
-    <div class="text-center py-8 px-4">
-      <!-- キャッチコピー -->
+  <!-- キャッチコピー -->
       <p style="font-size: clamp(1rem, 3vw, 1.25rem); margin-bottom: 1.5rem; color: #ffffff; line-height: 1.6;">
-        「インディアンポーカー」を模したトランプゲームです。<br>
-        対戦相手を指名してゲームを始めよう！
+        <br>「インディアンポーカー」を模したトランプゲームです。
+        <br>対戦相手を指名してゲームを始めよう！
       </p>
 
-      <!-- スペーシング調整（レスポンシブ） -->
-      <div style="margin: clamp(2rem, 8vw, 4rem) 0;"></div>
+<!-- ゲーム説明ボックス -->
+    <div style="background-color: #ffffff1a; backdrop-filter: blur(4px); border-radius: 0.75rem; border: 2px solid #fde04780; padding: clamp(1.5rem, 4vw, 2.5rem); margin: clamp(2rem, 5vw, 3rem) auto; box-shadow: 0 20px 25px -5px #0000001a, 0 10px 10px -5px #0000000d; max-width: 600px;">
+      <h2 style="font-size: clamp(1.25rem, 3.5vw, 1.75rem); font-weight: 800; color: #1e3a8a; margin-bottom: 1.5rem; text-align: center;">
+        🦀 ゲーム説明 🦀
+      </h2>
+
+      <div style="text-align: left; color: #374151; line-height: 1.7; font-size: clamp(0.9rem, 2.5vw, 1rem);">
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-weight: 700; color: #1e3a8a; margin-bottom: 0.5rem; font-size: clamp(1rem, 2.8vw, 1.1rem);">♠️ 基本ルール</h3>
+          <p style="margin: 0; padding-left: 1rem;">
+            相手のカードは見えるが、自分のカードは見えないトランプゲーム。<br>
+            相手のカードと場の情報から自分のカードの強さを推理しよう！
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-weight: 700; color: #1e3a8a; margin-bottom: 0.5rem; font-size: clamp(1rem, 2.8vw, 1.1rem);">👑 勝利条件</h3>
+          <p style="margin: 0; padding-left: 1rem;">
+            より強いカードを持っているプレイヤーが勝利。<br>
+            特別ルールとして、Aは2に負けるがKには勝つ。<br>
+            引き分けは自動再戦。3回続くとランダムに勝敗が決まる。<br>
+            （※今後全てのカードに勝つJOKERを実装予定。）
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-weight: 700; color: #1e3a8a; margin-bottom: 0.5rem; font-size: clamp(1rem, 2.8vw, 1.1rem);">🎮 ゲームの流れ</h3>
+          <p style="margin: 0; padding-left: 1rem;">
+            1. 対戦相手を選択<br>
+            2. お互いにカードを1枚ずつ配布<br>
+            3. 相手のカードを見て判断<br>
+            4. 勝負結果を確認！
+          </p>
+        </div>
+      </div>
+    </div>
+
+
+  <!-- スペーシング調整（レスポンシブ） -->
+  <div style="margin: clamp(2rem, 8vw, 4rem) 0;"></div>
 
       <!-- サインアップ + ログイン -->
       <% if current_user %>
@@ -62,4 +96,4 @@
       }
     }
   </style>
-</div>
+</div></div>
