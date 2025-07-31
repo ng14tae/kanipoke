@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  skip_before_action :require_login, only: %i[new create]
+  before_action :require_login, except: [:new, :create]
+  before_action :set_user, only: [:show, :edit, :update]
 
   def index
     @my_win_count = current_user.won_battles.count
@@ -22,9 +23,37 @@ class UsersController < ApplicationController
     end
   end
 
+  def show
+  @battles = @user.battles.includes(:user, :opponent).order(created_at: :desc).limit(10)
+  @win_rate = calculate_win_rate(@user)
+  end
+
+  def edit
+  end
+
+  def update
+    if @user.update(user_params)
+      redirect_to @user, notice: "プロフィールを更新しました！"
+    else
+      render :edit
+    end
+  end
+
   private
+
+  def set_user
+    @user = User.find(params[:id])
+  end
 
   def user_params
     params.require(:user).permit(:first_name, :last_name, :password, :password_confirmation)
+  end
+
+  def calculate_win_rate(user)
+    total_battles = user.battles.count
+    return 0 if total_battles == 0
+
+    won_battles = Battle.where(winner_id: user.id).count
+    (won_battles.to_f / total_battles * 100).round(1)
   end
 end
