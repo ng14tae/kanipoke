@@ -25,3 +25,7 @@
 - 対戦履歴(battle_history)
 - ランキング機能
 - ユーザー一覧のページネーション
+
+
+▶︎開発秘話note
+https://note.com/mc42d/n/nf0457cbc7b1d?sub_rt=share_pb

@@ -8,10 +8,10 @@ module ApplicationHelper
     # current_userと勝者を比較
     if battle.winner == current_user
       "🦀🎉 カニポカで#{battle.opponent.display_name}に勝利！
-#カニポカ #KANIDIAN_POKER \n"
+#カニポカ #KANIPOKE \n"
     elsif battle.winner == battle.opponent
       "🦀💭 カニポカで#{battle.opponent.display_name}に敗北...次は勝つ！
-#カニポカ #KANIDIAN_POKER \n"
+#カニポカ #KANIPOKE \n"
     end
   end
 
