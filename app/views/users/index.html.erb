@@ -45,31 +45,31 @@
   <!-- ソート切り替えボタン -->
   <div style="text-align: center; margin-bottom: 2rem;">
     <div style="display: inline-flex; gap: 0.5rem; background-color: #ffffff1a; padding: 0.5rem; border-radius: 0.75rem; border: 2px solid #fde04780; flex-wrap: wrap;">
-      
-      <%= link_to "📅 登録順", users_path,
+
+      <%= link_to "登録順", users_path,
           style: "padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; font-size: 0.9rem; #{params[:sort] ? 'background-color: #374151; color: white;' : 'background-color: #facc15; color: #1e3a8a;'}" %>
-      
-      <%= link_to "🏆 ランキング順", users_path(sort: 'win_rate'),
+
+      <%= link_to "ランキング順", users_path(sort: 'win_rate'),
           style: "padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; font-size: 0.9rem; #{params[:sort] == 'win_rate' ? 'background-color: #facc15; color: #1e3a8a;' : 'background-color: #374151; color: white;'}" %>
-      
+
       <!-- 新しく追加：エキスパートランキングボタン -->
-      <%= link_to "⭐ エキスパート", users_path(sort: 'experienced_ranking'),
+      <%= link_to "エキスパート", users_path(sort: 'experienced_ranking'),
           style: "padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; font-size: 0.9rem; #{params[:sort] == 'experienced_ranking' ? 'background-color: #facc15; color: #1e3a8a;' : 'background-color: #374151; color: white;'}" %>
     </div>
-    
+
     <!-- 現在の表示状態を示すテキスト -->
     <p style="margin-top: 1rem; font-size: 1rem; color: #d1d5db;">
       現在の表示: <span style="color: #facc15; font-weight: bold;"><%= @sort_type %></span>
       <% if params[:sort] == 'experienced_ranking' %>
         <br>
         <span style="color: #10b981; font-size: 0.9rem;">
-          🎯 対象者: <%= @total_experienced_users %>人 （戦績100回以上のプレイヤー）
+          対象者: <%= @total_experienced_users %>人 （戦績100回以上のプレイヤー）
         </span>
       <% end %>
     </p>
   </div>
 
-     <!-- プレイヤー一覧 -->
+    <!-- プレイヤー一覧 -->
     <!-- デスクトップ用グリッド -->
     <div class="desktop-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
       <% @users.each_with_index do |user, index| %>
@@ -104,10 +104,10 @@
           <div style="margin-bottom: 2rem; text-align: center;">
             <p style="font-weight: 400; font-size: clamp(1rem, 2.5vw, 1.25rem); margin-bottom: 0.75rem;">
               戦歴:
-              勝ち <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold; color: #10b981;"><%= user.won_battles.count %></span>回
-              負け <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold; color: #ef4444;"><%= user.lost_battles.count %></span>回
+              勝ち <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold;"><%= user.won_battles.count %></span>回
+              負け <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold;"><%= user.lost_battles.count %></span>回
             </p>
-            
+
             <!-- 勝率表示 -->
             <% total_battles = user.won_battles.count + user.lost_battles.count %>
             <% if total_battles > 0 %>
