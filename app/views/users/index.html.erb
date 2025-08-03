@@ -6,14 +6,14 @@
 
   <div class="container mx-auto" style="max-width: 1152px; padding: 2rem;">
     <div class="my-battle-stats mb-4">
-      <h2 style="font-size: clamp(1.5rem, 4vw, 1.75rem); font-weight: bold; margin-bottom: 1.5rem; ">
+      <h2 style="font-size: clamp(1.5rem, 4vw, 1.75rem); font-weight: bold; margin-bottom: 1.5rem;">
         <%= current_user.display_name %>の戦歴
       </h2>
       <div class="card">
         <div class="card-body">
           <!-- デスクトップ用戦歴表示 -->
           <div class="desktop-stats" style="display: block;">
-            <p style="font-size: clamp(1.2rem, 3vw, 1.75rem); margin-bottom: 1.5rem; ">
+            <p style="font-size: clamp(1.2rem, 3vw, 1.75rem); margin-bottom: 1.5rem;">
               総戦闘数: <%= @my_total_battles %>回 ／ 
               勝ち: <%= @my_win_count %>回 ／ 
               負け: <%= @my_lose_count %>回 ／ 
@@ -42,13 +42,58 @@
       </div>
     </div>
 
-    <!-- プレイヤー一覧 -->
+  <!-- ソート切り替えボタン -->
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <div style="display: inline-flex; gap: 0.5rem; background-color: #ffffff1a; padding: 0.5rem; border-radius: 0.75rem; border: 2px solid #fde04780; flex-wrap: wrap;">
+      
+      <%= link_to "📅 登録順", users_path,
+          style: "padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; font-size: 0.9rem; #{params[:sort] ? 'background-color: #374151; color: white;' : 'background-color: #facc15; color: #1e3a8a;'}" %>
+      
+      <%= link_to "🏆 ランキング順", users_path(sort: 'win_rate'),
+          style: "padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; font-size: 0.9rem; #{params[:sort] == 'win_rate' ? 'background-color: #facc15; color: #1e3a8a;' : 'background-color: #374151; color: white;'}" %>
+      
+      <!-- 新しく追加：エキスパートランキングボタン -->
+      <%= link_to "⭐ エキスパート", users_path(sort: 'experienced_ranking'),
+          style: "padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; font-size: 0.9rem; #{params[:sort] == 'experienced_ranking' ? 'background-color: #facc15; color: #1e3a8a;' : 'background-color: #374151; color: white;'}" %>
+    </div>
+    
+    <!-- 現在の表示状態を示すテキスト -->
+    <p style="margin-top: 1rem; font-size: 1rem; color: #d1d5db;">
+      現在の表示: <span style="color: #facc15; font-weight: bold;"><%= @sort_type %></span>
+      <% if params[:sort] == 'experienced_ranking' %>
+        <br>
+        <span style="color: #10b981; font-size: 0.9rem;">
+          🎯 対象者: <%= @total_experienced_users %>人 （戦績100回以上のプレイヤー）
+        </span>
+      <% end %>
+    </p>
+  </div>
+
+     <!-- プレイヤー一覧 -->
     <!-- デスクトップ用グリッド -->
     <div class="desktop-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-      <% @users.each do |user| %>
+      <% @users.each_with_index do |user, index| %>
         <div style="background-color: #ffffff1a; backdrop-filter: blur(4px); border-radius: 0.75rem; border: 2px solid #fde04780; box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000d; padding: 2.5rem; transition: all 0.3s ease; transform: scale(1);"
             onmouseover="this.style.boxShadow='0 25px 50px -12px #0000001a'; this.style.transform='scale(1.05)';"
             onmouseout="this.style.boxShadow='0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000d'; this.style.transform='scale(1)';">
+
+          <!-- ランキング表示（勝率順の場合のみ） -->
+          <% if params[:sort] == 'win_rate' %>
+            <div style="text-align: center; margin-bottom: 1rem;">
+              <div style="font-size: 1.25rem; font-weight: bold; color: #facc15;">
+                <% case index %>
+                <% when 0 %>
+                  🥇 1位
+                <% when 1 %>
+                  🥈 2位
+                <% when 2 %>
+                  🥉 3位
+                <% else %>
+                  <%= index + 1 %>位
+                <% end %>
+              </div>
+            </div>
+          <% end %>
 
           <!-- プレイヤー名 -->
           <p style="font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: bold; margin-bottom: 1.5rem; text-align: center;">
@@ -59,9 +104,21 @@
           <div style="margin-bottom: 2rem; text-align: center;">
             <p style="font-weight: 400; font-size: clamp(1rem, 2.5vw, 1.25rem); margin-bottom: 0.75rem;">
               戦歴:
-              勝ち <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold;"><%= user.won_battles.count %></span>回
-              負け <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold;"><%= user.lost_battles.count %></span>回
+              勝ち <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold; color: #10b981;"><%= user.won_battles.count %></span>回
+              負け <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold; color: #ef4444;"><%= user.lost_battles.count %></span>回
             </p>
+            
+            <!-- 勝率表示 -->
+            <% total_battles = user.won_battles.count + user.lost_battles.count %>
+            <% if total_battles > 0 %>
+              <p style="font-weight: 600; font-size: clamp(1rem, 2.5vw, 1.25rem); color: #facc15; margin-bottom: 0.5rem;">
+                勝率: <%= user.win_rate %>%
+              </p>
+            <% else %>
+              <p style="font-weight: 400; font-size: clamp(0.9rem, 2vw, 1rem); color: #9ca3af; margin-bottom: 0.5rem;">
+                未対戦
+              </p>
+            <% end %>
           </div>
 
           <!-- 対戦ボタン -->
@@ -75,127 +132,31 @@
           </div>
         </div>
       <% end %>
-
-    <div class="mt-12 flex justify-center">
-      <%= paginate @users %>
-    </div>
     </div>
 
-    <!-- モバイル用リスト -->
-    <div class="mobile-list" style="display: none; max-width: 350px; margin: 0 auto; padding: 0 1rem;">
-      <% @users.each do |user| %>
-        <div style="background-color: #ffffff1a; backdrop-filter: blur(4px); border-radius: 0.75rem; border: 2px solid #fde04780; box-shadow: 0 4px 6px -1px #0000001a; padding: 1.5rem; margin-bottom: 1rem; transition: all 0.2s ease;">
-
-          <!-- プレイヤー名 -->
-          <p style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem; text-align: center;">
-            <%= user.display_name %>
-          </p>
-
-          <!-- 戦歴 -->
-          <div style="margin-bottom: 1.5rem; text-align: center;">
-            <p style="font-weight: 400; font-size: 1rem; margin-bottom: 0.5rem;">
-              戦歴: 勝ち <span style="font-weight: bold;"><%= user.won_battles.count %></span>回 負け <span style="font-weight: bold;"><%= user.lost_battles.count %></span>回
-            </p>
-          </div>
-
-          <!-- 対戦ボタン -->
-          <div style="text-align: center;">
-            <%= link_to "対戦する", new_battle_path(opponent_id: user.id),
-                style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: 1.1rem; padding: 0.875rem 2rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; box-shadow: 0 4px 6px -1px #0000001a; transition: all 0.2s ease; transform: translateY(0); width: 80%; max-width: 200px;",
-                onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 10px 15px -3px #0000001a'; this.style.borderColor='#d97706';",
-                onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 6px -1px #0000001a'; this.style.borderColor='#eab308';",
-                onmousedown: "this.style.transform='translateY(-1px) scale(0.98)';",
-                onmouseup: "this.style.transform='translateY(-2px) scale(1.02)';" %>
-          </div>
+    <!-- ページネーション（もし使用している場合） -->
+    <% if defined?(Kaminari) && @users.respond_to?(:current_page) %>
+      <div style="text-align: center; margin-top: 3rem;">
+        <div style="display: inline-block; background-color: #ffffff1a; padding: 1rem; border-radius: 0.75rem; border: 2px solid #fde04780;">
+          <%= paginate @users %>
         </div>
-      <% end %>
-    <div class="mt-12 flex justify-center">
-      <%= paginate @users %>
-    </div>
-    </div>
+      </div>
+    <% end %>
   </div>
 </div>
 
+<!-- レスポンシブ対応のCSS -->
 <style>
-/* レスポンシブ対応のCSS */
-@media (max-width: 768px) {
-  .desktop-stats {
-    display: none !important;
+  @media (max-width: 768px) {
+    .desktop-stats {
+      display: none !important;
+    }
+    .mobile-stats {
+      display: block !important;
+    }
+    .desktop-grid {
+      grid-template-columns: 1fr !important;
+      gap: 1rem !important;
+    }
   }
-  .mobile-stats {
-    display: block !important;
-  }
-  .desktop-grid {
-    display: none !important;
-  }
-  .mobile-list {
-    display: block !important;
-  }
-
-  /* コンテナのパディング調整 */
-  .container {
-    padding: 1rem !important;
-  }
-
-  /* 全体のパディング調整 */
-  .min-h-screen {
-    padding: 2rem 1.5rem;
-  }
-
-  /* カードのホバー効果を無効化 */
-  div[onmouseover]:hover {
-    transform: none !important;
-    box-shadow: inherit !important;
-  }
-}
-
-@media (min-width: 769px) {
-  .desktop-stats {
-    display: block !important;
-  }
-  .mobile-stats {
-    display: none !important;
-  }
-  .desktop-grid {
-    display: grid !important;
-  }
-  .mobile-list {
-    display: none !important;
-  }
-}
-
-/* タッチデバイス用のホバー効果調整 */
-@media (hover: none) and (pointer: coarse) {
-  /* ホバー効果を無効化 */
-  div[onmouseover]:hover,
-  a:hover {
-    transform: none !important;
-    box-shadow: inherit !important;
-    background-color: inherit !important;
-  }
-}
-
-/* 小さな画面での追加調整 */
-@media (max-width: 480px) {
-  .container {
-    padding: 0.5rem !important;
-  }
-
-  .min-h-screen {
-    padding: 1rem 0.5rem;
-  }
-
-  /* モバイルリストのボタン幅調整 */
-  .mobile-list a {
-    width: 45% !important;
-    font-size: 1rem !important;
-  }
-}
-
-/* グリッドの最小幅をモバイルでさらに小さく */
-@media (max-width: 640px) {
-  .desktop-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
 </style>

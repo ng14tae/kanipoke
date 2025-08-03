@@ -8,7 +8,13 @@ Rails.application.routes.draw do
 
   # 一般ユーザー画面
   resources :battles, only: [ :new, :create, :show, :index ]
-  resources :users, only: [ :index, :create, :show, :new, :edit, :update ]
+  resources :users, only: [ :index, :create, :show, :new, :edit, :update, :destroy ] do
+    collection do
+      get :ranking           # 総合ランキング
+      get :weekly_ranking   # 週間ランキング
+      get :experienced_ranking # エキスパートランキング
+    end
+  end
 
 
   # 管理画面（名前空間分離）

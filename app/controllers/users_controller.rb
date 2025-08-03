@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :require_login, except: [:new, :create]
-  before_action :set_user, only: [:show, :edit, :update]
+  before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   def index
     @my_win_count = current_user.won_battles.count
@@ -9,12 +9,43 @@ class UsersController < ApplicationController
     @users = User.where.not(id: current_user.id)
               .includes(:won_battles, :lost_battles)
 
-    # ページネーション対応
-    @users = User.where.not(id: current_user.id)
-              .includes(:won_battles, :lost_battles)
-              .order(created_at: :asc)  # 並び順を明確に指定
-              .page(params[:page])       # ページネーション追加
-              .per(12)                   # 12人ずつ表示（3×4のグリッドレイアウトに最適）
+    case params[:sort]
+    when 'win_rate'
+      # 勝率順（勝率の高い順）
+      # バトル経験のあるユーザーのみを対象にして勝率でソート
+      users_with_battles = @users.select { |user| user.total_battles_count > 0 }
+      users_without_battles = @users.select { |user| user.total_battles_count == 0 }
+
+      # 勝率順でソート（勝率が同じ場合は総試合数の多い順）
+      sorted_with_battles = users_with_battles.sort_by do |user|
+        [-user.win_rate, -user.total_battles_count]
+      end
+
+      # バトル経験ありのユーザー → バトル経験なしのユーザーの順で配列を結合
+      @users = sorted_with_battles + users_without_battles.sort_by(&:created_at)
+      @sort_type = 'ランキング順（勝率の高い順）'
+      when 'experienced_ranking'
+      # 戦績100回以上のユーザーのみでランキング
+      experienced_users = @users.select { |user| user.total_battles_count >= 100 }
+
+      # 戦績100回以上のユーザーを勝率でソート
+      @users = experienced_users.sort_by do |user|
+        [-user.win_rate, -user.total_battles_count]
+      end
+
+      @sort_type = 'エキスパートランキング（戦績100回以上）'
+      @total_experienced_users = experienced_users.count
+
+    else
+      # デフォルトは登録順（作成日の昇順）
+      @users = @users.order(created_at: :asc)
+      @sort_type = '登録順'
+    end
+
+    # ページネーション
+    @users = Kaminari.paginate_array(@users)
+                     .page(params[:page])
+                     .per(12)            # 12人ずつ表示（3×4のグリッドレイアウトに最適）
   end
 
   def new
@@ -46,7 +77,60 @@ class UsersController < ApplicationController
     end
   end
 
+  def destroy
+    @user.destroy
+    redirect_to users_path, notice: 'ユーザーを削除しました'
+  end
+
+  def ranking
+    @users = build_ranking_users
+    @ranking_type = '総合ランキング'
+  end
+
+  def weekly_ranking
+    @users = build_ranking_users(1.week.ago)
+    @ranking_type = '週間ランキング'
+  end
+
+  def experienced_ranking
+  @users = build_experienced_ranking_users
+  @ranking_type = 'エキスパートランキング（戦績100回以上）'
+  render :ranking # rankingビューを再利用
+  end
+
   private
+
+  def build_ranking_users(start_date = nil)
+    # 全ユーザーを取得（関連データも一緒に読み込み）
+    users = User.includes(:battles, :battles_as_opponent, :won_battles)
+
+    # バトル経験のあるユーザーのみ抽出
+    users_with_battles = if start_date
+      users.select { |user| user.has_battles_since?(start_date) }
+    else
+      users.select { |user| user.has_battles? }
+    end
+
+    # 勝率でソート（勝率が同じ場合は総試合数でソート）
+    users_with_battles.sort_by do |user|
+      win_rate = start_date ? user.win_rate_since(start_date) : user.win_rate
+      total_battles = start_date ? user.total_battles_count_since(start_date) : user.total_battles_count
+      [-win_rate, -total_battles]
+    end
+  end
+
+  def build_experienced_ranking_users
+    users = User.includes(:battles, :battles_as_opponent, :won_battles)
+
+    # 戦績100回以上のユーザーのみを抽出
+    experienced_users = users.select { |user| user.total_battles_count >= 100 }
+
+    # 勝率でソート（勝率が同じ場合は総試合数でソート）
+    experienced_users.sort_by do |user|
+      [-user.win_rate, -user.total_battles_count]
+    end
+  end
+
 
   def set_user
     @user = User.find(params[:id])
@@ -57,10 +141,6 @@ class UsersController < ApplicationController
   end
 
   def calculate_win_rate(user)
-    total_battles = user.battles.count
-    return 0 if total_battles == 0
-
-    won_battles = Battle.where(winner_id: user.id).count
-    (won_battles.to_f / total_battles * 100).round(1)
+    user.win_rate
   end
 end
