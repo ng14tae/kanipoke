@@ -166,6 +166,8 @@ GEM
       net-smtp
     marcel (1.0.4)
     matrix (0.4.3)
+    meta-tags (2.22.1)
+      actionpack (>= 6.0.0, < 8.1)
     mini_mime (1.1.5)
     minitest (5.25.5)
     msgpack (1.8.0)
@@ -280,6 +282,10 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.3.0)
+    ransack (4.3.0)
+      activerecord (>= 6.1.5)
+      activesupport (>= 6.1.5)
+      i18n
     rdoc (6.14.2)
       erb
       psych (>= 4.0.0)
@@ -402,12 +408,15 @@ DEPENDENCIES
   debug
   jbuilder
   jsbundling-rails
+  kaminari (= 1.2.2)
+  meta-tags
   pg (~> 1.1)
   puma (>= 5.0)
   rails (~> 8.0.2)
   rails-i18n
   rails_admin (~> 3.3)
   rails_admin-i18n
+  ransack
   rubocop-rails-omakase
   sassc
   selenium-webdriver

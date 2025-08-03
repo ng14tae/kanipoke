@@ -65,3 +65,6 @@ gem "sorcery"
 gem "tailwindcss-rails", "~> 2.0"
 gem "rails-i18n"
 gem 'sassc'
+gem 'meta-tags' # OGP用gem
+gem 'kaminari', '1.2.2' # ページネーション用gem
+gem 'ransack' # 検索用gem
