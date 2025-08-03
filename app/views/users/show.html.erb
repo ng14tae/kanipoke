@@ -6,9 +6,18 @@
         </div>
         <div class="flex justify-center items-center mb-4">
         <%= link_to "プロフィール編集", edit_user_path(@user),
-            class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded",
+            class: "bg-blue-500 hover:bg-blue-700 text-gray font-bold py-2 px-4 rounded",
             style: "text-decoration: underline;"%>
+
+        <%= link_to "削除", user_path(@user),
+        method: :delete,
+        data: {
+        turbo_confirm: "#{@user.first_name} #{@user.last_name}を削除します。本当に削除しますか？",
+        turbo_method: :delete
+    },
+    class: "px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200 text-center inline-block" %>
         </div>
+    </div>
 
     <!-- 最近の対戦履歴 -->
     <div class="bg-white rounded-lg shadow-md p-6">

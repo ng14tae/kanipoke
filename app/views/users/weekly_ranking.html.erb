@@ -1,0 +1,97 @@
+<div class="container mx-auto px-4 py-8">
+<div class="bg-white bg-opacity-10 rounded-lg shadow-lg p-6">
+    <h1 class="text-4xl font-bold mb-8 text-center">
+    🏆 週間ランキング
+    </h1>
+
+    <!-- ランキング切り替えボタン -->
+    <div class="flex justify-center mb-8 space-x-4">
+    <%= link_to "総合ランキング", ranking_users_path,
+        class: "px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
+    <%= link_to "週間ランキング", weekly_ranking_users_path,
+        class: "px-6 py-2 bg-yellow-500 text-black rounded-lg font-semibold shadow-lg" %>
+    </div>
+
+    <% if @users.any? %>
+    <div class="space-y-4">
+        <% @users.each_with_index do |user, index| %>
+        <div class="flex items-center justify-between bg-white bg-opacity-20 rounded-lg p-4 hover:bg-opacity-30 transition-all duration-200">
+            <!-- ランキング順位 -->
+            <div class="flex items-center space-x-4">
+            <div class="text-3xl font-bold min-w-[60px]">
+                <% case index %>
+                <% when 0 %>
+                🥇
+                <% when 1 %>
+                🥈
+                <% when 2 %>
+                🥉
+                <% else %>
+                <span class="text-2xl"><%= index + 1 %>位</span>
+                <% end %>
+            </div>
+
+            <!-- ユーザー名 -->
+            <div>
+                <%= link_to user_path(user),
+                    class: "text-2xl font-semibold hover:text-yellow-300 transition-colors duration-200" do %>
+                <%= user.display_name %>
+                <% end %>
+            </div>
+            </div>
+            <!-- 戦績情報（週間） -->
+            <div class="flex items-center space-x-6 text-lg">
+            <!-- 勝率 -->
+            <div class="text-center">
+                <div class="text-2xl font-bold text-yellow-300">
+                <%= user.win_rate_since(1.week.ago) %>%
+                </div>
+                <div class="text-sm text-gray-300">勝率</div>
+            </div>
+
+            <!-- 勝利数 -->
+            <div class="text-center">
+                <div class="text-xl font-semibold text-green-400">
+                <%= user.wins_count_since(1.week.ago) %>勝
+                </div>
+                <div class="text-sm text-gray-300">勝利</div>
+            </div>
+
+            <!-- 敗北数 -->
+            <div class="text-center">
+                <div class="text-xl font-semibold text-red-400">
+                <%= user.losses_count_since(1.week.ago) %>敗
+                </div>
+                <div class="text-sm text-gray-300">敗北</div>
+            </div>
+
+            <!-- 総試合数 -->
+            <div class="text-center">
+                <div class="text-xl font-semibold text-blue-400">
+                <%= user.total_battles_count_since(1.week.ago) %>試合
+                </div>
+                <div class="text-sm text-gray-300">総試合</div>
+            </div>
+
+
+            </div>
+        </div>
+        <% end %>
+    </div>
+    <% else %>
+    <div class="text-center py-12">
+        <div class="text-6xl mb-4">📅</div>
+        <h2 class="text-2xl font-semibold mb-2">今週の対戦データがありません</h2>
+        <p class="text-gray-300 mb-6">今週の対戦を開始してランキングを作成しましょう！</p>
+        <%= link_to "対戦を開始", new_battle_path,
+            class: "px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 font-semibold" %>
+    </div>
+    <% end %>
+
+    <!-- 戻るボタン -->
+    <div class="text-center mt-8">
+    <%= link_to "← ホームに戻る", root_path,
+        class: "px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
+    </div>
+</div>
+</div>
