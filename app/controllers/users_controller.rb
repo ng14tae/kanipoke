@@ -117,7 +117,7 @@ class UsersController < ApplicationController
   private
 
   def build_ranking_users(start_date = nil, limit = nil)
-    # 全ユーザーを取得（関連データも一緒に読み込み）
+    # 関連データを一緒に読み込み
     users = User.includes(:battles, :battles_as_opponent, :won_battles)
 
     # バトル経験のあるユーザーのみ抽出
@@ -127,11 +127,33 @@ class UsersController < ApplicationController
       users.select { |user| user.has_battles? }
     end
 
+    # 各ユーザーに週間統計データを追加
+    users_with_stats = users_with_battles.map do |user|
+      # 期間に応じて統計を計算
+      if start_date
+        total_games = user.total_battles_count_since(start_date)
+        wins = user.wins_count_since(start_date)
+        losses = user.losses_count_since(start_date)
+        win_rate = user.win_rate_since(start_date)
+      else
+        total_games = user.total_battles_count
+        wins = user.wins_count
+        losses = user.losses_count
+        win_rate = user.win_rate
+      end
+
+      # ユーザーオブジェクトに統計メソッドを動的追加
+      user.define_singleton_method(:weekly_total_games) { total_games }
+      user.define_singleton_method(:weekly_wins) { wins }
+      user.define_singleton_method(:weekly_losses) { losses }
+      user.define_singleton_method(:weekly_win_rate) { win_rate }
+
+      user
+    end
+
     # 勝率でソート（勝率が同じ場合は総試合数でソート）
-    sorted_users = users_with_battles.sort_by do |user|
-      win_rate = start_date ? user.win_rate_since(start_date) : user.win_rate
-      total_battles = start_date ? user.total_battles_count_since(start_date) : user.total_battles_count
-      [-win_rate, -total_battles]
+    sorted_users = users_with_stats.sort_by do |user|
+      [-user.weekly_win_rate, -user.weekly_total_games]
     end
 
     # limit指定がある場合は上位のみを返す
