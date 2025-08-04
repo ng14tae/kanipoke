@@ -78,12 +78,13 @@
                 <% end %>
             </div>
             </div>
-            <!-- 戦績情報（週間） -->
+
+            <!-- 戦績情報（週間限定データ） -->
             <div class="flex items-center space-x-6 text-lg">
             <!-- 勝率 -->
             <div class="text-center">
                 <div class="text-2xl font-bold text-yellow-300">
-                <%= user.win_rate_since(1.week.ago) %>%
+                <%= user.weekly_win_rate.round(1) %>%
                 </div>
                 <div class="text-sm text-gray-300">勝率</div>
             </div>
@@ -91,7 +92,7 @@
             <!-- 勝利数 -->
             <div class="text-center">
                 <div class="text-xl font-semibold text-green-400">
-                <%= user.wins_count_since(1.week.ago) %>勝
+                <%= user.weekly_wins %>勝
                 </div>
                 <div class="text-sm text-gray-300">勝利</div>
             </div>
@@ -99,7 +100,7 @@
             <!-- 敗北数 -->
             <div class="text-center">
                 <div class="text-xl font-semibold text-red-400">
-                <%= user.losses_count_since(1.week.ago) %>敗
+                <%= user.weekly_losses %>敗
                 </div>
                 <div class="text-sm text-gray-300">敗北</div>
             </div>
@@ -107,7 +108,7 @@
             <!-- 総試合数 -->
             <div class="text-center">
                 <div class="text-xl font-semibold text-blue-400">
-                <%= user.total_battles_count_since(1.week.ago) %>試合
+                <%= user.weekly_total_games %>試合
                 </div>
                 <div class="text-sm text-gray-300">総試合</div>
             </div>
