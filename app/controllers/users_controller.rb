@@ -88,17 +88,23 @@ class UsersController < ApplicationController
   end
 
   def weekly_ranking
-    # 期間の定義
-    @start_date = 1.week.ago.beginning_of_day
-    @end_date = Date.current.end_of_day
-    @period_days = 7
+    # 現在の日付を基準に今週の範囲を計算
+    today = Date.current
+
+    # 今週の月曜日を取得
+    monday_this_week = today.beginning_of_week(:monday)
+
+    # 月曜日から日曜日まで（7日間完全）
+    @start_date = monday_this_week.beginning_of_day
+    @end_date = (monday_this_week + 6.days).end_of_day  # 月曜 + 6日 = 日曜
 
     # ランキングデータの取得
-    @users = build_ranking_users(@start_date)
+    @users = build_ranking_users(@start_date, 10)
     @ranking_type = '週間ランキング'
 
-    # 表示用の期間情報
-    @period_description = "過去#{@period_days}日間"
+    # 週の情報を計算
+    week_number = today.cweek
+    @period_description = "第#{week_number}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
     @update_time = Time.current
   end
 
