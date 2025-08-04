@@ -4,6 +4,33 @@
     🏆 週間ランキング
     </h1>
 
+    <!-- 期間表示セクション -->
+    <div class="text-center mb-8">
+        <div class="bg-white bg-opacity-20 rounded-lg p-4 mb-4">
+            <p class="text-lg text-yellow-200 font-semibold mb-2">
+                📅 集計期間
+            </p>
+            <p class="text-xl text-white font-medium">
+                <%= @start_date.strftime('%Y年%m月%d日(%a)') %> ～ <%= @end_date.strftime('%Y年%m月%d日(%a)') %>
+            </p>
+            <p class="text-sm text-gray-300 mt-2">
+                <%= @period_description %>（<%= @start_date.strftime('%m/%d') %> ～ <%= @end_date.strftime('%m/%d') %>）の対戦成績を集計
+            </p>
+            <!-- リアルタイム更新時刻 -->
+            <p class="text-xs text-gray-400 mt-2">
+                最終更新: <%= @update_time.strftime('%Y年%m月%d日 %H:%M') %>
+            </p>
+        </div>
+    </div>
+
+    <div class="text-center mb-8">
+        <div class="bg-white bg-opacity-20 rounded-lg p-4 mb-4">
+            <p class="text-lg md:text-xl lg:text-3xl font-semibold mb-2">
+                今週の🦀王は誰だ……！？
+            </p>
+        </div>
+    </div>
+
     <!-- ランキング切り替えボタン -->
     <div class="flex justify-center mb-8 space-x-4">
     <%= link_to "総合ランキング", ranking_users_path,
@@ -14,7 +41,7 @@
 
     <% if @users.any? %>
     <div class="space-y-4">
-        <% @users.each_with_index do |user, index| %>
+        <% @users.first(10).each_with_index do |user, index| %>
         <div class="flex items-center justify-between bg-white bg-opacity-20 rounded-lg p-4 hover:bg-opacity-30 transition-all duration-200">
             <!-- ランキング順位 -->
             <div class="flex items-center space-x-4">

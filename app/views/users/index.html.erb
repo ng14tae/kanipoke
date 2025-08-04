@@ -156,3 +156,54 @@
     }
   }
 </style>
+
+<!-- 改良版スクロール位置記憶 -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const SCROLL_KEY = 'usersIndexScrollPos';
+
+    // ページ読み込み時：保存された位置に戻る
+    function restoreScrollPosition() {
+      const scrollPos = localStorage.getItem(SCROLL_KEY);
+      if (scrollPos && scrollPos !== '0') {
+        setTimeout(() => {
+          window.scrollTo({
+            top: parseInt(scrollPos),
+            behavior: 'smooth' // スムーズスクロール
+          });
+          console.log(`スクロール位置を復元: ${scrollPos}px`);
+        }, 150);
+      }
+    }
+
+    // 初回読み込み時に実行
+    restoreScrollPosition();
+
+    // スクロール時：位置を保存
+    let ticking = false;
+    function saveScrollPosition() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          const currentPos = window.scrollY;
+          localStorage.setItem(SCROLL_KEY, currentPos);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', saveScrollPosition);
+
+    // ページ離脱時にも保存
+    window.addEventListener('beforeunload', function() {
+      localStorage.setItem(SCROLL_KEY, window.scrollY);
+    });
+
+    // 対戦申し込みボタンクリック時にスクロール位置を保存
+    document.querySelectorAll('a[href*="new_battle_path"]').forEach(button => {
+      button.addEventListener('click', function() {
+        localStorage.setItem(SCROLL_KEY, window.scrollY);
+      });
+    });
+  });
+  </script>

@@ -88,8 +88,18 @@ class UsersController < ApplicationController
   end
 
   def weekly_ranking
-    @users = build_ranking_users(1.week.ago)
+    # 期間の定義
+    @start_date = 1.week.ago.beginning_of_day
+    @end_date = Date.current.end_of_day
+    @period_days = 7
+
+    # ランキングデータの取得
+    @users = build_ranking_users(@start_date)
     @ranking_type = '週間ランキング'
+
+    # 表示用の期間情報
+    @period_description = "過去#{@period_days}日間"
+    @update_time = Time.current
   end
 
   def experienced_ranking
@@ -100,7 +110,7 @@ class UsersController < ApplicationController
 
   private
 
-  def build_ranking_users(start_date = nil)
+  def build_ranking_users(start_date = nil, limit = nil)
     # 全ユーザーを取得（関連データも一緒に読み込み）
     users = User.includes(:battles, :battles_as_opponent, :won_battles)
 
@@ -112,11 +122,14 @@ class UsersController < ApplicationController
     end
 
     # 勝率でソート（勝率が同じ場合は総試合数でソート）
-    users_with_battles.sort_by do |user|
+    sorted_users = users_with_battles.sort_by do |user|
       win_rate = start_date ? user.win_rate_since(start_date) : user.win_rate
       total_battles = start_date ? user.total_battles_count_since(start_date) : user.total_battles_count
       [-win_rate, -total_battles]
     end
+
+    # limit指定がある場合は上位のみを返す
+    limit ? sorted_users.first(limit) : sorted_users
   end
 
   def build_experienced_ranking_users

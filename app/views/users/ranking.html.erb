@@ -14,7 +14,7 @@
 
     <% if @users.any? %>
     <div class="space-y-4">
-        <% @users.each_with_index do |user, index| %>
+        <% @users.first(10).each_with_index do |user, index| %>
         <div class="flex items-center justify-between bg-white bg-opacity-20 rounded-lg p-4 hover:bg-opacity-30 transition-all duration-200">
             <!-- ランキング順位 -->
             <div class="flex items-center space-x-4">
