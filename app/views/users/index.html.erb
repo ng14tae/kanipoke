@@ -61,10 +61,6 @@
     <p style="margin-top: 1rem; font-size: 1rem; color: #d1d5db;">
       現在の表示: <span style="color: #facc15; font-weight: bold;"><%= @sort_type %></span>
       <% if params[:sort] == 'experienced_ranking' %>
-        <br>
-        <span style="font-size: 0.9rem;">
-          対象者: <%= @total_experienced_users %>人 （戦績100回以上のプレイヤー）
-        </span>
       <% end %>
     </p>
   </div>
