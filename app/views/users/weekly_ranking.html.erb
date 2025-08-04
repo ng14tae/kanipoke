@@ -4,7 +4,7 @@
     🏆 週間ランキング
     </h1>
 
-    <!-- 期間表示セクション -->
+    <!-- 期間表示セクション（シンプル版） -->
     <div class="text-center mb-8">
         <div class="bg-white bg-opacity-20 rounded-lg p-4 mb-4">
             <p class="text-lg text-yellow-200 font-semibold mb-2">
@@ -14,8 +14,22 @@
                 <%= @start_date.strftime('%Y年%m月%d日(%a)') %> ～ <%= @end_date.strftime('%Y年%m月%d日(%a)') %>
             </p>
             <p class="text-sm text-gray-300 mt-2">
-                <%= @period_description %>（<%= @start_date.strftime('%m/%d') %> ～ <%= @end_date.strftime('%m/%d') %>）の対戦成績を集計
+                <%= @period_description %>の対戦成績を集計
             </p>
+
+            <!-- 週の進行状況 -->
+            <div class="mt-3">
+                <% days_passed = (Date.current - @start_date.to_date).to_i + 1 %>
+                <% days_passed = [days_passed, 7].min %>
+                <div class="bg-gray-600 rounded-full h-2 mb-2">
+                    <div class="bg-yellow-400 h-2 rounded-full transition-all duration-500"
+                        style="width: <%= (days_passed / 7.0 * 100) %>%"></div>
+                </div>
+                <p class="text-xs text-gray-400">
+                    今週 <%= days_passed %>/7日経過
+                </p>
+            </div>
+
             <!-- リアルタイム更新時刻 -->
             <p class="text-xs text-gray-400 mt-2">
                 最終更新: <%= @update_time.strftime('%Y年%m月%d日 %H:%M') %>
@@ -24,11 +38,9 @@
     </div>
 
     <div class="text-center mb-8">
-        <div class="bg-white bg-opacity-20 rounded-lg p-4 mb-4">
             <p class="text-lg md:text-xl lg:text-3xl font-semibold mb-2">
                 今週の🦀王は誰だ……！？
             </p>
-        </div>
     </div>
 
     <!-- ランキング切り替えボタン -->
