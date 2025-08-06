@@ -147,6 +147,24 @@ class UsersController < ApplicationController
 
     @last_week_champion = User.last_week_champion(expert_only: true)
 
+    if @last_week_champion
+      # 先週の期間を計算
+      last_week_start = @start_date - 7.days
+      last_week_end = @end_date - 7.days
+
+      # 先週の統計を計算
+      last_week_wins = @last_week_champion.wins_count_since(last_week_start)
+      last_week_losses = @last_week_champion.losses_count_since(last_week_start)
+      last_week_total = last_week_wins + last_week_losses
+      last_week_rate = last_week_total > 0 ? (last_week_wins.to_f / last_week_total * 100) : 0
+
+      # メソッドを動的に追加
+      @last_week_champion.define_singleton_method(:weekly_wins) { last_week_wins }
+      @last_week_champion.define_singleton_method(:weekly_losses) { last_week_losses }
+      @last_week_champion.define_singleton_method(:weekly_total_games) { last_week_total }
+      @last_week_champion.define_singleton_method(:weekly_win_rate) { last_week_rate }
+    end
+
     @total_experts = User.select { |user| user.expert? }.count
     @active_experts_this_week = @users.count
     @average_battles_this_week = @users.empty? ? 0 : (@users.sum(&:weekly_total_games) / @users.count.to_f).round(1)
