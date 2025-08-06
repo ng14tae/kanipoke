@@ -143,4 +143,51 @@ class User < ApplicationRecord
 
     ranking.first&.dig(:user)
   end
+
+  # === 先週の統計（便利メソッド） ===
+
+  def last_week_win_rate
+    # 先週の勝率を計算するロジック
+    last_week_stats = calculate_last_week_stats
+    return 0 if last_week_stats[:total_games] == 0
+
+    (last_week_stats[:wins].to_f / last_week_stats[:total_games] * 100).round(1)
+  end
+
+  def last_week_wins
+    # 先週の勝利数を取得するロジック
+    calculate_last_week_stats[:wins]
+  end
+
+  def last_week_losses
+  last_week_start = 1.week.ago.beginning_of_week(:monday)
+  last_week_end = 1.week.ago.end_of_week(:sunday)
+  losses_count_since(last_week_start) - losses_count_since(last_week_end + 1.day)
+  end
+
+  def last_week_total_games
+    last_week_start = 1.week.ago.beginning_of_week(:monday)
+    last_week_end = 1.week.ago.end_of_week(:sunday)
+    total_battles_count_since(last_week_start) - total_battles_count_since(last_week_end + 1.day)
+  end
+
+  private
+
+  def calculate_last_week_stats
+    # 先週の統計を計算する実装
+    # 例: 先週の月曜日から日曜日までの戦績を集計
+    last_week_start = 1.week.ago.beginning_of_week(:monday)
+    last_week_end = 1.week.ago.end_of_week(:sunday)
+
+    # 先週の期間内の戦績を集計
+    battles_in_last_week = all_battles.where(created_at: last_week_start..last_week_end)
+    wins_in_last_week = won_battles.where(created_at: last_week_start..last_week_end)
+
+    total_games = battles_in_last_week.count
+    wins = wins_in_last_week.count
+    losses = total_games - wins
+
+    # 実際の統計計算ロジックをここに実装
+    { wins: wins, losses: losses, total_games: total_games }
+  end
 end
