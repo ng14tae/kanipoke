@@ -106,6 +106,14 @@ class UsersController < ApplicationController
     week_number = today.cweek
     @period_description = "第#{week_number}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
     @update_time = Time.current
+    @expert_only = false
+
+    @last_week_champion = User.last_week_champion(expert_only: false)
+
+      # 統計情報
+    @total_users = User.count
+    @active_users_this_week = @users.count
+    @average_battles_this_week = @users.empty? ? 0 : (@users.sum(&:weekly_total_games) / @users.count.to_f).round(1)
   end
 
   def experienced_ranking
@@ -114,9 +122,41 @@ class UsersController < ApplicationController
   render :ranking # rankingビューを再利用
   end
 
+  def expert?
+    total_battles_count >= 100
+  end
+
+  # 期間指定でのエキスパート判定も追加
+  def expert_since?(start_date)
+    total_battles_count_since(start_date) >= 100
+  end
+
+  def expert_weekly_ranking
+    today = Date.current
+    monday = today.beginning_of_week(:monday)
+    @start_date = monday.beginning_of_day
+    @end_date = (monday + 6.days).end_of_day
+    @update_time = Time.current
+
+
+    # エキスパート限定の週間ランキングを取得
+    @users = build_ranking_users(@start_date, 10, expert_only: true)
+    @ranking_type = 'エキスパート週間ランキング'
+    @period_description = "第#{today.cweek}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
+    @expert_only = true  # ビューで使用
+
+    @last_week_champion = User.last_week_champion(expert_only: true)
+
+    @total_experts = User.select { |user| user.expert? }.count
+    @active_experts_this_week = @users.count
+    @average_battles_this_week = @users.empty? ? 0 : (@users.sum(&:weekly_total_games) / @users.count.to_f).round(1)
+
+    render :weekly_ranking  # 既存のビューを再利用
+  end
+
   private
 
-  def build_ranking_users(start_date = nil, limit = nil)
+  def build_ranking_users(start_date = nil, limit = nil, expert_only: false)
     # 関連データを一緒に読み込み
     users = User.includes(:battles, :battles_as_opponent, :won_battles)
 
@@ -125,6 +165,10 @@ class UsersController < ApplicationController
       users.select { |user| user.has_battles_since?(start_date) }
     else
       users.select { |user| user.has_battles? }
+    end
+
+    if expert_only
+      users_with_battles = users_with_battles.select { |user| user.expert? }
     end
 
     # 各ユーザーに週間統計データを追加

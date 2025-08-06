@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       get :ranking           # 総合ランキング
       get :weekly_ranking   # 週間ランキング
       get :experienced_ranking # エキスパートランキング
+      get :expert_weekly_ranking
     end
   end
 
