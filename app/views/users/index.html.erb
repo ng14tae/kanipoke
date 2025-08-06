@@ -48,10 +48,6 @@
 
       <%= link_to "登録順", users_path,
           style: "padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; font-size: 0.9rem; #{params[:sort] ? 'background-color: #374151; color: white;' : 'background-color: #facc15; color: #1e3a8a;'}" %>
-
-      <%= link_to "ランキング順", users_path(sort: 'win_rate'),
-          style: "padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; font-size: 0.9rem; #{params[:sort] == 'win_rate' ? 'background-color: #facc15; color: #1e3a8a;' : 'background-color: #374151; color: white;'}" %>
-
       <!-- 新しく追加：エキスパートランキングボタン -->
       <%= link_to "エキスパート", users_path(sort: 'experienced_ranking'),
           style: "padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; font-size: 0.9rem; #{params[:sort] == 'experienced_ranking' ? 'background-color: #facc15; color: #1e3a8a;' : 'background-color: #374151; color: white;'}" %>

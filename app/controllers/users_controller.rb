@@ -10,21 +10,7 @@ class UsersController < ApplicationController
               .includes(:won_battles, :lost_battles)
 
     case params[:sort]
-    when 'win_rate'
-      # 勝率順（勝率の高い順）
-      # バトル経験のあるユーザーのみを対象にして勝率でソート
-      users_with_battles = @users.select { |user| user.total_battles_count > 0 }
-      users_without_battles = @users.select { |user| user.total_battles_count == 0 }
-
-      # 勝率順でソート（勝率が同じ場合は総試合数の多い順）
-      sorted_with_battles = users_with_battles.sort_by do |user|
-        [-user.win_rate, -user.total_battles_count]
-      end
-
-      # バトル経験ありのユーザー → バトル経験なしのユーザーの順で配列を結合
-      @users = sorted_with_battles + users_without_battles.sort_by(&:created_at)
-      @sort_type = 'ランキング順（勝率の高い順）'
-      when 'experienced_ranking'
+    when 'experienced_ranking'
       # 戦績100回以上のユーザーのみでランキング
       experienced_users = @users.select { |user| user.total_battles_count >= 100 }
 
@@ -80,11 +66,6 @@ class UsersController < ApplicationController
   def destroy
     @user.destroy
     redirect_to users_path, notice: 'ユーザーを削除しました'
-  end
-
-  def ranking
-    @users = build_ranking_users
-    @ranking_type = '総合ランキング'
   end
 
   def weekly_ranking
@@ -247,3 +228,5 @@ class UsersController < ApplicationController
     user.win_rate
   end
 end
+
+
