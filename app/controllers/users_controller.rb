@@ -112,109 +112,134 @@ class UsersController < ApplicationController
     total_battles_count_since(start_date) >= 100
   end
 
-def expert_weekly_ranking
-  today = Date.current
-  monday = today.beginning_of_week(:monday)
-  @start_date = monday.beginning_of_day
-  @end_date = (monday + 6.days).end_of_day
-  @update_time = Time.current
+  def expert_weekly_ranking
+    today = Date.current
+    monday = today.beginning_of_week(:monday)
+    @start_date = monday.beginning_of_day
+    @end_date = (monday + 6.days).end_of_day
+    @update_time = Time.current
 
-  # 既存のweekly_rankingメソッドを使用
-  all_weekly_ranking = User.weekly_ranking(@start_date)
+    # 既存のweekly_rankingメソッドを使用
+    all_weekly_ranking = User.weekly_ranking(@start_date)
 
-  # 今週だけで100戦以上のユーザーのみをフィルタリング
-  @users = all_weekly_ranking.select do |stats|
-    stats[:total_games] >= 100  # ← 今週の戦績で100戦以上
-  end.take(10)  # 上位10名まで
+    # 今週だけで100戦以上のユーザーのみをフィルタリング
+    @users = all_weekly_ranking.select do |stats|
+      stats[:total_games] >= 100  # ← 今週の戦績で100戦以上
+    end.take(10)  # 上位10名まで
 
-  @ranking_type = 'エキスパート週間ランキング'
-  @period_description = "第#{today.cweek}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
-  @expert_only = true
+    @ranking_type = 'エキスパート週間ランキング'
+    @period_description = "第#{today.cweek}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
+    @expert_only = true
 
-  @last_week_champion = User.last_week_champion(expert_only: true)
+    @last_week_champion = User.last_week_champion(expert_only: true)
 
-  if @last_week_champion
-    # 先週の期間を計算
-    last_week_start = @start_date - 7.days
-    last_week_end = @end_date - 7.days
+    if @last_week_champion
+      # 先週の期間を計算
+      last_week_start = @start_date - 7.days
+      last_week_end = @end_date - 7.days
 
-    # 先週の統計を計算
-    last_week_wins = @last_week_champion.wins_count_since(last_week_start)
-    last_week_losses = @last_week_champion.losses_count_since(last_week_start)
-    last_week_total = last_week_wins + last_week_losses
-    last_week_rate = last_week_total > 0 ? (last_week_wins.to_f / last_week_total * 100) : 0
+      # 先週の統計を計算
+      last_week_wins = @last_week_champion.wins_count_since(last_week_start)
+      last_week_losses = @last_week_champion.losses_count_since(last_week_start)
+      last_week_total = last_week_wins + last_week_losses
+      last_week_rate = last_week_total > 0 ? (last_week_wins.to_f / last_week_total * 100) : 0
 
-    # メソッドを動的に追加
-    @last_week_champion.define_singleton_method(:weekly_wins) { last_week_wins }
-    @last_week_champion.define_singleton_method(:weekly_losses) { last_week_losses }
-    @last_week_champion.define_singleton_method(:weekly_total_games) { last_week_total }
-    @last_week_champion.define_singleton_method(:weekly_win_rate) { last_week_rate }
-  end
-    render :weekly_ranking  # 既存のビューを再利用
+      # メソッドを動的に追加
+      @last_week_champion.define_singleton_method(:weekly_wins) { last_week_wins }
+      @last_week_champion.define_singleton_method(:weekly_losses) { last_week_losses }
+      @last_week_champion.define_singleton_method(:weekly_total_games) { last_week_total }
+      @last_week_champion.define_singleton_method(:weekly_win_rate) { last_week_rate }
+    end
+      render :weekly_ranking  # 既存のビューを再利用
   end
 
   private
 
   def build_ranking_users(start_date = nil, limit = nil, expert_only: false)
-    # 関連データを一緒に読み込み
-    users = User.includes(:battles, :battles_as_opponent, :won_battles)
+    # データ規模に合わせた適切なlimit設定
+    limit ||= determine_appropriate_limit(start_date, expert_only)
 
-    # バトル経験のあるユーザーのみ抽出
-    users_with_battles = if start_date
-      users.select { |user| user.has_battles_since?(start_date) }
-    else
-      users.select { |user| user.has_battles? }
-    end
+    query = build_ranking_query(start_date, expert_only)
 
-    if expert_only
-      users_with_battles = users_with_battles.select { |user| user.expert? }
-    end
-
-    # 各ユーザーに週間統計データを追加
-    users_with_stats = users_with_battles.map do |user|
-      # 期間に応じて統計を計算
-      if start_date
-        total_games = user.total_battles_count_since(start_date)
-        wins = user.wins_count_since(start_date)
-        losses = user.losses_count_since(start_date)
-        win_rate = user.win_rate_since(start_date)
-      else
-        total_games = user.total_battles_count
-        wins = user.wins_count
-        losses = user.losses_count
-        win_rate = user.win_rate
-      end
-
-      # ユーザーオブジェクトに統計メソッドを動的追加
-      user.define_singleton_method(:weekly_total_games) { total_games }
-      user.define_singleton_method(:weekly_wins) { wins }
-      user.define_singleton_method(:weekly_losses) { losses }
-      user.define_singleton_method(:weekly_win_rate) { win_rate }
-
+    users_with_stats = query.limit(limit).map do |user|
+      add_weekly_stats_methods(user)
       user
     end
 
-    # 勝率でソート（勝率が同じ場合は総試合数でソート）
-    sorted_users = users_with_stats.sort_by do |user|
-      [-user.weekly_win_rate, -user.weekly_total_games]
-    end
-
-    # limit指定がある場合は上位のみを返す
-    limit ? sorted_users.first(limit) : sorted_users
+    users_with_stats
   end
 
   def build_experienced_ranking_users
-    users = User.includes(:battles, :battles_as_opponent, :won_battles)
+    User.joins(:battles)
+        .group('users.id')
+        .having('COUNT(battles.id) >= 100')
+        .select('users.*, 
+                COUNT(battles.id) as total_battles,
+                SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) as wins_count,
+                ROUND((SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) * 100.0 / COUNT(battles.id)), 1) as win_rate')
+        .order('win_rate DESC, total_battles DESC')
+        .limit(20)
+        .map { |user| add_total_stats_methods(user) }
+  end
 
-    # 戦績100回以上のユーザーのみを抽出
-    experienced_users = users.select { |user| user.total_battles_count >= 100 }
-
-    # 勝率でソート（勝率が同じ場合は総試合数でソート）
-    experienced_users.sort_by do |user|
-      [-user.win_rate, -user.total_battles_count]
+  def determine_appropriate_limit(start_date, expert_only)
+    if expert_only
+      20    # エキスパートユーザー（100戦以上）は少数想定
+    elsif start_date
+      30    # 週間アクティブユーザー
+    else
+      50    # 全ユーザー（40人なので全員でもOK）
     end
   end
 
+  def build_ranking_query(start_date, expert_only)
+    query = User.joins(:battles).group('users.id')
+
+    # 期間フィルター
+    if start_date
+      end_date = start_date.end_of_week(:monday).end_of_day
+      query = query.where(battles: { created_at: start_date..end_date })
+    end
+
+    # エキスパートフィルター
+    if expert_only
+      query = query.having('COUNT(battles.id) >= 100')
+    else
+      query = query.having('COUNT(battles.id) > 0')
+    end
+
+    # SQLで効率的に統計計算
+    query.select('users.*,
+                  COUNT(battles.id) as weekly_total_games,
+                  SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) as weekly_wins,
+                  (COUNT(battles.id) - SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END)) as weekly_losses,
+                  ROUND((SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) * 100.0 / COUNT(battles.id)), 1) as weekly_win_rate')
+        .order('weekly_win_rate DESC, weekly_total_games DESC')
+  end
+
+  def add_weekly_stats_methods(user)
+    total = user.read_attribute('weekly_total_games') || 0
+    wins = user.read_attribute('weekly_wins') || 0
+    losses = user.read_attribute('weekly_losses') || 0
+    win_rate = user.read_attribute('weekly_win_rate') || 0.0
+
+    user.define_singleton_method(:weekly_total_games) { total }
+    user.define_singleton_method(:weekly_wins) { wins }
+    user.define_singleton_method(:weekly_losses) { losses }
+    user.define_singleton_method(:weekly_win_rate) { win_rate }
+    user
+  end
+
+  def add_total_stats_methods(user)
+    total = user.read_attribute('total_battles') || 0
+    wins = user.read_attribute('wins_count') || 0
+    win_rate = user.read_attribute('win_rate') || 0.0
+
+    user.define_singleton_method(:total_battles_count) { total }
+    user.define_singleton_method(:wins_count) { wins }
+    user.define_singleton_method(:win_rate) { win_rate }
+    user
+  end
 
   def set_user
     @user = User.find(params[:id])
@@ -228,5 +253,3 @@ def expert_weekly_ranking
     user.win_rate
   end
 end
-
-
