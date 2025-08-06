@@ -1,56 +1,69 @@
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-8 text-center">
-    🏆 週間ランキング
-    </h1>
-
-    <!-- 期間表示セクション（シンプル版） -->
-    <div class="text-center mb-8">
-        <div class="bg-white bg-opacity-20 rounded-lg p-4 mb-4">
-            <p class="text-lg text-yellow-200 font-semibold mb-2">
-                集計期間
-            </p>
-            <p class="text-xl text-white font-medium">
-                <%= @start_date.strftime('%Y年%m月%d日(%a)') %> ～ <%= @end_date.strftime('%Y年%m月%d日(%a)') %>
-            </p>
-            <%# <p class="text-sm text-gray-300 mt-2">
-                <%= @period_description %>
-                <!-- の対戦成績を集計 -->
-            <%# </p> %>
-        </div>
-
-        <% if false %>
-            <!-- 週の進行状況 -->
-            <div class="mt-3">
-                <% days_passed = (Date.current - @start_date.to_date).to_i + 1 %>
-                <% days_passed = [days_passed, 7].min %>
-                <div class="bg-gray-600 rounded-full h-2 mb-2">
-                    <div class="bg-yellow-400 h-2 rounded-full transition-all duration-500"
-                        style="width: <%= (days_passed / 7.0 * 100) %>%"></div>
-                </div>
-                <p class="text-xs text-gray-400">
-                    今週 <%= days_passed %>/7日経過
-                </p>
-            </div>
-        <% end %>
-    </div>
-
-    <div class="text-center mb-8">
-            <p class="text-lg md:text-xl lg:text-3xl font-semibold mb-2">
-                今週の🦀王は誰だ……！？
-            </p><br>
-            <p class="text-xs text-white mt-2">
-                最終更新: <%= @update_time.strftime('%Y年%m月%d日 %H:%M') %>
-            </p>
-        </div>
-    </div>
-
     <!-- ランキング切り替えボタン -->
     <div class="flex justify-center mb-8 space-x-4">
     <%= link_to "総合ランキング", ranking_users_path,
         class: "px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
-    <%= link_to "週間ランキング", weekly_ranking_users_path,
-        class: "px-6 py-2 bg-yellow-500 text-black rounded-lg font-semibold shadow-lg" %>
+    <%= link_to "通常週間ランキング", weekly_ranking_users_path,
+        class: "px-6 py-2 #{@expert_only ? 'bg-gray-600 hover:bg-gray-500' : 'bg-yellow-500'} text-#{@expert_only ? 'white' : 'black'} rounded-lg #{@expert_only ? '' : 'font-semibold shadow-lg'} transition-colors duration-200" %>
+    <%= link_to "エキスパートランキング", expert_weekly_ranking_users_path,
+    class: "px-6 py-2 #{@expert_only ? 'bg-red-500 font-semibold shadow-lg' : 'bg-gray-600 hover:bg-gray-500'} #{@expert_only ? '' : 'text-white'} rounded-lg transition-colors duration-200" %>
     </div>
+
+<div class="container mx-auto px-4 py-8">
+<div class="bg-white bg-opacity-10 rounded-lg shadow-lg p-6">
+    <h1 class="text-4xl font-bold mb-8 text-center">
+    🏆 <%= @ranking_type || '週間ランキング' %>
+    </h1>
+
+    <!-- 先週の王者セクション（新規追加） -->
+    <% if @last_week_champion %>
+    <div class="bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-xl p-6 mb-8 shadow-2xl border-2 border-yellow-300">
+        <div class="text-center">
+        <h3 class="text-2xl font-bold text-gray-900 mb-4">
+            👑 先週の🦀王 👑
+        </h3>
+        <div class="bg-white bg-opacity-20 rounded-lg p-4 inline-block">
+            <p class="text-xl font-bold text-gray-900 mb-2">
+            <%= @last_week_champion.name %>
+            </p>
+            <div class="flex justify-center space-x-4 text-sm text-gray-800">
+            <span class="bg-white bg-opacity-40 px-3 py-1 rounded-full">
+                勝率: <%= (@last_week_champion.last_week_win_rate * 100).round(1) %>%
+            </span>
+            <span class="bg-white bg-opacity-40 px-3 py-1 rounded-full">
+                <%= @last_week_champion.last_week_wins %>勝
+            </span>
+            <span class="bg-white bg-opacity-40 px-3 py-1 rounded-full">
+                <%= @last_week_champion.last_week_losses %>敗
+            </span>
+            <span class="bg-white bg-opacity-40 px-3 py-1 rounded-full">
+                計<%= @last_week_champion.last_week_total_games %>戦
+            </span>
+            </div>
+        </div>
+        </div>
+    </div>
+    <% end %>
+
+    <!-- 期間表示セクション（シンプル版） -->
+    <div class="text-center mb-8">
+        <p class="text-lg text-yellow-200 font-semibold mb-2">
+            集計期間
+        </p>
+        <p class="text-xl text-white font-medium">
+            <%= @start_date.strftime('%Y年%m月%d日(%a)') %> ～ <%= @end_date.strftime('%Y年%m月%d日(%a)') %>
+        </p>
+        <p class="text-xs text-white mt-2">
+            最終更新: <%= @update_time.strftime('%Y年%m月%d日 %H:%M') %>
+        </p>
+    </div>
+
+
+    <div class="text-center mb-8">
+        <p class="text-lg md:text-xl lg:text-3xl font-semibold mb-2">
+            今週の🦀王は誰だ……！？
+        </p>
+    </div>
+
 
     <% if @users.any? %>
     <div class="space-y-4">
@@ -71,48 +84,62 @@
                 <% end %>
             </div>
 
-            <!-- ユーザー名 -->
-            <div>
-                <%= link_to user_path(user),
-                    class: "text-2xl font-semibold hover:text-yellow-300 transition-colors duration-200" do %>
-                <%= user.display_name %>
-                <% end %>
-            </div>
-            </div>
+    <!-- ユーザー名 -->
+    <div>
+        <%= link_to user_path(user),
+        class: "text-2xl font-semibold hover:text-yellow-300 transition-colors duration-200" do %>
+        <%= user.display_name %>
+        <% end %>
 
-            <!-- 戦績情報（週間限定データ） -->
-            <div class="flex items-center space-x-6 text-lg">
-            <!-- 勝率 -->
-            <div class="text-center">
-                <div class="text-2xl font-bold">
-                <%= user.weekly_win_rate.round(1) %>%
-                </div>
-                <div class="text-sm text-gray-300">勝率</div>
-            </div>
+    <!-- エキスパートバッジを追加 -->
+    <% if user.respond_to?(:expert?) && user.expert? %>
+        <span class="ml-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-2 py-1 rounded-full text-xs font-bold">
+            ⚔️ EXPERT
+        </span>
+    <% end %>
 
-            <!-- 勝利数 -->
-            <div class="text-center">
-                <div class="text-xl font-semibold">
-                <%= user.weekly_wins %>勝
-                </div>
-                <div class="text-sm text-gray-300">勝利</div>
-            </div>
+    <!-- 総戦績表示（エキスパートランキングの場合） -->
+    <% if @expert_only %>
+        <div class="text-sm text-gray-300 mt-1">
+            総戦績: <%= user.total_battles_count %>戦
+        </div>
+    <% end %>
+</div>
+    </div>
 
-            <!-- 敗北数 -->
-            <div class="text-center">
-                <div class="text-xl font-semibold">
-                <%= user.weekly_losses %>敗
-                </div>
-                <div class="text-sm text-gray-300">敗北</div>
-            </div>
+    <!-- 戦績情報（週間限定データ） -->
+    <div class="flex items-center space-x-6 text-lg">
+    <!-- 勝率 -->
+    <div class="text-center">
+        <div class="text-2xl font-bold">
+        <%= user.weekly_win_rate.round(1) %>%
+        </div>
+        <div class="text-sm text-gray-300">勝率</div>
+    </div>
 
-            <!-- 総試合数 -->
-            <div class="text-center">
-                <div class="text-xl font-semibold">
-                <%= user.weekly_total_games %>試合
-                </div>
-                <div class="text-sm text-gray-300">総試合</div>
-            </div>
+    <!-- 勝利数 -->
+    <div class="text-center">
+        <div class="text-xl font-semibold">
+        <%= user.weekly_wins %>勝
+        </div>
+        <div class="text-sm text-gray-300">勝利</div>
+    </div>
+
+    <!-- 敗北数 -->
+    <div class="text-center">
+        <div class="text-xl font-semibold">
+        <%= user.weekly_losses %>敗
+        </div>
+        <div class="text-sm text-gray-300">敗北</div>
+    </div>
+
+    <!-- 総試合数 -->
+    <div class="text-center">
+        <div class="text-xl font-semibold">
+        <%= user.weekly_total_games %>試合
+        </div>
+        <div class="text-sm text-gray-300">総試合</div>
+    </div>
 
 
             </div>
@@ -134,4 +161,5 @@
     <%= link_to "← ホームに戻る", root_path,
         class: "px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
     </div>
+</div>
 </div>
