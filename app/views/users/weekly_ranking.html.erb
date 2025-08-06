@@ -84,10 +84,16 @@
                 <!-- ユーザー名 -->
                 <div class="flex-1">
                     <div class="mb-2">
-                        <%= link_to user_path(user),
-                        class: "text-2xl font-semibold hover:text-yellow-300 transition-colors duration-200" do %>
-                        <%= user.display_name %>
+                    <% if user.id != current_user.id %>
+                        <%= link_to new_battle_path(opponent_id: user.id),
+                            class: "text-2xl font-semibold hover:text-yellow-300 transition-colors duration-200" do %>
+                            <%= user.display_name %>
                         <% end %>
+                    <% else %>
+                        <span class="text-2xl font-semibold text-gray-400">
+                            <%= user.display_name %> (あなた)
+                        </span>
+                    <% end %>
 
                         <!-- エキスパートバッジを追加 -->
                         <% if user.respond_to?(:expert?) && user.expert? %>
