@@ -26,7 +26,7 @@
             </p>
             <div class="flex justify-center space-x-4 text-sm text-gray-800">
             <span class="bg-white bg-opacity-40 px-3 py-1 rounded-full">
-                勝率: <%= (@last_week_champion.last_week_win_rate * 100).round(1) %>%
+                勝率:  <%= @last_week_champion.last_week_win_rate %>%
             </span>
             <span class="bg-white bg-opacity-40 px-3 py-1 rounded-full">
                 <%= @last_week_champion.last_week_wins %>勝
@@ -84,7 +84,8 @@
             </div>
 
     <!-- ユーザー名 -->
-    <div>
+    <div class="flex-1">
+        <div class="mb-2">
         <%= link_to user_path(user),
         class: "text-2xl font-semibold hover:text-yellow-300 transition-colors duration-200" do %>
         <%= user.display_name %>
@@ -103,15 +104,15 @@
             総戦績: <%= user.total_battles_count %>戦
         </div>
     <% end %>
-</div>
     </div>
+</div>
 
     <!-- 戦績情報（週間限定データ） -->
     <div class="flex items-center space-x-6 text-lg">
     <!-- 勝率 -->
     <div class="text-center">
         <div class="text-2xl font-bold">
-        <%= user.weekly_win_rate.round(1) %>%
+        <%= user.weekly_win_rate %>%
         </div>
         <div class="text-sm text-gray-300">勝率</div>
     </div>
@@ -150,7 +151,7 @@
         <div class="text-6xl mb-4">📅</div>
         <h2 class="text-2xl font-semibold mb-2">今週の対戦データがありません</h2>
         <p class="text-gray-300 mb-6">今週の対戦を開始してランキングを作成しましょう！</p>
-        <%= link_to "対戦を開始", new_battle_path,
+        <%= link_to "対戦を開始", users_index_path,
             class: "px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 font-semibold" %>
     </div>
     <% end %>
