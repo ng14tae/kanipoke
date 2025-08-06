@@ -3,21 +3,35 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   def index
-  # ✅ 自分の戦績も効率的に取得
-  @my_stats = calculate_user_battle_stats(current_user.id)
-  @my_win_count = @my_stats[:wins]
-  @my_lose_count = @my_stats[:losses]
-  @my_total_battles = @my_stats[:total]
+    @my_win_count = current_user.won_battles.count
+    @my_lose_count = current_user.lost_battles.count
+    @my_total_battles = @my_win_count + @my_lose_count
+    @users = User.where.not(id: current_user.id)
+              .includes(:won_battles, :lost_battles)
 
     case params[:sort]
     when 'experienced_ranking'
-      @users = build_experienced_ranking_users_optimized
+      # 戦績100回以上のユーザーのみでランキング
+      experienced_users = @users.select { |user| user.total_battles_count >= 100 }
+
+      # 戦績100回以上のユーザーを勝率でソート
+      @users = experienced_users.sort_by do |user|
+        [-user.win_rate, -user.total_battles_count]
+      end
+
       @sort_type = 'エキスパートランキング（戦績100回以上）'
-      @total_experienced_users = count_experienced_users
+      @total_experienced_users = experienced_users.count
+
     else
-      @users = build_default_users_with_stats
+      # デフォルトは登録順（作成日の昇順）
+      @users = @users.order(created_at: :asc)
       @sort_type = '登録順'
     end
+
+    # ページネーション
+    @users = Kaminari.paginate_array(@users)
+                     .page(params[:page])
+                     .per(12)            # 12人ずつ表示（3×4のグリッドレイアウトに最適）
   end
 
   def new
@@ -237,181 +251,5 @@ class UsersController < ApplicationController
 
   def calculate_win_rate(user)
     user.win_rate
-  end
-
-  def calculate_user_battle_stats(user_id)
-    Rails.logger.info "=== Calculating battle stats for user #{user_id} ==="
-    
-    begin
-      # ✅ PostgreSQL対応の安全な実装
-      battles_scope = Battle.where('user_id = ? OR opponent_id = ?', user_id, user_id)
-      
-      total_battles = battles_scope.count
-      won_battles = battles_scope.where(winner_id: user_id).count
-      lost_battles = total_battles - won_battles
-      
-      Rails.logger.info "User #{user_id}: wins=#{won_battles}, losses=#{lost_battles}, total=#{total_battles}"
-      
-      {
-        wins: won_battles,
-        losses: lost_battles,
-        total: total_battles
-      }
-    rescue => e
-      Rails.logger.error "Error in calculate_user_battle_stats: #{e.message}"
-      { wins: 0, losses: 0, total: 0 }
-    end
-  end
-
-  def build_experienced_ranking_users_optimized
-    Rails.logger.info "=== Building experienced ranking users ==="
-    
-    begin
-      # ✅ expertロールのユーザーを取得
-      expert_users = User.where(role: :expert)
-                        .where.not(id: current_user.id)
-      
-      Rails.logger.info "Found #{expert_users.count} expert users"
-      
-      # ✅ 各ユーザーの統計を安全に計算（filter_mapを使用）
-      users_with_stats = expert_users.filter_map do |user|
-        begin
-          # 統計データを取得
-          stats = calculate_user_battle_stats(user.id)
-          total_battles = stats[:total]
-          wins = stats[:wins]
-          
-          # ✅ 最低バトル数の条件チェック
-          next if total_battles < 5
-          
-          win_rate = total_battles > 0 ? (wins.to_f / total_battles * 100).round(2) : 0.0
-          
-          # ✅ 統計メソッドを動的に追加
-          user.define_singleton_method(:total_battles_count) { total_battles }
-          user.define_singleton_method(:wins_count) { wins }
-          user.define_singleton_method(:win_rate_percentage) { win_rate }
-          user.define_singleton_method(:losses_count) { total_battles - wins }
-          
-          Rails.logger.info "User #{user.id}: battles=#{total_battles}, wins=#{wins}, rate=#{win_rate}%"
-          
-          # ✅ ソート用のデータ構造を返す
-          {
-            user: user,
-            win_rate: win_rate,
-            total_battles: total_battles
-          }
-          
-        rescue => e
-          Rails.logger.error "Error calculating stats for user #{user.id}: #{e.message}"
-          nil
-        end
-      end
-      
-      # ✅ ソートして上位20名を取得
-      sorted_users = users_with_stats.sort_by { |data| [-data[:win_rate], -data[:total_battles]] }
-                                    .first(20)
-      
-      # ✅ userオブジェクトのみを返す
-      result = sorted_users.map { |data| data[:user] }
-      
-      Rails.logger.info "Returning #{result.count} experienced ranking users"
-      result
-      
-    rescue => e
-      Rails.logger.error "Error in build_experienced_ranking_users_optimized: #{e.message}"
-      []
-    end
-  end
-
-  def build_default_users_with_stats
-  per_page = 12
-  offset = (params[:page].to_i - 1) * per_page
-  offset = 0 if offset < 0
-
-  Rails.logger.info "=== Building users with stats (page: #{params[:page]}, offset: #{offset}) ==="
-
-  begin
-    # ✅ 段階的なアプローチ
-    users = User.where.not(id: current_user.id)
-                .limit(per_page)
-                .offset(offset)
-                .order(created_at: :asc)
-    
-    Rails.logger.info "Found #{users.count} users"
-    
-    # ✅ 各ユーザーの戦績を安全に取得
-    users.map do |user|
-      begin
-        battles = Battle.where('user_id = ? OR opponent_id = ?', user.id, user.id)
-        total_battles = battles.count
-        wins = battles.where(winner_id: user.id).count
-        
-        # ✅ 動的にメソッドを追加
-        user.define_singleton_method(:total_battles_count) { total_battles }
-        user.define_singleton_method(:wins_count) { wins }
-        
-        Rails.logger.info "User #{user.id} (#{user.name}): battles=#{total_battles}, wins=#{wins}"
-        
-        user
-      rescue => e
-        Rails.logger.error "Error calculating stats for user #{user.id}: #{e.message}"
-        
-        # エラー時はデフォルト値を設定
-        user.define_singleton_method(:total_battles_count) { 0 }
-        user.define_singleton_method(:wins_count) { 0 }
-        
-        user
-      end
-    end
-  rescue => e
-    Rails.logger.error "Error in build_default_users_with_stats: #{e.message}"
-    # 完全にフォールバック
-    User.where.not(id: current_user.id).limit(per_page).offset(offset).order(created_at: :asc)
-  end
-end
-
-private
-
-def add_basic_stats_methods(user)
-  total_battles = user.read_attribute('total_battles') || 0
-  wins = user.read_attribute('wins') || 0
-  
-  user.define_singleton_method(:total_battles_count) { total_battles }
-  user.define_singleton_method(:wins_count) { wins }
-  
-  user
-end
-
-
-  def count_experienced_users
-    # ✅ エキスパートユーザー数をカウント（キャッシュ対応）
-    Rails.cache.fetch("experienced_users_count", expires_in: 1.hour) do
-      User.joins('LEFT JOIN battles ON (battles.user_id = users.id OR battles.opponent_id = users.id)')
-          .where.not(id: current_user.id)
-          .group('users.id')
-          .having('COUNT(DISTINCT battles.id) >= 100')
-          .count
-          .size
-    end
-  end
-
-  def add_optimized_stats_methods(user)
-    total_battles = user.read_attribute('total_battles') || 0
-    wins = user.read_attribute('wins') || 0
-    win_rate = user.read_attribute('win_rate') || 0.0
-
-    user.define_singleton_method(:total_battles_count) { total_battles }
-    user.define_singleton_method(:wins_count) { wins }
-    user.define_singleton_method(:win_rate) { win_rate }
-    user
-  end
-
-  def add_basic_stats_methods(user)
-    total_battles = user.read_attribute('total_battles') || 0
-    wins = user.read_attribute('wins') || 0
-
-    user.define_singleton_method(:total_battles_count) { total_battles }
-    user.define_singleton_method(:wins_count) { wins }
-    user
   end
 end
