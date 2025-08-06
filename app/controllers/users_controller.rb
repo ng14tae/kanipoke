@@ -112,44 +112,44 @@ class UsersController < ApplicationController
     total_battles_count_since(start_date) >= 100
   end
 
-  def expert_weekly_ranking
-    today = Date.current
-    monday = today.beginning_of_week(:monday)
-    @start_date = monday.beginning_of_day
-    @end_date = (monday + 6.days).end_of_day
-    @update_time = Time.current
+def expert_weekly_ranking
+  today = Date.current
+  monday = today.beginning_of_week(:monday)
+  @start_date = monday.beginning_of_day
+  @end_date = (monday + 6.days).end_of_day
+  @update_time = Time.current
 
+  # 既存のweekly_rankingメソッドを使用
+  all_weekly_ranking = User.weekly_ranking(@start_date)
 
-    # エキスパート限定の週間ランキングを取得
-    @users = build_ranking_users(@start_date, 10, expert_only: true)
-    @ranking_type = 'エキスパート週間ランキング'
-    @period_description = "第#{today.cweek}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
-    @expert_only = true  # ビューで使用
+  # 今週だけで100戦以上のユーザーのみをフィルタリング
+  @users = all_weekly_ranking.select do |stats|
+    stats[:total_games] >= 100  # ← 今週の戦績で100戦以上
+  end.take(10)  # 上位10名まで
 
-    @last_week_champion = User.last_week_champion(expert_only: true)
+  @ranking_type = 'エキスパート週間ランキング'
+  @period_description = "第#{today.cweek}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
+  @expert_only = true
 
-    if @last_week_champion
-      # 先週の期間を計算
-      last_week_start = @start_date - 7.days
-      last_week_end = @end_date - 7.days
+  @last_week_champion = User.last_week_champion(expert_only: true)
 
-      # 先週の統計を計算
-      last_week_wins = @last_week_champion.wins_count_since(last_week_start)
-      last_week_losses = @last_week_champion.losses_count_since(last_week_start)
-      last_week_total = last_week_wins + last_week_losses
-      last_week_rate = last_week_total > 0 ? (last_week_wins.to_f / last_week_total * 100) : 0
+  if @last_week_champion
+    # 先週の期間を計算
+    last_week_start = @start_date - 7.days
+    last_week_end = @end_date - 7.days
 
-      # メソッドを動的に追加
-      @last_week_champion.define_singleton_method(:weekly_wins) { last_week_wins }
-      @last_week_champion.define_singleton_method(:weekly_losses) { last_week_losses }
-      @last_week_champion.define_singleton_method(:weekly_total_games) { last_week_total }
-      @last_week_champion.define_singleton_method(:weekly_win_rate) { last_week_rate }
-    end
+    # 先週の統計を計算
+    last_week_wins = @last_week_champion.wins_count_since(last_week_start)
+    last_week_losses = @last_week_champion.losses_count_since(last_week_start)
+    last_week_total = last_week_wins + last_week_losses
+    last_week_rate = last_week_total > 0 ? (last_week_wins.to_f / last_week_total * 100) : 0
 
-    @total_experts = User.select { |user| user.expert? }.count
-    @active_experts_this_week = @users.count
-    @average_battles_this_week = @users.empty? ? 0 : (@users.sum(&:weekly_total_games) / @users.count.to_f).round(1)
-
+    # メソッドを動的に追加
+    @last_week_champion.define_singleton_method(:weekly_wins) { last_week_wins }
+    @last_week_champion.define_singleton_method(:weekly_losses) { last_week_losses }
+    @last_week_champion.define_singleton_method(:weekly_total_games) { last_week_total }
+    @last_week_champion.define_singleton_method(:weekly_win_rate) { last_week_rate }
+  end
     render :weekly_ranking  # 既存のビューを再利用
   end
 
