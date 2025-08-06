@@ -64,7 +64,8 @@
 
     <% if @users.any? %>
     <div class="space-y-4">
-        <% @users.first(10).each_with_index do |user, index| %>
+        <% @users.first(10).each_with_index do |user_data, index| %>
+        <% user = user_data.is_a?(Hash) ? user_data[:user] : user_data %>
         <div class="flex items-center justify-between bg-white bg-opacity-20 rounded-lg p-4 hover:bg-opacity-30 transition-all duration-200">
             <!-- ランキング順位 -->
             <div class="flex items-center space-x-4">
@@ -110,7 +111,7 @@
     <!-- 勝率 -->
     <div class="text-center">
         <div class="text-2xl font-bold">
-        <%= user.weekly_win_rate %>%
+        <%= user_data.is_a?(Hash) ? user_data[:win_rate] : user.weekly_win_rate %>%
         </div>
         <div class="text-sm text-gray-300">勝率</div>
     </div>
@@ -118,7 +119,7 @@
     <!-- 勝利数 -->
     <div class="text-center">
         <div class="text-xl font-semibold">
-        <%= user.weekly_wins %>勝
+        <%= user_data.is_a?(Hash) ? user_data[:wins] : user.weekly_wins %>勝
         </div>
         <div class="text-sm text-gray-300">勝利</div>
     </div>
@@ -126,7 +127,7 @@
     <!-- 敗北数 -->
     <div class="text-center">
         <div class="text-xl font-semibold">
-        <%= user.weekly_losses %>敗
+        <%= user_data.is_a?(Hash) ? user_data[:losses] : user.weekly_losses %>敗
         </div>
         <div class="text-sm text-gray-300">敗北</div>
     </div>
@@ -134,23 +135,22 @@
     <!-- 総試合数 -->
     <div class="text-center">
         <div class="text-xl font-semibold">
-        <%= user.weekly_total_games %>試合
+        <%= user_data.is_a?(Hash) ? user_data[:total_games] : user.weekly_total_games %>試合
         </div>
         <div class="text-sm text-gray-300">総試合</div>
     </div>
-
 
             </div>
         </div>
         <% end %>
     </div>
+
     <% else %>
-    <div class="text-center py-12">
-        <div class="text-6xl mb-4">📅</div>
+        <div class="text-center py-12">
         <h2 class="text-2xl font-semibold mb-2">今週の対戦データがありません</h2>
         <p class="text-gray-300 mb-6">今週の対戦を開始してランキングを作成しましょう！</p>
         <%= link_to "対戦を開始", users_index_path,
-            class: "px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 font-semibold" %>
+            class: "px-6 py-3 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 font-semibold" %>
     </div>
     <% end %>
 
