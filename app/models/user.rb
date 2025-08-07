@@ -18,6 +18,30 @@ class User < ApplicationRecord
   has_many :won_battles, class_name: "Battle", foreign_key: "winner_id"
   has_many :lost_battles, class_name: "Battle", foreign_key: "loser_id"
 
+  # 戦績付きでユーザーを取得するスコープ
+    scope :with_battle_stats, -> {
+    select(
+      'users.*',
+      '(SELECT COUNT(*) FROM battles WHERE winner_id = users.id) as win_count',
+      '(SELECT COUNT(*) FROM battles WHERE loser_id = users.id) as lose_count',
+      '((SELECT COUNT(*) FROM battles WHERE winner_id = users.id) +
+        (SELECT COUNT(*) FROM battles WHERE loser_id = users.id)) as total_battles',
+      'CASE
+         WHEN ((SELECT COUNT(*) FROM battles WHERE winner_id = users.id) +
+               (SELECT COUNT(*) FROM battles WHERE loser_id = users.id)) = 0 THEN 0
+         ELSE ROUND((SELECT COUNT(*) FROM battles WHERE winner_id = users.id) * 100.0 /
+              ((SELECT COUNT(*) FROM battles WHERE winner_id = users.id) +
+               (SELECT COUNT(*) FROM battles WHERE loser_id = users.id)), 2)
+       END as win_rate'
+    )
+    .group('users.id')  # ←この1行を追加するだけ！
+  }
+
+    scope :experienced, -> {
+      with_battle_stats.having('((SELECT COUNT(*) FROM battles WHERE winner_id = users.id) +
+                              (SELECT COUNT(*) FROM battles WHERE loser_id = users.id)) >= 100')
+    }
+
   # === 表示名関連 ===
   def display_name
     "#{first_name}の#{last_name}"

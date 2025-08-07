@@ -6,32 +6,25 @@ class UsersController < ApplicationController
     @my_win_count = current_user.won_battles.count
     @my_lose_count = current_user.lost_battles.count
     @my_total_battles = @my_win_count + @my_lose_count
-    @users = User.where.not(id: current_user.id)
-              .includes(:won_battles, :lost_battles)
 
     case params[:sort]
     when 'experienced_ranking'
-      # 戦績100回以上のユーザーのみでランキング
-      experienced_users = @users.select { |user| user.total_battles_count >= 100 }
-
-      # 戦績100回以上のユーザーを勝率でソート
-      @users = experienced_users.sort_by do |user|
-        [-user.win_rate, -user.total_battles_count]
-      end
+      @users = User.experienced
+                  .where.not(id: current_user.id)
+                  .order('win_rate DESC, total_battles DESC')
+                  .page(params[:page])
+                  .per(12)
 
       @sort_type = 'エキスパートランキング（戦績100回以上）'
-      @total_experienced_users = experienced_users.count
+      @total_experienced_users = @users.total_count
 
     else
-      # デフォルトは登録順（作成日の昇順）
-      @users = @users.order(created_at: :asc)
+      @users = User.where.not(id: current_user.id)
+                  .order(created_at: :asc)
+                  .page(params[:page])
+                  .per(12)
       @sort_type = '登録順'
     end
-
-    # ページネーション
-    @users = Kaminari.paginate_array(@users)
-                     .page(params[:page])
-                     .per(12)            # 12人ずつ表示（3×4のグリッドレイアウトに最適）
   end
 
   def new
@@ -48,8 +41,8 @@ class UsersController < ApplicationController
   end
 
   def show
-  @battles = @user.battles.includes(:user, :opponent).order(created_at: :desc).limit(10)
-  @win_rate = calculate_win_rate(@user)
+    @battles = @user.battles.includes(:user, :opponent).order(created_at: :desc).limit(10)
+    @win_rate = calculate_win_rate(@user)
   end
 
   def edit
@@ -69,38 +62,38 @@ class UsersController < ApplicationController
   end
 
   def weekly_ranking
-    # 現在の日付を基準に今週の範囲を計算
     today = Date.current
-
-    # 今週の月曜日を取得
     monday_this_week = today.beginning_of_week(:monday)
 
-    # 月曜日から日曜日まで（7日間完全）
+    # 今週の期間
     @start_date = monday_this_week.beginning_of_day
-    @end_date = (monday_this_week + 6.days).end_of_day  # 月曜 + 6日 = 日曜
+    @end_date = (monday_this_week + 6.days).end_of_day
 
-    # ランキングデータの取得
+    # 先週の期間を明示的に計算
+    last_week_start = @start_date - 7.days
+    last_week_end = @end_date - 7.days
+
     @users = build_ranking_users(@start_date, 10)
     @ranking_type = '週間ランキング'
 
-    # 週の情報を計算
     week_number = today.cweek
     @period_description = "第#{week_number}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
     @update_time = Time.current
     @expert_only = false
 
-    @last_week_champion = User.last_week_champion(expert_only: false)
+    #  修正：先週の期間を使って正しく王者を取得
+    @last_week_champion = get_last_week_champion(last_week_start, last_week_end, expert_only: false)
 
-      # 統計情報
+    # 統計情報
     @total_users = User.count
     @active_users_this_week = @users.count
     @average_battles_this_week = @users.empty? ? 0 : (@users.sum(&:weekly_total_games) / @users.count.to_f).round(1)
   end
 
   def experienced_ranking
-  @users = build_experienced_ranking_users
-  @ranking_type = 'エキスパートランキング（戦績100回以上）'
-  render :ranking # rankingビューを再利用
+    @users = build_experienced_ranking_users
+    @ranking_type = 'エキスパートランキング（戦績100回以上）'
+    render :ranking # rankingビューを再利用
   end
 
   def expert?
@@ -119,38 +112,24 @@ class UsersController < ApplicationController
     @end_date = (monday + 6.days).end_of_day
     @update_time = Time.current
 
-    # 既存のweekly_rankingメソッドを使用
+    # 先週の期間を明示的に計算
+    last_week_start = @start_date - 7.days
+    last_week_end = @end_date - 7.days
+
     all_weekly_ranking = User.weekly_ranking(@start_date)
 
-    # 今週だけで100戦以上のユーザーのみをフィルタリング
     @users = all_weekly_ranking.select do |stats|
-      stats[:total_games] >= 100  # ← 今週の戦績で100戦以上
-    end.take(10)  # 上位10名まで
+      stats[:total_games] >= 100
+    end.take(10)
 
     @ranking_type = 'エキスパート週間ランキング'
     @period_description = "第#{today.cweek}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
     @expert_only = true
 
-    @last_week_champion = User.last_week_champion(expert_only: true)
+    # ✅ 統一：同じメソッドを使用
+    @last_week_champion = get_last_week_champion(last_week_start, last_week_end, expert_only: true)
 
-    if @last_week_champion
-      # 先週の期間を計算
-      last_week_start = @start_date - 7.days
-      last_week_end = @end_date - 7.days
-
-      # 先週の統計を計算
-      last_week_wins = @last_week_champion.wins_count_since(last_week_start)
-      last_week_losses = @last_week_champion.losses_count_since(last_week_start)
-      last_week_total = last_week_wins + last_week_losses
-      last_week_rate = last_week_total > 0 ? (last_week_wins.to_f / last_week_total * 100) : 0
-
-      # メソッドを動的に追加
-      @last_week_champion.define_singleton_method(:weekly_wins) { last_week_wins }
-      @last_week_champion.define_singleton_method(:weekly_losses) { last_week_losses }
-      @last_week_champion.define_singleton_method(:weekly_total_games) { last_week_total }
-      @last_week_champion.define_singleton_method(:weekly_win_rate) { last_week_rate }
-    end
-      render :weekly_ranking  # 既存のビューを再利用
+    render :weekly_ranking
   end
 
   private
@@ -239,6 +218,42 @@ class UsersController < ApplicationController
     user.define_singleton_method(:wins_count) { wins }
     user.define_singleton_method(:win_rate) { win_rate }
     user
+  end
+
+  # 先週の王者を取得する統一メソッド
+  def get_last_week_champion(start_date, end_date, expert_only: false)
+    last_week_ranking = User.weekly_ranking(start_date)
+    return nil if last_week_ranking.blank?
+
+    if expert_only
+      last_week_ranking = last_week_ranking.select { |stats| stats[:total_games] >= 100 }
+      return nil if last_week_ranking.blank?
+    end
+
+    champion_stats = last_week_ranking.first
+    return nil unless champion_stats
+
+    # ✅ 安全なユーザー取得
+    user_id = champion_stats[:user_id] || champion_stats['user_id']
+    return nil if user_id.blank?
+
+    begin
+      champion = User.find(user_id)
+    rescue ActiveRecord::RecordNotFound
+      Rails.logger.warn "Champion user not found: #{user_id}"
+      return nil
+    end
+
+    # 統計メソッドの追加
+    champion.define_singleton_method(:weekly_wins) { champion_stats[:wins] || 0 }
+    champion.define_singleton_method(:weekly_losses) { champion_stats[:losses] || 0 }
+    champion.define_singleton_method(:weekly_total_games) { champion_stats[:total_games] || 0 }
+    champion.define_singleton_method(:weekly_win_rate) { champion_stats[:win_rate] || 0.0 }
+
+    champion
+  rescue => e
+    Rails.logger.error "Error in get_last_week_champion: #{e.message}"
+    nil
   end
 
   def set_user
