@@ -172,7 +172,9 @@ class UsersController < ApplicationController
   end
 
   def build_ranking_query(start_date, expert_only)
-    query = User.joins(:battles).group('users.id')
+    # ユーザーが参加した全試合を取得
+    query = User.joins("LEFT JOIN battles ON (battles.user_id = users.id OR battles.opponent_id = users.id)")
+                .where("battles.id IS NOT NULL")
 
     # 期間フィルター
     if start_date
@@ -180,20 +182,23 @@ class UsersController < ApplicationController
       query = query.where(battles: { created_at: start_date..end_date })
     end
 
-    # エキスパートフィルター
+    # グループ化とフィルター
+    query = query.group('users.id')
+
     if expert_only
       query = query.having('COUNT(battles.id) >= 100')
     else
       query = query.having('COUNT(battles.id) > 0')
     end
 
-    # SQLで効率的に統計計算
-    query.select('users.*,
-                  COUNT(battles.id) as weekly_total_games,
-                  SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) as weekly_wins,
-                  (COUNT(battles.id) - SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END)) as weekly_losses,
-                  ROUND((SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) * 100.0 / COUNT(battles.id)), 1) as weekly_win_rate')
-        .order('weekly_win_rate DESC, weekly_total_games DESC')
+    # 統計情報を選択
+    query.select(
+      'users.*, ' \
+      'COUNT(battles.id) as weekly_total_games, ' \
+      'SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) as weekly_wins, ' \
+      '(COUNT(battles.id) - SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END)) as weekly_losses, ' \
+      'ROUND((SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) * 100.0 / COUNT(battles.id)), 1) as weekly_win_rate'
+    ).order('weekly_win_rate DESC, weekly_total_games DESC')
   end
 
   def add_weekly_stats_methods(user)
