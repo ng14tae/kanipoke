@@ -159,59 +159,54 @@ class User < ApplicationRecord
     end.sort_by { |stats| [-stats[:win_rate], -stats[:wins], -stats[:total_games]] }
   end
 
-    def self.last_week_champion(expert_only: false)
-    last_week_start = 1.week.ago.beginning_of_week(:monday)
-    last_week_end = 1.week.ago.end_of_week(:sunday)
+  # Userモデルの修正部分（last_week_championメソッドのみ）
 
-    # 先週にバトルしたユーザーを取得
-    users_with_last_week_battles = User.joins(:battles)
-                                      .where(battles: { created_at: last_week_start..last_week_end })
-                                      .distinct
+def self.last_week_champion(expert_only: false)
+  last_week_start = 1.week.ago.beginning_of_week(:monday)
+  last_week_end = 1.week.ago.end_of_week(:sunday)
 
-    return nil if users_with_last_week_battles.empty?
+  # 先週にバトルしたユーザーを取得し、統計情報も一緒に計算
+  query = User.joins("LEFT JOIN battles ON (battles.user_id = users.id OR battles.opponent_id = users.id)")
+              .where(battles: { created_at: last_week_start..last_week_end })
+              .group('users.id')
+              .having('COUNT(battles.id) > 0')
 
-    # 各ユーザーの先週の成績を計算
-    candidates = users_with_last_week_battles.filter_map do |user|
-      stats = user.send(:calculate_last_week_stats)
-      next if stats[:total_games].zero?
+    # エキスパート限定の場合は全期間での100戦以上のユーザーに限定
+    if expert_only
+      # 全期間での戦績100回以上のユーザーIDを先に取得
+      expert_user_ids = User.joins(:battles)
+                          .group('users.id')
+                          .having('COUNT(battles.id) >= 100')
+                          .pluck(:id)
 
-      # エキスパート限定の場合は100戦以上のユーザーのみ
-      if expert_only
-        next unless user.total_battles_count >= 100
-      end
+      return nil if expert_user_ids.empty?
 
-      win_rate = (stats[:wins].to_f / stats[:total_games] * 100).round(1)
-
-      {
-        user: user,
-        wins: stats[:wins],
-        losses: stats[:losses],
-        total_games: stats[:total_games],
-        win_rate: win_rate
-      }
+      query = query.where(id: expert_user_ids)
     end
 
-    return nil if candidates.empty?
+    # 先週の統計情報を選択
+    candidates = query.select(
+      'users.*, ' \
+      'COUNT(battles.id) as last_week_total_games, ' \
+      'SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) as last_week_wins, ' \
+      '(COUNT(battles.id) - SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END)) as last_week_losses, ' \
+      'ROUND((SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) * 100.0 / COUNT(battles.id)), 1) as last_week_win_rate'
+    ).order('last_week_win_rate DESC, last_week_wins DESC, last_week_total_games DESC')
 
-    # 勝率→勝利数→総試合数の順でソート
-    champion_stats = candidates.sort_by do |stats|
-      [-stats[:win_rate], -stats[:wins], -stats[:total_games]]
-    end.first
+    champion = candidates.first
+    return nil unless champion
 
-    champion = champion_stats[:user]
-
-    # 先週の統計メソッドを動的に追加
-    champion.define_singleton_method(:last_week_wins) { champion_stats[:wins] }
-    champion.define_singleton_method(:last_week_losses) { champion_stats[:losses] }
-    champion.define_singleton_method(:last_week_total_games) { champion_stats[:total_games] }
-    champion.define_singleton_method(:last_week_win_rate) { champion_stats[:win_rate] }
+    # ビューで期待されるメソッド名で動的メソッドを追加
+    champion.define_singleton_method(:last_week_wins) { champion.read_attribute('last_week_wins') || 0 }
+    champion.define_singleton_method(:last_week_losses) { champion.read_attribute('last_week_losses') || 0 }
+    champion.define_singleton_method(:last_week_total_games) { champion.read_attribute('last_week_total_games') || 0 }
+    champion.define_singleton_method(:last_week_win_rate) { champion.read_attribute('last_week_win_rate') || 0.0 }
 
     champion
   rescue => e
     Rails.logger.error "Error in last_week_champion: #{e.message}"
     nil
   end
-
   # === 先週の統計（便利メソッド） ===
 
   def last_week_win_rate
