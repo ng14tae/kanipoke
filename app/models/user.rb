@@ -184,15 +184,11 @@ class User < ApplicationRecord
   end
 
   def last_week_losses
-  last_week_start = 1.week.ago.beginning_of_week(:monday)
-  last_week_end = 1.week.ago.end_of_week(:sunday)
-  losses_count_since(last_week_start) - losses_count_since(last_week_end + 1.day)
+    calculate_last_week_stats[:losses]
   end
 
   def last_week_total_games
-    last_week_start = 1.week.ago.beginning_of_week(:monday)
-    last_week_end = 1.week.ago.end_of_week(:sunday)
-    total_battles_count_since(last_week_start) - total_battles_count_since(last_week_end + 1.day)
+    calculate_last_week_stats[:losses]
   end
 
   private
