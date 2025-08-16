@@ -90,15 +90,6 @@ class UsersController < ApplicationController
     render :ranking # rankingビューを再利用
   end
 
-  def expert?
-    total_battles_count >= 100
-  end
-
-  # 期間指定でのエキスパート判定も追加
-  def expert_since?(start_date)
-    total_battles_count_since(start_date) >= 100
-  end
-
   def expert_weekly_ranking
     today = Date.current
     monday = today.beginning_of_week(:monday)
