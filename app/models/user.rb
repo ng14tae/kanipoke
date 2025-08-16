@@ -225,14 +225,16 @@ class User < ApplicationRecord
     calculate_last_week_stats[:total_games]
   end
 
-
   private
 
   def calculate_last_week_stats
-    # 先週の統計を計算する実装
-    # 例: 先週の月曜日から日曜日までの戦績を集計
-    last_week_start = 1.week.ago.beginning_of_week(:monday)
-    last_week_end = 1.week.ago.end_of_week(:sunday)
+    @last_week_stats ||= begin
+    # 先週の期間を正確に計算（時刻も含めて）
+    last_week_start = 1.week.ago.beginning_of_week(:monday).beginning_of_day
+    last_week_end = 1.week.ago.end_of_week(:sunday).end_of_day
+
+    # デバッグ用ログ（必要に応じて）
+    Rails.logger.info "先週の期間: #{last_week_start} 〜 #{last_week_end}"
 
     # 先週の期間内の戦績を集計
     battles_in_last_week = all_battles.where(created_at: last_week_start..last_week_end)
@@ -242,7 +244,9 @@ class User < ApplicationRecord
     wins = wins_in_last_week.count
     losses = total_games - wins
 
-    # 実際の統計計算ロジックをここに実装
+    # デバッグ用ログ
+    Rails.logger.info "#{name}の先週の戦績: #{wins}勝#{losses}敗（計#{total_games}戦）"
+
     { wins: wins, losses: losses, total_games: total_games }
   end
 end
