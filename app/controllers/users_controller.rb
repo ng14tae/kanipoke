@@ -82,7 +82,7 @@ class UsersController < ApplicationController
     @expert_only = false
 
     #  修正：先週の期間を使って正しく王者を取得
-    @last_week_champion = get_last_week_champion(last_week_start, last_week_end, expert_only: false)
+    @last_week_champion = User.last_week_champion(expert_only: false)
 
     # 統計情報
     @total_users = User.count
@@ -127,7 +127,7 @@ class UsersController < ApplicationController
     @expert_only = true
 
     # ✅ 統一：同じメソッドを使用
-    @last_week_champion = get_last_week_champion(last_week_start, last_week_end, expert_only: true)
+    @last_week_champion = User.last_week_champion(expert_only: false)
 
     render :weekly_ranking
   end
