@@ -65,13 +65,8 @@ class UsersController < ApplicationController
     today = Date.current
     monday_this_week = today.beginning_of_week(:monday)
 
-    # 今週の期間
     @start_date = monday_this_week.beginning_of_day
     @end_date = (monday_this_week + 6.days).end_of_day
-
-    # 先週の期間を明示的に計算
-    last_week_start = @start_date - 7.days
-    last_week_end = @end_date - 7.days
 
     @users = build_ranking_users(@start_date, 10)
     @ranking_type = '週間ランキング'
@@ -81,10 +76,9 @@ class UsersController < ApplicationController
     @update_time = Time.current
     @expert_only = false
 
-    #  修正：先週の期間を使って正しく王者を取得
+    # ✅ 修正：通常ユーザーの先週チャンピオン
     @last_week_champion = User.last_week_champion(expert_only: false)
 
-    # 統計情報
     @total_users = User.count
     @active_users_this_week = @users.count
     @average_battles_this_week = @users.empty? ? 0 : (@users.sum(&:weekly_total_games) / @users.count.to_f).round(1)
@@ -112,10 +106,6 @@ class UsersController < ApplicationController
     @end_date = (monday + 6.days).end_of_day
     @update_time = Time.current
 
-    # 先週の期間を明示的に計算
-    last_week_start = @start_date - 7.days
-    last_week_end = @end_date - 7.days
-
     all_weekly_ranking = User.weekly_ranking(@start_date)
 
     @users = all_weekly_ranking.select do |stats|
@@ -126,8 +116,8 @@ class UsersController < ApplicationController
     @period_description = "第#{today.cweek}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
     @expert_only = true
 
-    # ✅ 統一：同じメソッドを使用
-    @last_week_champion = User.last_week_champion(expert_only: false)
+    # ✅ 修正：エキスパート限定の先週チャンピオン
+    @last_week_champion = User.last_week_champion(expert_only: true)
 
     render :weekly_ranking
   end
