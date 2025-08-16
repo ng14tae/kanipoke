@@ -160,41 +160,64 @@ class User < ApplicationRecord
   end
 
   def self.last_week_champion(expert_only: false)
-    # すべてのユーザーをチェック
-    all_users = User.all
+    # 先週の期間を計算
+    current_week_start = Time.current.beginning_of_week(:monday)
+    last_week_start = current_week_start - 1.week
+    last_week_end = current_week_start - 1.day
 
-    candidates = []
+    Rails.logger.info "先週の期間: #{last_week_start} 〜 #{last_week_end}"
 
-    all_users.each do |user|
-      # エキスパート限定チェック
-      if expert_only && user.total_battles_count < 100
-        next
-      end
+    # 先週のバトル参加者の統計をSQLで一括計算
+    query = <<-SQL
+      SELECT
+        users.*,
+        COALESCE(last_week_battles.total_games, 0) as last_week_total_games,
+        COALESCE(last_week_battles.wins, 0) as last_week_wins,
+        COALESCE(last_week_battles.total_games, 0) - COALESCE(last_week_battles.wins, 0) as last_week_losses,
+        CASE
+          WHEN COALESCE(last_week_battles.total_games, 0) = 0 THEN 0
+          ELSE ROUND(COALESCE(last_week_battles.wins, 0) * 100.0 / COALESCE(last_week_battles.total_games, 0), 1)
+        END as last_week_win_rate
+      FROM users
+      LEFT JOIN (
+        SELECT
+          participant_id,
+          COUNT(*) as total_games,
+          SUM(CASE WHEN winner_id = participant_id THEN 1 ELSE 0 END) as wins
+        FROM (
+          SELECT user_id as participant_id, winner_id FROM battles 
+          WHERE created_at BETWEEN ? AND ? AND user_id IS NOT NULL
+          UNION ALL
+          SELECT opponent_id as participant_id, winner_id FROM battles 
+          WHERE created_at BETWEEN ? AND ? AND opponent_id IS NOT NULL
+        ) participant_battles
+        GROUP BY participant_id
+      ) last_week_battles ON users.id = last_week_battles.participant_id
+    SQL
 
-      # 先週の統計を取得（既存のメソッドを使用）
-      wins = user.last_week_wins
-      losses = user.last_week_losses
-      total_games = user.last_week_total_games
+    base_query = User.find_by_sql([query, last_week_start, last_week_end, last_week_start, last_week_end])
 
-      # 先週にバトルがなかったユーザーはスキップ
-      next if total_games == 0
-
-      win_rate = user.last_week_win_rate
-
-      candidates << {
-        user: user,
-        wins: wins,
-        losses: losses,
-        total_games: total_games,
-        win_rate: win_rate
-      }
+    # エキスパート限定フィルター
+    if expert_only
+      base_query = base_query.select { |user| user.total_battles_count >= 100 }
     end
+
+    # 先週に対戦したユーザーのみフィルター
+    candidates = base_query.select { |user| user.read_attribute('last_week_total_games') > 0 }
 
     return nil if candidates.empty?
 
-    # 勝率でソートして最高のユーザーを選択
-    best_candidate = candidates.max_by { |c| [c[:win_rate], c[:wins], c[:total_games]] }
-    champion = best_candidate[:user]
+    # 勝率順でソート
+    champion = candidates.max_by do |user| 
+      [
+        user.read_attribute('last_week_win_rate'),
+        user.read_attribute('last_week_wins'),
+        user.read_attribute('last_week_total_games')
+      ]
+    end
+
+    # 動的メソッドを追加
+    add_last_week_methods_to_user(champion) if champion
 
     champion
   rescue => e
@@ -226,6 +249,20 @@ class User < ApplicationRecord
   end
 
   private
+
+  def self.add_last_week_methods_to_user(user)
+    total = user.read_attribute('last_week_total_games') || 0
+    wins = user.read_attribute('last_week_wins') || 0
+    losses = user.read_attribute('last_week_losses') || 0
+    win_rate = user.read_attribute('last_week_win_rate') || 0.0
+
+    user.define_singleton_method(:last_week_total_games) { total }
+    user.define_singleton_method(:last_week_wins) { wins }
+    user.define_singleton_method(:last_week_losses) { losses }
+    user.define_singleton_method(:last_week_win_rate) { win_rate }
+
+    user
+  end
 
   def calculate_last_week_stats
     @last_week_stats ||= begin
