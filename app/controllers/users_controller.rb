@@ -106,11 +106,8 @@ class UsersController < ApplicationController
     @end_date = (monday + 6.days).end_of_day
     @update_time = Time.current
 
-    all_weekly_ranking = User.weekly_ranking(@start_date)
-
-    @users = all_weekly_ranking.select do |stats|
-      stats[:total_games] >= 100
-    end.take(10)
+    # ✅ 修正：エキスパート専用の今週ランキングを取得
+    @users = build_ranking_users(@start_date, 20, expert_only: true)
 
     @ranking_type = 'エキスパート週間ランキング'
     @period_description = "第#{today.cweek}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
@@ -175,6 +172,7 @@ class UsersController < ApplicationController
     # グループ化とフィルター
     query = query.group('users.id')
 
+    # ✅ 修正：expert_onlyフラグに基づく条件分岐
     if expert_only
       query = query.having('COUNT(battles.id) >= 100')
     else
