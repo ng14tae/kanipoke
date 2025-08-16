@@ -76,7 +76,7 @@ class UsersController < ApplicationController
     @update_time = Time.current
     @expert_only = false
 
-    # ✅ 修正：通常ユーザーの先週チャンピオン
+    # 修正：通常ユーザーの先週チャンピオン
     @last_week_champion = User.last_week_champion(expert_only: false)
 
     @total_users = User.count
@@ -106,14 +106,14 @@ class UsersController < ApplicationController
     @end_date = (monday + 6.days).end_of_day
     @update_time = Time.current
 
-    # ✅ 修正：エキスパート専用の今週ランキングを取得
+    # 修正：エキスパート専用の今週ランキングを取得
     @users = build_ranking_users(@start_date, 20, expert_only: true)
 
     @ranking_type = 'エキスパート週間ランキング'
     @period_description = "第#{today.cweek}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
     @expert_only = true
 
-    # ✅ 修正：エキスパート限定の先週チャンピオン
+    # 修正：エキスパート限定の先週チャンピオン
     @last_week_champion = User.last_week_champion(expert_only: true)
 
     render :weekly_ranking
@@ -169,12 +169,19 @@ class UsersController < ApplicationController
       query = query.where(battles: { created_at: start_date..end_date })
     end
 
-    # グループ化とフィルター
+    # グループ化
     query = query.group('users.id')
 
-    # ✅ 修正：expert_onlyフラグに基づく条件分岐
+    # expert_onlyフラグに基づく条件分岐
     if expert_only
-      query = query.having('COUNT(battles.id) >= 100')
+      # 全期間での戦績100回以上のユーザーIDを先に取得
+      expert_user_ids = User.joins(:battles)
+                          .group('users.id')
+                          .having('COUNT(battles.id) >= 100')
+                          .pluck(:id)
+
+      query = query.where(id: expert_user_ids) if expert_user_ids.any?
+      query = query.having('COUNT(battles.id) > 0')
     else
       query = query.having('COUNT(battles.id) > 0')
     end
