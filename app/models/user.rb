@@ -160,12 +160,56 @@ class User < ApplicationRecord
   end
 
   def self.last_week_champion(expert_only: false)
-    last_week_start = 1.week.ago.beginning_of_week(:monday)
-    ranking = weekly_ranking(last_week_start)
+  last_week_start = 1.week.ago.beginning_of_week(:monday)
+  last_week_end = 1.week.ago.end_of_week(:sunday)
 
-    ranking = ranking.select { |stats| stats[:user].expert? } if expert_only
+  # 先週にバトルしたユーザーを取得
+  users_with_last_week_battles = User.joins(:battles)
+                                    .where(battles: { created_at: last_week_start..last_week_end })
+                                    .distinct
 
-    ranking.first&.dig(:user)
+  return nil if users_with_last_week_battles.empty?
+
+  # 各ユーザーの先週の成績を計算
+  candidates = users_with_last_week_battles.filter_map do |user|
+    stats = user.send(:calculate_last_week_stats)
+    next if stats[:total_games].zero?
+
+    # エキスパート限定の場合は100戦以上のユーザーのみ
+    if expert_only
+      next unless user.total_battles_count >= 100
+    end
+
+    win_rate = (stats[:wins].to_f / stats[:total_games] * 100).round(1)
+
+    {
+      user: user,
+      wins: stats[:wins],
+      losses: stats[:losses],
+      total_games: stats[:total_games],
+      win_rate: win_rate
+    }
+  end
+
+  return nil if candidates.empty?
+
+  # 勝率→勝利数→総試合数の順でソート
+  champion_stats = candidates.sort_by do |stats|
+    [-stats[:win_rate], -stats[:wins], -stats[:total_games]]
+  end.first
+
+  champion = champion_stats[:user]
+
+  # 先週の統計メソッドを動的に追加
+  champion.define_singleton_method(:last_week_wins) { champion_stats[:wins] }
+  champion.define_singleton_method(:last_week_losses) { champion_stats[:losses] }
+  champion.define_singleton_method(:last_week_total_games) { champion_stats[:total_games] }
+  champion.define_singleton_method(:last_week_win_rate) { champion_stats[:win_rate] }
+
+    champion
+  rescue => e
+    Rails.logger.error "Error in last_week_champion: #{e.message}"
+    nil
   end
 
   # === 先週の統計（便利メソッド） ===
@@ -184,12 +228,13 @@ class User < ApplicationRecord
   end
 
   def last_week_losses
-    calculate_last_week_stats[:losses]
+  calculate_last_week_stats[:losses]
   end
 
   def last_week_total_games
-    calculate_last_week_stats[:losses]
+    calculate_last_week_stats[:total_games]
   end
+
 
   private
 
@@ -201,7 +246,7 @@ class User < ApplicationRecord
 
     # 先週の期間内の戦績を集計
     battles_in_last_week = all_battles.where(created_at: last_week_start..last_week_end)
-    wins_in_last_week = won_battles.where(created_at: last_week_start..last_week_end)
+    wins_in_last_week = battles_in_last_week.where(winner_id: id)
 
     total_games = battles_in_last_week.count
     wins = wins_in_last_week.count
