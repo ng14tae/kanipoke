@@ -218,7 +218,7 @@ class User < ApplicationRecord
   end
 
   def last_week_losses
-  calculate_last_week_stats[:losses]
+    calculate_last_week_stats[:losses]
   end
 
   def last_week_total_games
@@ -229,9 +229,10 @@ class User < ApplicationRecord
 
   def calculate_last_week_stats
     @last_week_stats ||= begin
-      # 先週の期間を正確に計算（時刻も含めて）
-      last_week_start = 1.week.ago.beginning_of_week(:monday).beginning_of_day
-      last_week_end = 1.week.ago.end_of_week(:sunday).end_of_day
+      # 現在の週の月曜日を基準に先週を明確に定義
+      current_week_start = Time.current.beginning_of_week(:monday)
+      last_week_start = current_week_start - 1.week
+      last_week_end = current_week_start - 1.day  # 先週の日曜日の終わり
 
       # デバッグ用ログ（必要に応じて）
       Rails.logger.info "先週の期間: #{last_week_start} 〜 #{last_week_end}"
