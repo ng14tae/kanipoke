@@ -159,52 +159,52 @@ class User < ApplicationRecord
     end.sort_by { |stats| [-stats[:win_rate], -stats[:wins], -stats[:total_games]] }
   end
 
-  def self.last_week_champion(expert_only: false)
-  last_week_start = 1.week.ago.beginning_of_week(:monday)
-  last_week_end = 1.week.ago.end_of_week(:sunday)
+    def self.last_week_champion(expert_only: false)
+    last_week_start = 1.week.ago.beginning_of_week(:monday)
+    last_week_end = 1.week.ago.end_of_week(:sunday)
 
-  # 先週にバトルしたユーザーを取得
-  users_with_last_week_battles = User.joins(:battles)
-                                    .where(battles: { created_at: last_week_start..last_week_end })
-                                    .distinct
+    # 先週にバトルしたユーザーを取得
+    users_with_last_week_battles = User.joins(:battles)
+                                      .where(battles: { created_at: last_week_start..last_week_end })
+                                      .distinct
 
-  return nil if users_with_last_week_battles.empty?
+    return nil if users_with_last_week_battles.empty?
 
-  # 各ユーザーの先週の成績を計算
-  candidates = users_with_last_week_battles.filter_map do |user|
-    stats = user.send(:calculate_last_week_stats)
-    next if stats[:total_games].zero?
+    # 各ユーザーの先週の成績を計算
+    candidates = users_with_last_week_battles.filter_map do |user|
+      stats = user.send(:calculate_last_week_stats)
+      next if stats[:total_games].zero?
 
-    # エキスパート限定の場合は100戦以上のユーザーのみ
-    if expert_only
-      next unless user.total_battles_count >= 100
+      # エキスパート限定の場合は100戦以上のユーザーのみ
+      if expert_only
+        next unless user.total_battles_count >= 100
+      end
+
+      win_rate = (stats[:wins].to_f / stats[:total_games] * 100).round(1)
+
+      {
+        user: user,
+        wins: stats[:wins],
+        losses: stats[:losses],
+        total_games: stats[:total_games],
+        win_rate: win_rate
+      }
     end
 
-    win_rate = (stats[:wins].to_f / stats[:total_games] * 100).round(1)
+    return nil if candidates.empty?
 
-    {
-      user: user,
-      wins: stats[:wins],
-      losses: stats[:losses],
-      total_games: stats[:total_games],
-      win_rate: win_rate
-    }
-  end
+    # 勝率→勝利数→総試合数の順でソート
+    champion_stats = candidates.sort_by do |stats|
+      [-stats[:win_rate], -stats[:wins], -stats[:total_games]]
+    end.first
 
-  return nil if candidates.empty?
+    champion = champion_stats[:user]
 
-  # 勝率→勝利数→総試合数の順でソート
-  champion_stats = candidates.sort_by do |stats|
-    [-stats[:win_rate], -stats[:wins], -stats[:total_games]]
-  end.first
-
-  champion = champion_stats[:user]
-
-  # 先週の統計メソッドを動的に追加
-  champion.define_singleton_method(:last_week_wins) { champion_stats[:wins] }
-  champion.define_singleton_method(:last_week_losses) { champion_stats[:losses] }
-  champion.define_singleton_method(:last_week_total_games) { champion_stats[:total_games] }
-  champion.define_singleton_method(:last_week_win_rate) { champion_stats[:win_rate] }
+    # 先週の統計メソッドを動的に追加
+    champion.define_singleton_method(:last_week_wins) { champion_stats[:wins] }
+    champion.define_singleton_method(:last_week_losses) { champion_stats[:losses] }
+    champion.define_singleton_method(:last_week_total_games) { champion_stats[:total_games] }
+    champion.define_singleton_method(:last_week_win_rate) { champion_stats[:win_rate] }
 
     champion
   rescue => e
