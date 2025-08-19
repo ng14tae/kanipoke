@@ -29,3 +29,6 @@
 
 ▶︎開発秘話note
 https://note.com/mc42d/n/nf0457cbc7b1d?sub_rt=share_pb
+
+▶︎まとめ記事
+https://qiita.com/ng14tae/items/6e6528cc48ca673c6369
