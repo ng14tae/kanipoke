@@ -62,26 +62,20 @@ class UsersController < ApplicationController
   end
 
   def weekly_ranking
-    today = Date.current
-    monday_this_week = today.beginning_of_week(:monday)
-
-    @start_date = monday_this_week.beginning_of_day
-    @end_date = (monday_this_week + 6.days).end_of_day
-
+    @start_date, @end_date = current_week_range  # ← 共通メソッドを使用
     @users = build_ranking_users(@start_date, 10)
-    @ranking_type = '週間ランキング'
 
-    week_number = today.cweek
-    @period_description = "第#{week_number}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
-    @update_time = Time.current
-    @expert_only = false
-
-    # 修正：通常ユーザーの先週チャンピオン
-    @last_week_champion = User.last_week_champion(expert_only: false)
+    last_week_start, last_week_end = last_week_range  # ← 共通メソッドを使用
+    @last_week_champion = User.last_week_champion(
+      expert_only: false,
+      start_date: last_week_start,
+      end_date: last_week_end
+    )
 
     @total_users = User.count
     @active_users_this_week = @users.count
     @average_battles_this_week = @users.empty? ? 0 : (@users.sum(&:weekly_total_games) / @users.count.to_f).round(1)
+    @update_time = Time.zone.now
   end
 
   def experienced_ranking
@@ -91,21 +85,30 @@ class UsersController < ApplicationController
   end
 
   def expert_weekly_ranking
-    today = Date.current
-    monday = today.beginning_of_week(:monday)
-    @start_date = monday.beginning_of_day
-    @end_date = (monday + 6.days).end_of_day
-    @update_time = Time.current
+    # 日本時間での現在日時を取得
+    today = Time.zone.now.to_date
+    monday_this_week = today.beginning_of_week(:monday)
 
-    # 修正：エキスパート専用の今週ランキングを取得
+    # 日本時間での期間設定
+    @start_date = Time.zone.parse("#{monday_this_week} 00:00:00")
+    @end_date = Time.zone.parse("#{monday_this_week + 6.days} 23:59:59")
+    @update_time = Time.zone.now
+
+    # エキスパート専用の今週ランキングを取得
     @users = build_ranking_users(@start_date, 20, expert_only: true)
 
     @ranking_type = 'エキスパート週間ランキング'
     @period_description = "第#{today.cweek}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
     @expert_only = true
 
-    # 修正：エキスパート限定の先週チャンピオン
-    @last_week_champion = User.last_week_champion(expert_only: true)
+    # 先週の期間を正確に設定してエキスパート限定チャンピオン取得
+    last_week_start = Time.zone.parse("#{monday_this_week - 7.days} 00:00:00")
+    last_week_end = Time.zone.parse("#{monday_this_week - 1.day} 23:59:59")
+    @last_week_champion = User.last_week_champion(
+      expert_only: true, 
+      start_date: last_week_start, 
+      end_date: last_week_end
+    )
 
     render :weekly_ranking
   end
@@ -130,7 +133,7 @@ class UsersController < ApplicationController
     User.joins(:battles)
         .group('users.id')
         .having('COUNT(battles.id) >= 100')
-        .select('users.*, 
+        .select('users.*,
                 COUNT(battles.id) as total_battles,
                 SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) as wins_count,
                 ROUND((SUM(CASE WHEN battles.winner_id = users.id THEN 1 ELSE 0 END) * 100.0 / COUNT(battles.id)), 1) as win_rate')
@@ -255,7 +258,19 @@ class UsersController < ApplicationController
     params.require(:user).permit(:first_name, :last_name, :password, :password_confirmation)
   end
 
-  def calculate_win_rate(user)
-    user.win_rate
+  def current_week_range
+    start_date, end_date = User.current_week_range
+    [
+      Time.zone.parse("#{start_date.to_date} 00:00:00"),
+      Time.zone.parse("#{end_date.to_date} 23:59:59")
+    ]
+  end
+
+  def last_week_range
+    start_date, end_date = User.last_week_range
+    [
+      Time.zone.parse("#{start_date.to_date} 00:00:00"),
+      Time.zone.parse("#{end_date.to_date} 23:59:59")
+    ]
   end
 end

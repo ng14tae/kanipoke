@@ -124,7 +124,7 @@ class User < ApplicationRecord
 
   # === 今週の統計（便利メソッド） ===
   def weekly_total_games
-    start_of_week = Time.current.beginning_of_week(:monday)
+    start_of_week = Time.zone.now.beginning_of_week(:monday)  # ← Time.zone.nowに変更
     total_battles_count_since(start_of_week)
   end
 
@@ -144,7 +144,7 @@ class User < ApplicationRecord
   end
 
   # === ランキング関連（大幅簡略化） ===
-  def self.weekly_ranking(week_start = Time.current.beginning_of_week(:monday))
+  def self.weekly_ranking(week_start = Time.zone.now.beginning_of_week(:monday))
     User.all.filter_map do |user|
       total_games = user.total_battles_count_since(week_start)
       next if total_games.zero?
@@ -159,13 +159,13 @@ class User < ApplicationRecord
     end.sort_by { |stats| [-stats[:win_rate], -stats[:wins], -stats[:total_games]] }
   end
 
-  def self.last_week_champion(expert_only: false)
-    # 先週の期間を計算
-    current_week_start = Time.current.beginning_of_week(:monday)
-    last_week_start = current_week_start - 1.week
-    last_week_end = current_week_start - 1.day
+  def self.last_week_champion(expert_only: false, start_date: nil, end_date: nil)
+    # 期間の設定（パラメータ優先、なければデフォルト計算）
+    if start_date.nil? || end_date.nil?
+    start_date, end_date = last_week_range  # ← 新しく作った共通メソッドを使用
+    end
 
-    Rails.logger.info "先週の期間: #{last_week_start} 〜 #{last_week_end}"
+    Rails.logger.info "先週の期間: #{start_date} 〜 #{end_date}"
 
     # 先週のバトル参加者の統計をSQLで一括計算
     query = <<-SQL
@@ -195,7 +195,7 @@ class User < ApplicationRecord
       ) last_week_battles ON users.id = last_week_battles.participant_id
     SQL
 
-    base_query = User.find_by_sql([query, last_week_start, last_week_end, last_week_start, last_week_end])
+    base_query = User.find_by_sql([query, start_date, end_date, start_date, end_date])
 
     # エキスパート限定フィルター
     if expert_only
@@ -266,10 +266,9 @@ class User < ApplicationRecord
 
   def calculate_last_week_stats
     @last_week_stats ||= begin
-      # 現在の週の月曜日を基準に先週を明確に定義
-      current_week_start = Time.current.beginning_of_week(:monday)
-      last_week_start = current_week_start - 1.week
-      last_week_end = current_week_start - 1.day  # 先週の日曜日の終わり
+    current_week_start = Time.zone.now.beginning_of_week(:monday)  # ← Time.zone.nowに変更
+    last_week_start = current_week_start - 1.week
+    last_week_end = current_week_start - 1.day
 
       # デバッグ用ログ（必要に応じて）
       Rails.logger.info "先週の期間: #{last_week_start} 〜 #{last_week_end}"
@@ -287,5 +286,18 @@ class User < ApplicationRecord
 
       { wins: wins, losses: losses, total_games: total_games }
     end
+  end
+
+  def self.current_week_range
+    start_date = Time.zone.now.beginning_of_week(:monday)
+    end_date = start_date.end_of_week
+    [start_date, end_date]
+  end
+
+  def self.last_week_range
+    current_start, _ = current_week_range
+    last_week_start = current_start - 1.week
+    last_week_end = current_start - 1.day
+    [last_week_start, last_week_end]
   end
 end
