@@ -41,8 +41,6 @@ class UsersController < ApplicationController
   end
 
   def show
-    @battles = @user.battles.includes(:user, :opponent).order(created_at: :desc).limit(10)
-    @win_rate = calculate_win_rate(@user)
   end
 
   def edit
