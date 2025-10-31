@@ -62,7 +62,7 @@ gem "rails_admin", "~> 3.3"
 gem "rails_admin-i18n"
 # gem 'devise'
 gem "sorcery"
-gem "tailwindcss-rails", "~> 2.0"
+gem "tailwindcss-rails", "~> 4.4"
 gem "rails-i18n"
 gem 'sassc'
 gem 'meta-tags' # OGP用gem
