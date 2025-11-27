@@ -79,7 +79,7 @@
 
     <!-- モバイル用ボタン（縦並び） -->
     <div class="mobile-buttons" style="display: none; flex-direction: column; align-items: center; gap: 1rem;">
-      <%= link_to "もう一度対戦", new_battle_path(opponent_id: @battle.opponent.id),
+      <%= link_to "もう一度対戦する", new_battle_path(opponent_id: @battle.opponent.id),
             style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: 1.1rem; padding: 1rem 2rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; box-shadow: 0 10px 15px -3px #00000019; transition: all 0.2s ease; transform: translateY(0); width: 80%; max-width: 250px; text-align: center;",
             onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#d97706';",
             onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #00000019'; this.style.borderColor='#eab308';",
