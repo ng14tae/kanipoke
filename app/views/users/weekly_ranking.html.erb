@@ -1,168 +1,110 @@
-    <!-- ランキング切り替えボタン -->
-    <div class="flex justify-center mb-8 space-x-4">
+<div class="flex flex-col items-center px-4 py-8 space-y-6 sm:px-6 lg:px-8">
+  <!-- ランキング切替ボタン -->
+  <div class="flex flex-wrap justify-center gap-4">
     <%= link_to "通常週間ランキング", weekly_ranking_users_path,
-        class: "px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
+        class: "px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
     <%= link_to "エキスパートランキング", expert_weekly_ranking_users_path,
-        class: "px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
-    </div>
+        class: "px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
+  </div>
 
-<div class="container mx-auto px-4 py-8">
-<div class="bg-white bg-opacity-10 rounded-lg shadow-lg p-6">
-    <h1 class="text-4xl font-bold mb-8 text-center">
-    🏆 <%= @ranking_type || '週間ランキング' %>
+  <div class="w-full max-w-4xl bg-white bg-opacity-10 rounded-lg shadow-lg p-6 space-y-6">
+    <h1 class="text-3xl sm:text-4xl font-bold text-center">
+      🏆 <%= @ranking_type || '週間ランキング' %>
     </h1>
 
-    <!-- 先週の王者セクション（新規追加） -->
+    <!-- 先週の王者 -->
     <% if @last_week_champion %>
-        <div class="text-center mb-8">
-        <h3 class="text-2xl font-bold text-gray-900 mb-4">
-            👑 先週の🦀王 👑
-        </h3>
-        <div class="bg-white bg-opacity-20 rounded-lg p-4 inline-block">
-            <p class="text-xl font-bold text-gray-900 mb-2">
-            <%= @last_week_champion.name %>
-            </p>
-            <div class="flex justify-center space-x-4 text-sm text-gray-800">
-            <span class="bg-white bg-opacity-40 px-3 py-1 rounded-full">
-                勝率:  <%= @last_week_champion.last_week_win_rate %>%
-            </span>
-            <span class="bg-white bg-opacity-40 px-3 py-1 rounded-full">
-                <%= @last_week_champion.last_week_wins %>勝
-            </span>
-            <span class="bg-white bg-opacity-40 px-3 py-1 rounded-full">
-                <%= @last_week_champion.last_week_losses %>敗
-            </span>
-            <span class="bg-white bg-opacity-40 px-3 py-1 rounded-full">
-                計<%= @last_week_champion.last_week_total_games %>戦
-            </span>
-            </div>
+      <div class="text-center">
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">👑 先週の🦀王 👑</h3>
+        <div class="bg-white bg-opacity-20 rounded-lg p-4 inline-block space-y-2">
+          <p class="text-xl font-bold text-gray-900"><%= @last_week_champion.name %></p>
+          <div class="flex flex-wrap justify-center gap-2 text-sm text-gray-800">
+            <span class="bg-white bg-opacity-40 px-2 py-1 rounded-full">勝率: <%= @last_week_champion.last_week_win_rate %>%</span>
+            <span class="bg-white bg-opacity-40 px-2 py-1 rounded-full"><%= @last_week_champion.last_week_wins %>勝</span>
+            <span class="bg-white bg-opacity-40 px-2 py-1 rounded-full"><%= @last_week_champion.last_week_losses %>敗</span>
+            <span class="bg-white bg-opacity-40 px-2 py-1 rounded-full">計<%= @last_week_champion.last_week_total_games %>戦</span>
+          </div>
         </div>
-        </div>
+      </div>
     <% end %>
 
-    <!-- 期間表示セクション（シンプル版） -->
-    <div class="text-center mb-8">
-        <p class="text-lg text-yellow-200 font-semibold mb-2">
-            集計期間
-        </p>
-        <p class="text-xl text-white font-medium">
-            <%= @start_date.strftime('%Y年%m月%d日(%a)') %> ～ <%= @end_date.strftime('%Y年%m月%d日(%a)') %>
-        </p>
-        <p class="text-xs text-white mt-2">
-            最終更新: <%= @update_time.strftime('%Y年%m月%d日 %H:%M') %>
-        </p>
+    <!-- 期間表示 -->
+    <div class="text-center space-y-1">
+      <p class="text-lg text-yellow-200 font-semibold">集計期間</p>
+      <p class="text-xl text-white font-medium">
+        <%= @start_date.strftime('%Y年%m月%d日(%a)') %> ～ <%= @end_date.strftime('%Y年%m月%d日(%a)') %>
+      </p>
+      <p class="text-xs text-white mt-1">最終更新: <%= @update_time.strftime('%Y年%m月%d日 %H:%M') %></p>
     </div>
 
-
-    <div class="text-center mb-8">
-        <p class="text-lg md:text-xl lg:text-3xl font-semibold mb-2">
-            今週の🦀王は誰だ……！？
-        </p>
+    <!-- 今週の王 -->
+    <div class="text-center">
+      <p class="text-lg sm:text-xl lg:text-2xl font-semibold">今週の🦀王は誰だ……！?</p>
     </div>
-
 
     <% if @users.any? %>
-    <div class="space-y-4">
+      <div class="space-y-4">
         <% @users.first(10).each_with_index do |user_data, index| %>
-        <% user = user_data.is_a?(Hash) ? user_data[:user] : user_data %>
-        <div class="flex items-center justify-between bg-white bg-opacity-20 rounded-lg p-4 hover:bg-opacity-30 transition-all duration-200">
-            <!-- ランキング順位 -->
-            <div class="flex items-center space-x-4">
-                <div class="text-3xl font-bold min-w-[60px]">
-                    <% case index %>
-                    <% when 0 %>
-                    １位
-                    <% when 1 %>
-                    2位
-                    <% when 2 %>
-                    3位
-                    <% else %>
-                    <span class="text-2xl"><%= index + 1 %>位</span>
-                    <% end %>
-                </div>
+          <% user = user_data.is_a?(Hash) ? user_data[:user] : user_data %>
+          <div class="flex flex-col sm:flex-row items-center justify-between bg-white bg-opacity-20 rounded-lg p-4 hover:bg-opacity-30 transition-all duration-200 space-y-2 sm:space-y-0">
 
-                <!-- ユーザー名 -->
-                <div class="flex-1">
-                    <div class="mb-2">
-                    <% if user.id != current_user.id %>
-                        <%= link_to new_battle_path(opponent_id: user.id),
-                            class: "text-2xl font-semibold hover:text-yellow-300 transition-colors duration-200" do %>
-                            <%= user.display_name %>
-                        <% end %>
-                    <% else %>
-                        <span class="text-2xl font-semibold text-gray-400">
-                            <%= user.display_name %> (あなた)
-                        </span>
-                    <% end %>
-
-                        <!-- エキスパートバッジを追加 -->
-                        <% if user.respond_to?(:expert?) && user.expert? %>
-                            <span class="ml-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-2 py-1 rounded-full text-xs font-bold">
-                                ⚔️ EXPERT
-                            </span>
-                        <% end %>
-                    </div>
-
-                    <!-- 総戦績表示（エキスパートランキングの場合） -->
-                    <% if @expert_only %>
-                        <div class="text-sm text-gray-300 mt-1">
-                            総戦績: <%= user.total_battles_count %>戦
-                        </div>
-                    <% end %>
-                </div>
+            <!-- 順位 & 名前 -->
+            <div class="flex flex-col sm:flex-row items-center sm:space-x-4 w-full sm:w-auto">
+            <div class="text-3xl font-bold min-w-[50px]">
+            <% case index %>
+            <% when 0 %>
+                １位
+            <% when 1 %>
+                2位
+            <% when 2 %>
+                3位
+            <% else %>
+                <span class="text-2xl"><%= index + 1 %>位</span>
+            <% end %>
             </div>
 
-            <!-- 戦績情報（週間限定データ） -->
-            <div class="flex items-center space-x-6 text-lg">
-                <!-- 勝率 -->
-                <div class="text-center">
-                    <div class="text-2xl font-bold">
-                    <%= user_data.is_a?(Hash) ? user_data[:win_rate] : user.weekly_win_rate %>%
-                    </div>
-                    <div class="text-sm text-gray-300">勝率</div>
-                </div>
+              <div class="flex-1 min-w-[120px] text-center sm:text-left">
+                <% if user.id != current_user.id %>
+                  <%= link_to new_battle_path(opponent_id: user.id),
+                      class: "text-xl sm:text-2xl font-semibold hover:text-yellow-300 transition-colors duration-200" do %>
+                    <%= user.display_name %>
+                  <% end %>
+                <% else %>
+                  <span class="text-xl sm:text-2xl font-semibold text-gray-400"><%= user.display_name %> (あなた)</span>
+                <% end %>
 
-                <!-- 勝利数 -->
-                <div class="text-center">
-                    <div class="text-xl font-semibold">
-                    <%= user_data.is_a?(Hash) ? user_data[:wins] : user.weekly_wins %>勝
-                    </div>
-                    <div class="text-sm text-gray-300">勝利</div>
-                </div>
-
-                <!-- 敗北数 -->
-                <div class="text-center">
-                    <div class="text-xl font-semibold">
-                    <%= user_data.is_a?(Hash) ? user_data[:losses] : user.weekly_losses %>敗
-                    </div>
-                    <div class="text-sm text-gray-300">敗北</div>
-                </div>
-
-                <!-- 総試合数 -->
-                <div class="text-center">
-                    <div class="text-xl font-semibold">
-                    <%= user_data.is_a?(Hash) ? user_data[:total_games] : user.weekly_total_games %>試合
-                    </div>
-                    <div class="text-sm text-gray-300">総試合</div>
-                </div>
+                <% if user.respond_to?(:expert?) && user.expert? %>
+                  <span class="ml-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-2 py-1 rounded-full text-xs font-bold">
+                    ⚔️ EXPERT
+                  </span>
+                <% end %>
+              </div>
             </div>
-        </div>
+
+            <!-- 戦績 -->
+            <div class="flex flex-wrap justify-center sm:justify-between space-x-4 sm:space-x-6 text-lg w-full sm:w-auto">
+              <div class="text-center"><div class="text-2xl font-bold"><%= user_data.is_a?(Hash) ? user_data[:win_rate] : user.weekly_win_rate %>%</div><div class="text-sm text-gray-300">勝率</div></div>
+              <div class="text-center"><div class="text-xl font-semibold"><%= user_data.is_a?(Hash) ? user_data[:wins] : user.weekly_wins %>勝</div><div class="text-sm text-gray-300">勝利</div></div>
+              <div class="text-center"><div class="text-xl font-semibold"><%= user_data.is_a?(Hash) ? user_data[:losses] : user.weekly_losses %>敗</div><div class="text-sm text-gray-300">敗北</div></div>
+              <div class="text-center"><div class="text-xl font-semibold"><%= user_data.is_a?(Hash) ? user_data[:total_games] : user.weekly_total_games %>試合</div><div class="text-sm text-gray-300">総試合</div></div>
+            </div>
+
+          </div>
         <% end %>
-    </div>
+      </div>
     <% else %>
-
-        <div class="text-center py-12">
+      <div class="text-center py-12">
         <h2 class="text-2xl font-semibold mb-2">今週の対戦データがありません</h2>
         <p class="text-gray-300 mb-6">今週の対戦を開始してランキングを作成しましょう！</p>
         <%= link_to "対戦を開始", users_index_path,
             class: "px-6 py-3 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 font-semibold" %>
-    </div>
+      </div>
     <% end %>
 
     <!-- 戻るボタン -->
-    <div class="text-center mt-8">
-    <%= link_to "← ホームに戻る", root_path,
-        class: "px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
+    <div class="text-center mt-4">
+      <%= link_to "← ホームに戻る", root_path,
+          class: "px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
     </div>
-</div>
+  </div>
 </div>
