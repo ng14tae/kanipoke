@@ -1,115 +1,66 @@
-<div class="min-h-screen py-12 px-6">
+<div class="min-h-screen py-12 px-4 sm:px-6 lg:px-12">
+  <!-- タイトル -->
   <div class="text-center mt-8">
-  <h1 class="text-2xl font-bold" style=" clamp(1.5rem, 4vw, 2rem);">
-    🎮🦀 結果発表 🦀🎮
-  </h1>
+    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold">
+      🎮🦀 結果発表 🦀🎮
+    </h1>
   </div>
 
-  <div class="battle-cards-reveal my-8">
-    <!-- デスクトップ用レイアウト -->
-    <div class="desktop-layout" style="display: flex; justify-content: space-around; align-items: center;">
-      <!-- プレイヤーのカード（公開） -->
-      <div class="player-card-section text-center" style="flex: 1; min-width: 0;">
-        <h3 style="font-size: clamp(0.875rem, 3vw, 1.125rem); margin-bottom: 1rem;"><%= @battle.user.display_name || @battle.user.name %></h3>
-        <!-- 実際のカード画像を表示 -->
-        <%= card_image_tag(@battle.user_card, class: "revealed-card", style: "margin: 0 auto; display: block; max-width: 120px; width: 100%; height: auto;") %>
-        <p class="card-number text-lg font-bold mt-2" style="font-size: clamp(0.875rem, 3vw, 1.125rem);">カード: <%= @battle.user_card %></p>
-      </div>
-
-      <div class="vs-section text-center" style="flex: 0 0 auto; margin: 0 1rem;">
-        <h2 class="text-4xl font-bold" style="color:font-size: clamp(2rem, 6vw, 3rem);">VS</h2>
-      </div>
-
-      <!-- 対戦相手のカード（公開） -->
-      <div class="opponent-card-section text-center" style="flex: 1; min-width: 0;">
-        <h3 style="font-size: clamp(0.875rem, 3vw, 1.125rem); margin-bottom: 1rem;"><%= @battle.opponent.display_name || @battle.opponent.name %></h3>
-        <!-- 実際のカード画像を表示 -->
-        <%= card_image_tag(@battle.opponent_card, class: "revealed-card", style: "margin: 0 auto; display: block; max-width: 120px; width: 100%; height: auto;") %>
-        <p class="card-number text-lg font-bold mt-2" style="font-size: clamp(0.875rem, 3vw, 1.125rem);">カード: <%= @battle.opponent_card %></p>
-      </div>
+  <!-- カード比較セクション（横スクロールなし） -->
+  <div class="battle-cards-reveal my-8 flex flex-row items-center justify-center gap-4 flex-wrap md:flex-nowrap">
+    <!-- プレイヤーカード -->
+    <div class="player-card-section text-center flex-1 min-w-0 max-w-[150px] sm:max-w-[180px]">
+      <h3 class="text-lg sm:text-xl font-medium mb-2 truncate">
+        <%= @battle.user.display_name || @battle.user.name %>
+      </h3>
+      <%= card_image_tag(@battle.user_card, class: "mx-auto w-full h-auto") %>
+      <p class="text-base sm:text-lg font-bold mt-2">カード: <%= @battle.user_card %></p>
     </div>
 
-    <!-- モバイル用レイアウト（768px以下で表示） -->
-    <div class="mobile-layout" style="display: none;">
-      <!-- プレイヤーのカード（上部） -->
-      <div class="player-card-section text-center" style="margin-bottom: 2rem;">
-        <h3 style="font-size: 1rem; margin-bottom: 1rem;"><%= @battle.user.display_name || @battle.user.name %></h3>
-        <%= card_image_tag(@battle.user_card, class: "revealed-card", style: "margin: 0 auto; display: block; max-width: 100px; width: 100%; height: auto;") %>
-        <p class="card-number text-lg font-bold mt-2" style="font-size: 1rem;">カード: <%= @battle.user_card %></p>
-      </div>
+    <!-- VS表示 -->
+    <div class="vs-section text-center flex-shrink-0 px-2">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold">VS</h2>
+    </div>
 
-      <!-- VS表示（中央） -->
-      <div class="vs-section text-center" style="margin: 1.5rem 0;">
-        <h2 class="text-4xl font-bold" style="font-size: 2rem;">結果</h2>
-      </div>
-
-      <!-- 対戦相手のカード（下部） -->
-      <div class="opponent-card-section text-center">
-        <h3 style="font-size: 1rem; margin-bottom: 1rem;"><%= @battle.opponent.display_name || @battle.opponent.name %></h3>
-        <%= card_image_tag(@battle.opponent_card, class: "revealed-card", style: "margin: 0 auto; display: block; max-width: 100px; width: 100%; height: auto;") %>
-        <p class="card-number text-lg font-bold mt-2" style="font-size: 1rem;">カード: <%= @battle.opponent_card %></p>
-      </div>
+    <!-- 相手カード -->
+    <div class="opponent-card-section text-center flex-1 min-w-0 max-w-[150px] sm:max-w-[180px]">
+      <h3 class="text-lg sm:text-xl font-medium mb-2 truncate">
+        <%= @battle.opponent.display_name || @battle.opponent.name %>
+      </h3>
+      <%= card_image_tag(@battle.opponent_card, class: "mx-auto w-full h-auto") %>
+      <p class="text-base sm:text-lg font-bold mt-2">カード: <%= @battle.opponent_card %></p>
     </div>
   </div>
 
   <!-- 勝敗結果 -->
   <div class="battle-result text-center my-8">
     <% winner = User.find(@battle.winner_id) %>
-    <h2 class="text-3xl font-bold" style="font-size: clamp(1.5rem, 4vw, 2rem);">
+    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold">
       🎉 <%= winner.display_name || winner.name %> の勝利！ 🎉
     </h2>
 
-    <div style="text-align: center; margin-top: 1.5rem;">
-    <br>
-    <!-- デスクトップ用ボタン（横並び） -->
-    <div class="desktop-buttons" style="display: inline-block;">
+    <!-- アクションボタン -->
+    <div class="mt-6 flex flex-col md:flex-row justify-center items-center gap-4">
       <%= link_to "もう一度対戦", new_battle_path(opponent_id: @battle.opponent.id),
-            style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: clamp(1rem, 3vw, 1.25rem); padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; box-shadow: 0 10px 15px -3px #00000019; transition: all 0.2s ease; transform: translateY(0); margin-right: 1rem; ",
-            onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#d97706';",
-            onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #00000019'; this.style.borderColor='#eab308';",
-            onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
-            onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';" %>
+            class: "px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-lg shadow-md hover:bg-yellow-500 transform hover:-translate-y-1 transition-all max-w-[180px] w-full text-center" %>
+
       <%= link_to "対戦相手一覧に戻る", users_path,
-            style: "display: inline-block; background-color: #6b7280; color: #ffffff; font-weight: 900; font-size: clamp(1rem, 3vw, 1.25rem); padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #4b5563; box-shadow: 0 10px 15px -3px #00000019; transition: all 0.2s ease; transform: translateY(0);",
-            onmouseover: "this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#374151';",
-            onmouseout: "this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #00000019'; this.style.borderColor='#4b5563';",
-            onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
-            onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';" %>
+            class: "px-4 py-2 bg-gray-600 text-white font-bold rounded-lg shadow-md hover:bg-gray-700 transform hover:-translate-y-1 transition-all max-w-[180px] w-full text-center" %>
     </div>
 
-    <!-- モバイル用ボタン（縦並び） -->
-    <div class="mobile-buttons" style="display: none; flex-direction: column; align-items: center; gap: 1rem;">
-      <%= link_to "もう一度対戦する", new_battle_path(opponent_id: @battle.opponent.id),
-            style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: 1.1rem; padding: 1rem 2rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; box-shadow: 0 10px 15px -3px #00000019; transition: all 0.2s ease; transform: translateY(0); width: 80%; max-width: 250px; text-align: center;",
-            onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#d97706';",
-            onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #00000019'; this.style.borderColor='#eab308';",
-            onmousedown: "this.style.transform='translateY(-1px) scale(0.98)';",
-            onmouseup: "this.style.transform='translateY(-2px) scale(1.02)';" %><br><br>
-      <%= link_to "対戦相手一覧に戻る", users_path,
-            style: "display: inline-block; background-color: #6b7280; color: #ffffff; font-weight: 900; font-size: 1.1rem; padding: 1rem 2rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #4b5563; box-shadow: 0 10px 15px -3px #00000019; transition: all 0.2s ease; transform: translateY(0); width: 80%; max-width: 250px; text-align: center;",
-            onmouseover: "this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#374151';",
-            onmouseout: "this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #00000019'; this.style.borderColor='#4b5563';",
-            onmousedown: "this.style.transform='translateY(-1px) scale(0.98)';",
-            onmouseup: "this.style.transform='translateY(-2px) scale(1.02)';" %>
+    <!-- Twitterシェア -->
+    <div class="mt-6 text-center">
+      <%= link_to "https://twitter.com/intent/tweet?text=#{CGI.escape(battle_share_text(@battle))}&url=#{CGI.escape(root_url)}",
+            target: "_blank",
+            rel: "noopener noreferrer",
+            class: "inline-flex items-center justify-center px-4 py-2 bg-black text-white font-bold rounded-lg shadow hover:bg-gray-800 transition max-w-[180px] w-full mx-auto" do %>
+
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+
+        <span>結果をシェア</span>
+      <% end %>
     </div>
-    </div>
-  </div>
-
-  <br>
-  <div style="text-align: center; margin-top: 1.5rem;">
-    <%= link_to "https://twitter.com/intent/tweet?text=#{CGI.escape(battle_share_text(@battle))}&url=#{CGI.escape(root_url)}",
-      target: "_blank", rel: "noopener noreferrer",
-      style: "display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background-color: #000000; color: #ffffff; font-weight: 700; font-size: clamp(0.9rem, 2.5vw, 1rem); border-radius: 0.75rem; text-decoration: none; transition: all 0.2s ease; transform: translateY(0); box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000d; border: 2px solid #374151; max-width: 300px;",
-      onmouseover: "this.style.backgroundColor='#1f2937'; this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000d'; this.style.borderColor='#4b5563';",
-      onmouseout: "this.style.backgroundColor='#000000'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000d'; this.style.borderColor='#374151';",
-      onmousedown: "this.style.transform='translateY(-1px) scale(0.98)';",
-      onmouseup: "this.style.transform='translateY(-2px) scale(1.02)';" do %>
-
-      <svg style="width: 1.25rem; height: 1.25rem; margin-right: 0.75rem; flex-shrink: 0;" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.80l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-      </svg>
-
-      <p style="margin: 0; font-size: clamp(0.9rem, 2.5vw, 1rem); font-weight: 700;">対戦結果をシェアする</p>
-    <% end %>
   </div>
 </div>
