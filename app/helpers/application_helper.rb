@@ -76,4 +76,25 @@ module ApplicationHelper
   def form_label_classes
     "block text-xs sm:text-sm font-medium text-gray-700 mb-1"
   end
+
+  # ユーザーカードの共通クラス
+  def user_card_classes
+    "bg-white bg-opacity-10 backdrop-blur-sm rounded-xl border-2 border-yellow-300 border-opacity-50 shadow-lg p-6 sm:p-10 transition-all duration-300 hover:shadow-2xl hover:scale-105"
+  end
+
+  # ソートボタンの共通クラス
+  def sort_button_classes(active: false)
+    base = "px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200"
+    active ? "#{base} bg-yellow-400 text-blue-900" : "#{base} bg-gray-700 text-white hover:bg-gray-600"
+  end
+
+  # ランキングバッジ
+  def ranking_badge(index)
+    case index
+    when 0 then "🥇 1位"
+    when 1 then "🥈 2位"
+    when 2 then "🥉 3位"
+    else "#{index + 1}位"
+    end
+  end
 end

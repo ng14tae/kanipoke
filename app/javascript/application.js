@@ -2,6 +2,7 @@
 import "@hotwired/turbo-rails"
 import "./controllers"
 import "./scroll_position"
+import "./users_index_scroll"
 
 if ('serviceWorker' in navigator) {
 window.addEventListener('load', () => {
