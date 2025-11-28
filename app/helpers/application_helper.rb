@@ -43,4 +43,37 @@ module ApplicationHelper
       content_tag(:span, "?", class: "text-4xl text-gray-500 font-bold")
     end
   end
+
+  def button_classes(type: :primary, size: :medium)
+    base = "inline-block font-black rounded-lg border-2 shadow-lg transition-all duration-200 transform hover:-translate-y-1 hover:scale-105 hover:shadow-2xl active:translate-y-0 active:scale-98"
+
+    size_classes = case size
+    when :small
+      "text-sm px-4 py-2 min-w-[100px]"
+    when :medium
+      "text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-3.5 min-w-[120px]"
+    when :large
+      "text-lg sm:text-xl px-8 sm:px-10 py-4 sm:py-5 min-w-[140px]"
+    end
+
+    color_classes = case type
+    when :primary
+      "bg-yellow-400 text-blue-900 border-yellow-500 hover:bg-orange-500 hover:border-orange-600"
+    when :secondary
+      "bg-gray-500 text-white border-gray-600 hover:bg-gray-600 hover:border-gray-700"
+    when :danger
+      "bg-red-500 text-white border-red-600 hover:bg-red-600 hover:border-red-700"
+    end
+
+    "#{base} #{size_classes} #{color_classes}"
+  end
+
+  def form_input_classes
+    "w-4/5 max-w-[200px] mx-auto block px-3 py-2 sm:py-2.5 border-2 border-gray-300 rounded-md text-sm sm:text-base text-gray-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+  end
+
+  # フォームラベルの共通クラス
+  def form_label_classes
+    "block text-xs sm:text-sm font-medium text-gray-700 mb-1"
+  end
 end

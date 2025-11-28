@@ -1,6 +1,6 @@
 <div class="min-h-screen py-12 px-6">
   <div class="text-center mt-8">
-    <h1 class="text-2xl font-bold" style=" clamp(1.5rem, 4vw, 2rem);">
+    <h1 class="text-xl sm:text-2xl font-bold">
       🎮🦀 勝負 🦀🎮
     </h1>
   </div>
@@ -8,61 +8,52 @@
   <div id="battle-arena">
     <div class="battle-cards-reveal my-8">
       <!-- デスクトップ用レイアウト -->
-      <div style="display: flex; justify-content: space-around; align-items: center;">
+      <div class="hidden md:flex justify-around items-center gap-4">
         <!-- プレイヤーのカード（非公開） -->
-        <div class="player-card-section text-center" style="flex: 1; min-width: 0;">
-          <h3 style=" font-size: clamp(0.875rem, 3vw, 1.125rem); margin-bottom: 1rem;"><%= current_user.display_name || current_user.name %></h3>
-          <!-- 裏カード画像 -->
-          <%= card_image_tag(0, class: "hidden-card", style: "margin: 0 auto; display: block; max-width: 120px; width: 100%; height: auto;") %>
-          <p class="text-sm mt-2" style=" font-size: clamp(0.75rem, 2.5vw, 0.875rem);">(自分の手札は見えません)</p>
+        <div class="player-card-section text-center flex-1 min-w-0">
+          <h3 class="text-sm sm:text-base mb-4"><%= current_user.display_name %></h3>
+          <%= card_image_tag(0, class: "mx-auto block max-w-[120px] w-full h-auto") %>
+          <p class="text-xs sm:text-sm mt-2">(自分の手札は見えません)</p>
         </div>
 
         <!-- VS表示 -->
-        <div class="vs-section text-center" style="flex: 0 0 auto; margin: 0 1rem;">
-          <h2 class="text-4xl font-bold" style="font-size: clamp(2rem, 6vw, 3rem);">VS</h2>
+        <div class="vs-section text-center flex-shrink-0 mx-4">
+          <h2 class="text-4xl sm:text-5xl font-bold">VS</h2>
         </div>
 
         <!-- 対戦相手のカード（公開） -->
-        <div class="opponent-card-section text-center" style="flex: 1; min-width: 0;">
-          <h3 style="font-size: clamp(0.875rem, 3vw, 1.125rem); margin-bottom: 1rem;"><%= @opponent.display_name || @opponent.name %></h3>
-          <%= card_image_tag(@opponent_card, class: "revealed-card", style: "margin: 0 auto; display: block; max-width: 120px; width: 100%; height: auto;") %>
-          <p class="card-number text-lg font-bold mt-2" style="font-size: clamp(0.875rem, 3vw, 1.125rem);">カード: <%= @opponent_card %></p>
+        <div class="opponent-card-section text-center flex-1 min-w-0">
+          <h3 class="text-sm sm:text-base mb-4"><%= @opponent.display_name %></h3>
+          <%= card_image_tag(@opponent_card, class: "mx-auto block max-w-[120px] w-full h-auto") %>
+          <p class="text-sm sm:text-base font-bold mt-2">カード: <%= @opponent_card %></p>
         </div>
       </div>
 
-      <!-- モバイル用レイアウト（768px以下で表示） -->
-      <div style="display: none;">
-        <style>
-          @media (max-width: 768px) {
-            .desktop-layout { display: none !important; }
-            .mobile-layout { display: block !important; }
-          }
-        </style>
-        <div class="mobile-layout" style="display: none;">
-          <!-- 対戦相手のカード（上部） -->
-          <div class="opponent-card-section text-center" style="margin-bottom: 2rem;">
-            <h3 style="font-size: 1rem; margin-bottom: 1rem;"><%= @opponent.display_name || @opponent.name %></h3>
-            <%= card_image_tag(@opponent_card, class: "revealed-card", style: "margin: 0 auto; display: block; max-width: 100px; width: 100%; height: auto;") %>
-            <p class="card-number text-lg font-bold mt-2" style="font-size: 1rem;">カード: <%= @opponent_card %></p>
-          </div>
+      <!-- モバイル用レイアウト -->
+      <div class="md:hidden space-y-6">
+        <!-- 対戦相手のカード（上部） -->
+        <div class="opponent-card-section text-center">
+          <h3 class="text-base mb-4"><%= @opponent.display_name %></h3>
+          <%= card_image_tag(@opponent_card, class: "mx-auto block max-w-[100px] w-full h-auto") %>
+          <p class="text-base font-bold mt-2">カード: <%= @opponent_card %></p>
+        </div>
 
-          <!-- VS表示（中央） -->
-          <div class="vs-section text-center" style="margin: 1.5rem 0;">
-            <h2 class="text-4xl font-bold" style="font-size: 2rem;">VS</h2>
-          </div>
+        <!-- VS表示（中央） -->
+        <div class="vs-section text-center my-6">
+          <h2 class="text-3xl font-bold">VS</h2>
+        </div>
 
-          <!-- プレイヤーのカード（下部） -->
-          <div class="player-card-section text-center">
-            <h3 style="font-size: 1rem; margin-bottom: 1rem;"><%= current_user.display_name || current_user.name %></h3>
-            <%= card_image_tag(0, class: "hidden-card", style: "margin: 0 auto; display: block; max-width: 100px; width: 100%; height: auto;") %>
-            <p class="text-sm mt-2" style="font-size: 0.875rem;">(自分の手札は見えません)</p>
-          </div>
+        <!-- プレイヤーのカード（下部） -->
+        <div class="player-card-section text-center">
+          <h3 class="text-base mb-4"><%= current_user.display_name %></h3>
+          <%= card_image_tag(0, class: "mx-auto block max-w-[100px] w-full h-auto") %>
+          <p class="text-sm mt-2">(自分の手札は見えません)</p>
         </div>
       </div>
     </div>
 
     <div class="game-info">
-      <p style="font-size: clamp(1rem, 3vw, 1.1rem); margin-bottom: 1.5rem; text-align: center; line-height: 1.5;">
+      <p class="text-base sm:text-lg mb-6 text-center leading-relaxed">
         カードが配られました！<br>「勝負！」ボタンを押して結果を見ましょう
       </p>
     </div>
@@ -72,52 +63,15 @@
       <%= f.hidden_field :user_card, value: @user_card %>
       <%= f.hidden_field :opponent_card, value: @opponent_card %>
 
-      <div class="actions">
-        <div style="text-align: center; margin-top: 1.5rem;">
-          <!-- デスクトップ用ボタン（横並び） -->
-          <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-            <%= f.submit "勝負！",
-                style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: clamp(1rem, 3vw, 1.25rem); padding: 0.875rem 2rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; box-shadow: 0 10px 15px -3px #0000001a; transition: all 0.2s ease; transform: translateY(0); cursor: pointer; min-width: 120px; margin: 0.5rem;",
-                onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#d97706';",
-                onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #0000001a'; this.style.borderColor='#eab308';",
-                onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
-                onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';" %>
-            <%= link_to "降りる", users_path,
-                style: "display: inline-block; background-color: #6b7280; color: #ffffff; font-weight: 900; font-size: clamp(1rem, 3vw, 1.25rem); padding: 0.875rem 2rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #4b5563; box-shadow: 0 10px 15px -3px #0000001a; transition: all 0.2s ease; transform: translateY(0); min-width: 120px; margin: 0.5rem;",
-                onmouseover: "this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#374151';",
-                onmouseout: "this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #0000001a'; this.style.borderColor='#4b5563';",
-                onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
-                onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';",
-                confirm: "本当に降りますか？" %>
-            <%= link_to "再戦", new_battle_path(opponent_id: @opponent.id),
-                data: { turbo: false },
-                style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: clamp(1rem, 3vw, 1.25rem); padding: 0.875rem 2rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; box-shadow: 0 10px 15px -3px #0000001a; transition: all 0.2s ease; transform: translateY(0); cursor: pointer; min-width: 120px; margin: 0.5rem;",
-                onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#d97706';",
-                onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #0000001a'; this.style.borderColor='#eab308';",
-                onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
-                onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';" %>
-
-                <!-- 追加：スクロール位置記憶の確実化 -->
-                  <script>
-                  document.addEventListener('DOMContentLoaded', function() {
-                    // 「降りる」リンクを取得
-                    const foldLinks = document.querySelectorAll('a[href*="users"]');
-
-                    foldLinks.forEach(link => {
-                      link.addEventListener('click', function(e) {
-                        // 現在保存されているスクロール位置を確認
-                        const currentScrollPos = localStorage.getItem('usersIndexScrollPos');
-                        console.log('現在保存されているスクロール位置:', currentScrollPos);
-
-                        // もしスクロール位置が保存されていなければ、デフォルト値を設定
-                        if (!currentScrollPos) {
-                          localStorage.setItem('usersIndexScrollPos', '0');
-                        }
-                      });
-                    });
-                  });
-                  </script>
-          </div>
+      <div class="text-center mt-6">
+        <div class="flex justify-center gap-4 flex-wrap">
+          <%= f.submit "勝負！", class: button_classes(type: :primary) %>
+          <%= link_to "降りる", users_path,
+              class: button_classes(type: :secondary),
+              data: { turbo_confirm: "本当に降りますか？" } %>
+          <%= link_to "再戦", new_battle_path(opponent_id: @opponent.id),
+              class: button_classes(type: :primary),
+              data: { turbo: false } %>
         </div>
       </div>
     <% end %>
