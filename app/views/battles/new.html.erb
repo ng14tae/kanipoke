@@ -1,5 +1,5 @@
 <div class="min-h-screen py-12 px-6">
-  <div class="text-center mt-8">
+  <div class="text-center mt-1">
     <h1 class="text-xl sm:text-2xl font-bold">
       🎮🦀 勝負 🦀🎮
     </h1>
@@ -7,13 +7,13 @@
 
   <div id="battle-arena">
     <div class="battle-cards-reveal my-8">
-      <!-- デスクトップ用レイアウト -->
-      <div class="hidden md:flex justify-around items-center gap-4">
-        <!-- プレイヤーのカード（非公開） -->
+      <!-- 常に左右並びで表示 -->
+      <div class="flex justify-around items-center gap-4">
+        <!-- プレイヤーのカード -->
         <div class="player-card-section text-center flex-1 min-w-0">
           <h3 class="text-sm sm:text-base mb-4"><%= current_user.display_name %></h3>
           <%= card_image_tag(0, class: "mx-auto block max-w-[120px] w-full h-auto") %>
-          <p class="text-xs sm:text-sm mt-2">(自分の手札は見えません)</p>
+          <p class="text-xs sm:text-sm mt-2">カード：？</p>
         </div>
 
         <!-- VS表示 -->
@@ -21,33 +21,11 @@
           <h2 class="text-4xl sm:text-5xl font-bold">VS</h2>
         </div>
 
-        <!-- 対戦相手のカード（公開） -->
+        <!-- 対戦相手のカード -->
         <div class="opponent-card-section text-center flex-1 min-w-0">
           <h3 class="text-sm sm:text-base mb-4"><%= @opponent.display_name %></h3>
           <%= card_image_tag(@opponent_card, class: "mx-auto block max-w-[120px] w-full h-auto") %>
           <p class="text-sm sm:text-base font-bold mt-2">カード: <%= @opponent_card %></p>
-        </div>
-      </div>
-
-      <!-- モバイル用レイアウト -->
-      <div class="md:hidden space-y-6">
-        <!-- 対戦相手のカード（上部） -->
-        <div class="opponent-card-section text-center">
-          <h3 class="text-base mb-4"><%= @opponent.display_name %></h3>
-          <%= card_image_tag(@opponent_card, class: "mx-auto block max-w-[100px] w-full h-auto") %>
-          <p class="text-base font-bold mt-2">カード: <%= @opponent_card %></p>
-        </div>
-
-        <!-- VS表示（中央） -->
-        <div class="vs-section text-center my-6">
-          <h2 class="text-3xl font-bold">VS</h2>
-        </div>
-
-        <!-- プレイヤーのカード（下部） -->
-        <div class="player-card-section text-center">
-          <h3 class="text-base mb-4"><%= current_user.display_name %></h3>
-          <%= card_image_tag(0, class: "mx-auto block max-w-[100px] w-full h-auto") %>
-          <p class="text-sm mt-2">(自分の手札は見えません)</p>
         </div>
       </div>
     </div>
