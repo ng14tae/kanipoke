@@ -1,13 +1,8 @@
 <div class="min-h-screen py-12 px-6">
-  <!-- ロゴ -->
-  <div class="text-center mb-8">
-    <%= image_tag "logo.png", class: "mx-auto max-w-sm" %>
-  </div>
-
   <div class="container mx-auto max-w-4xl px-4 sm:px-8">
     <!-- 自分の戦歴 -->
       <div class="mb-8">
-        <h2 class="text-2xl sm:text-3xl font-bold mb-4">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-center md:text-left">
           <%= current_user.display_name %>の戦歴
         </h2>
 
@@ -36,18 +31,20 @@
       </div>
 
     <!-- ソート切り替えボタン -->
-    <div class="text-center mb-8">
-      <div class="inline-flex gap-2 bg-white bg-opacity-10 p-2 rounded-xl border-2 border-yellow-300 border-opacity-50 flex-wrap justify-center">
-        <%= link_to "登録順", users_path,
-            class: sort_button_classes(active: params[:sort].blank?) %>
-        <%= link_to "エキスパート", users_path(sort: 'experienced_ranking'),
-            class: sort_button_classes(active: params[:sort] == 'experienced_ranking') %>
-      </div>
-
-      <p class="mt-4 text-base text-gray-300">
-        現在の表示: <span class="text-yellow-400 font-bold"><%= @sort_type %></span>
-      </p>
+<div class="text-center mb-8">
+  <div class="w-full max-w-2xl mx-auto">
+    <div class="flex border-b-2 border-white border-opacity-20">
+      <%= link_to "登録順", users_path,
+          class: "flex-1 text-center px-6 py-4 font-semibold transition-all duration-200 #{params[:sort].blank? ? 'bg-white bg-opacity-20 text-yellow-300 border-b-4 border-yellow-400' : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10'}" %>
+      <%= link_to "エキスパート", users_path(sort: 'experienced_ranking'),
+          class: "flex-1 text-center px-6 py-4 font-semibold transition-all duration-200 #{params[:sort] == 'experienced_ranking' ? 'bg-white bg-opacity-20 text-yellow-300 border-b-4 border-yellow-400' : 'text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10'}" %>
     </div>
+  </div>
+
+  <p class="mt-4 text-base text-gray-300">
+    現在の表示: <span class="text-yellow-400 font-bold"><%= @sort_type %></span>
+  </p>
+</div>
 
     <!-- プレイヤー一覧 -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">

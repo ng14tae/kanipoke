@@ -95,7 +95,7 @@ class UsersController < ApplicationController
     # エキスパート専用の今週ランキングを取得
     @users = build_ranking_users(@start_date, 20, expert_only: true)
 
-    @ranking_type = 'エキスパート週間ランキング'
+    @ranking_type = 'エキスパート'
     @period_description = "第#{today.cweek}週（#{@start_date.strftime('%m/%d')}〜#{@end_date.strftime('%m/%d')}）"
     @expert_only = true
 
@@ -150,33 +150,46 @@ class UsersController < ApplicationController
     end
   end
 
-  def build_ranking_query(start_date, expert_only)
-    # ユーザーが参加した全試合を取得
-    query = User.joins("LEFT JOIN battles ON (battles.user_id = users.id OR battles.opponent_id = users.id)")
-                .where("battles.id IS NOT NULL")
+def build_ranking_query(start_date, expert_only)
+  # ユーザーが参加した全試合を取得
+  query = User.joins("LEFT JOIN battles ON (battles.user_id = users.id OR battles.opponent_id = users.id)")
+              .where("battles.id IS NOT NULL")
 
-    # 期間フィルター
-    if start_date
-      end_date = start_date.end_of_week(:monday).end_of_day
-      query = query.where(battles: { created_at: start_date..end_date })
+  # 期間フィルター（週間ランキングの場合）
+  if start_date
+    end_date = start_date.end_of_week(:monday).end_of_day
+    query = query.where(battles: { created_at: start_date..end_date })
+  end
+
+  # グループ化
+  query = query.group('users.id')
+
+  # エキスパートのみに絞り込む（全期間100戦以上）
+  if expert_only
+    # SQLで直接100戦以上を判定（確実な方法）
+    expert_ids = ActiveRecord::Base.connection.execute(<<-SQL
+      SELECT users.id
+      FROM users
+      WHERE (
+        SELECT COUNT(*)
+        FROM battles
+        WHERE battles.user_id = users.id OR battles.opponent_id = users.id
+      ) >= 100
+    SQL
+    ).map { |row| row['id'] }
+
+    Rails.logger.info "🔍 Expert user IDs (100+ battles): #{expert_ids.inspect}"
+
+      if expert_ids.any?
+        query = query.where('users.id IN (?)', expert_ids)
+      else
+        # エキスパートが0人の場合は空結果
+        return User.none
+      end
     end
 
-    # グループ化
-    query = query.group('users.id')
-
-    # expert_onlyフラグに基づく条件分岐
-    if expert_only
-      # 全期間での戦績100回以上のユーザーIDを先に取得
-      expert_user_ids = User.joins(:battles)
-                          .group('users.id')
-                          .having('COUNT(battles.id) >= 100')
-                          .pluck(:id)
-
-      query = query.where(id: expert_user_ids) if expert_user_ids.any?
-      query = query.having('COUNT(battles.id) > 0')
-    else
-      query = query.having('COUNT(battles.id) > 0')
-    end
+    # 今週の戦績がある人のみ
+    query = query.having('COUNT(battles.id) > 0')
 
     # 統計情報を選択
     query.select(

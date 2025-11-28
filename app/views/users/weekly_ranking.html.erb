@@ -1,24 +1,27 @@
-<div class="flex flex-col items-center px-4 py-8 space-y-6 sm:px-6 lg:px-8">
-  <!-- ランキング切替ボタン -->
-  <div class="flex flex-wrap justify-center gap-4">
-    <%= link_to "通常週間ランキング", weekly_ranking_users_path,
-        class: "px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
-    <%= link_to "エキスパートランキング", expert_weekly_ranking_users_path,
-        class: "px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
+<div class="flex flex-col items-center px-4 py-8 space-y-0 sm:px-6 lg:px-8">
+  <!-- タブ切り替え（均等配置） -->
+  <div class="w-full max-w-4xl">
+    <div class="flex">
+      <%= link_to "週間ランキング", weekly_ranking_users_path,
+          class: "flex-1 text-center px-6 py-4 font-semibold transition-all duration-200 #{@expert_only ? 'bg-white bg-opacity-10 text-gray-300 hover:bg-opacity-15' : 'bg-white bg-opacity-20 text-yellow-300 border-b-4 border-yellow-400'}" %>
+      <%= link_to "エキスパート", expert_weekly_ranking_users_path,
+          class: "flex-1 text-center px-6 py-4 font-semibold transition-all duration-200 #{@expert_only ? 'bg-white bg-opacity-20 text-yellow-300 border-b-4 border-yellow-400' : 'bg-white bg-opacity-10 text-gray-300 hover:bg-opacity-15'}" %>
+    </div>
   </div>
 
-  <div class="w-full max-w-4xl bg-white bg-opacity-10 rounded-lg shadow-lg p-6 space-y-6">
+  <!-- メインコンテンツ（タブと一体化） -->
+  <div class="w-full max-w-4xl bg-white bg-opacity-10 rounded-b-lg shadow-lg p-6 space-y-6">
     <h1 class="text-3xl sm:text-4xl font-bold text-center">
-      🏆 <%= @ranking_type || '週間ランキング' %>
+      🏆 <%= @ranking_type || '週間ランキング' %> 🏆
     </h1>
 
     <!-- 先週の王者 -->
     <% if @last_week_champion %>
       <div class="text-center">
-        <h3 class="text-2xl font-bold text-gray-900 mb-2">👑 先週の🦀王 👑</h3>
+        <h3 class="text-2xl font-bold mb-2">👑 先週の🦀王 👑</h3>
         <div class="bg-white bg-opacity-20 rounded-lg p-4 inline-block space-y-2">
-          <p class="text-xl font-bold text-gray-900"><%= @last_week_champion.name %></p>
-          <div class="flex flex-wrap justify-center gap-2 text-sm text-gray-800">
+          <p class="text-xl font-bold"><%= @last_week_champion.display_name %></p>
+          <div class="flex flex-wrap justify-center gap-2 text-sm">
             <span class="bg-white bg-opacity-40 px-2 py-1 rounded-full">勝率: <%= @last_week_champion.last_week_win_rate %>%</span>
             <span class="bg-white bg-opacity-40 px-2 py-1 rounded-full"><%= @last_week_champion.last_week_wins %>勝</span>
             <span class="bg-white bg-opacity-40 px-2 py-1 rounded-full"><%= @last_week_champion.last_week_losses %>敗</span>
@@ -31,15 +34,18 @@
     <!-- 期間表示 -->
     <div class="text-center space-y-1">
       <p class="text-lg text-yellow-200 font-semibold">集計期間</p>
-      <p class="text-xl text-white font-medium">
-        <%= @start_date.strftime('%Y年%m月%d日(%a)') %> ～ <%= @end_date.strftime('%Y年%m月%d日(%a)') %>
+      <p class="text-xl font-medium">
+        <%= @start_date.strftime('%Y年%m月%d日(%a)') %> <br> ～ <br><%= @end_date.strftime('%Y年%m月%d日(%a)') %>
       </p>
-      <p class="text-xs text-white mt-1">最終更新: <%= @update_time.strftime('%Y年%m月%d日 %H:%M') %></p>
+      <p class="text-xs mt-1">最終更新: <%= @update_time.strftime('%Y年%m月%d日 %H:%M') %></p>
     </div>
 
     <!-- 今週の王 -->
     <div class="text-center">
       <p class="text-lg sm:text-xl lg:text-2xl font-semibold">今週の🦀王は誰だ……！?</p>
+      <% if @expert_only %>
+        <p class="text-sm text-yellow-200 mt-2">（総戦績100戦以上のエキスパートのみ）</p>
+      <% end %>
     </div>
 
     <% if @users.any? %>
@@ -50,18 +56,9 @@
 
             <!-- 順位 & 名前 -->
             <div class="flex flex-col sm:flex-row items-center sm:space-x-4 w-full sm:w-auto">
-            <div class="text-3xl font-bold min-w-[50px]">
-            <% case index %>
-            <% when 0 %>
-                １位
-            <% when 1 %>
-                2位
-            <% when 2 %>
-                3位
-            <% else %>
-                <span class="text-2xl"><%= index + 1 %>位</span>
-            <% end %>
-            </div>
+              <div class="text-2xl sm:text-3xl font-bold min-w-[80px] text-center sm:text-left">
+                <%= ranking_badge(index) %>
+              </div>
 
               <div class="flex-1 min-w-[120px] text-center sm:text-left">
                 <% if user.id != current_user.id %>
@@ -70,7 +67,9 @@
                     <%= user.display_name %>
                   <% end %>
                 <% else %>
-                  <span class="text-xl sm:text-2xl font-semibold text-gray-400"><%= user.display_name %> (あなた)</span>
+                  <span class="text-xl sm:text-2xl font-semibold text-gray-400">
+                    <%= user.display_name %> (あなた)
+                  </span>
                 <% end %>
 
                 <% if user.respond_to?(:expert?) && user.expert? %>
@@ -82,11 +81,23 @@
             </div>
 
             <!-- 戦績 -->
-            <div class="flex flex-wrap justify-center sm:justify-between space-x-4 sm:space-x-6 text-lg w-full sm:w-auto">
-              <div class="text-center"><div class="text-2xl font-bold"><%= user_data.is_a?(Hash) ? user_data[:win_rate] : user.weekly_win_rate %>%</div><div class="text-sm text-gray-300">勝率</div></div>
-              <div class="text-center"><div class="text-xl font-semibold"><%= user_data.is_a?(Hash) ? user_data[:wins] : user.weekly_wins %>勝</div><div class="text-sm text-gray-300">勝利</div></div>
-              <div class="text-center"><div class="text-xl font-semibold"><%= user_data.is_a?(Hash) ? user_data[:losses] : user.weekly_losses %>敗</div><div class="text-sm text-gray-300">敗北</div></div>
-              <div class="text-center"><div class="text-xl font-semibold"><%= user_data.is_a?(Hash) ? user_data[:total_games] : user.weekly_total_games %>試合</div><div class="text-sm text-gray-300">総試合</div></div>
+            <div class="flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6 w-full sm:w-auto">
+              <div class="text-center">
+                <div class="text-xl sm:text-2xl font-bold"><%= battle_stat(user_data, :win_rate) %>%</div>
+                <div class="text-xs sm:text-sm text-gray-300">勝率</div>
+              </div>
+              <div class="text-center">
+                <div class="text-lg sm:text-xl font-semibold"><%= battle_stat(user_data, :wins) %>勝</div>
+                <div class="text-xs sm:text-sm text-gray-300">勝利</div>
+              </div>
+              <div class="text-center">
+                <div class="text-lg sm:text-xl font-semibold"><%= battle_stat(user_data, :losses) %>敗</div>
+                <div class="text-xs sm:text-sm text-gray-300">敗北</div>
+              </div>
+              <div class="text-center">
+                <div class="text-lg sm:text-xl font-semibold"><%= battle_stat(user_data, :total_games) %>試合</div>
+                <div class="text-xs sm:text-sm text-gray-300">総試合</div>
+              </div>
             </div>
 
           </div>
@@ -94,17 +105,32 @@
       </div>
     <% else %>
       <div class="text-center py-12">
-        <h2 class="text-2xl font-semibold mb-2">今週の対戦データがありません</h2>
-        <p class="text-gray-300 mb-6">今週の対戦を開始してランキングを作成しましょう！</p>
-        <%= link_to "対戦を開始", users_index_path,
-            class: "px-6 py-3 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 font-semibold" %>
+        <h2 class="text-2xl font-semibold mb-2">
+          <% if @expert_only %>
+            今週のエキスパート<br>
+            対戦データがありません
+          <% else %>
+            今週の対戦データがありません
+          <% end %>
+        </h2>
+        <p class="text-gray-300 mb-6">
+          <% if @expert_only %>
+            総戦績100戦以上のプレイヤーの<br>
+            今週の対戦がまだありません
+          <% else %>
+            今週の対戦を開始して<br>
+            ランキングを作成しましょう！
+          <% end %>
+        </p>
+        <%= link_to "対戦を開始", users_path,
+            class: button_classes(type: :primary) %>
       </div>
     <% end %>
 
     <!-- 戻るボタン -->
     <div class="text-center mt-4">
       <%= link_to "← ホームに戻る", root_path,
-          class: "px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors duration-200" %>
+          class: button_classes(type: :secondary) %>
     </div>
   </div>
 </div>

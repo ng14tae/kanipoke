@@ -97,4 +97,25 @@ module ApplicationHelper
     else "#{index + 1}位"
     end
   end
+
+  # ランキングボタンの共通クラス
+  def ranking_button_classes(active: false)
+    base = "px-4 py-2 rounded-lg font-semibold transition-colors duration-200"
+    active ? "#{base} bg-yellow-400 text-blue-900" : "#{base} bg-gray-600 text-white hover:bg-gray-500"
+  end
+
+  # 戦績データの取得（ハッシュとオブジェクトの両方に対応）
+  def battle_stat(user_data, key)
+    user_data.is_a?(Hash) ? user_data[key] : user_data.send("weekly_#{key}")
+  end
+
+  # タブボタンの共通クラス
+  def tab_button_classes(active: false)
+    base = "px-6 py-3 font-semibold text-sm transition-all duration-200 relative"
+    if active
+      "#{base} bg-white bg-opacity-20 text-yellow-300 border-b-4 border-yellow-400"
+    else
+      "#{base} text-gray-300 hover:text-white hover:bg-white hover:bg-opacity-10"
+    end
+  end
 end
