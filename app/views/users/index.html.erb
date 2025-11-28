@@ -1,205 +1,106 @@
 <div class="min-h-screen py-12 px-6">
-  <!-- ロゴをセンターに配置 -->
+  <!-- ロゴ -->
   <div class="text-center mb-8">
-    <%= image_tag "logo.png", class: "mx-auto", style: "max-width;" %>
+    <%= image_tag "logo.png", class: "mx-auto max-w-sm" %>
   </div>
 
-  <div class="container mx-auto" style="max-width: 1152px; padding: 2rem;">
-    <div class="my-battle-stats mb-4">
-      <h2 style="font-size: clamp(1.5rem, 4vw, 1.75rem); font-weight: bold; margin-bottom: 1.5rem;">
-        <%= current_user.display_name %>の戦歴
-      </h2>
-      <div class="card">
-        <div class="card-body">
-          <!-- デスクトップ用戦歴表示 -->
-          <div class="desktop-stats" style="display: block;">
-            <p style="font-size: clamp(1.2rem, 3vw, 1.75rem); margin-bottom: 1.5rem;">
-              総戦闘数: <%= @my_total_battles %>回 ／ 
-              勝ち: <%= @my_win_count %>回 ／ 
-              負け: <%= @my_lose_count %>回 ／ 
-              <% if @my_total_battles > 0 %>
-                勝率: <%= (@my_win_count.to_f / @my_total_battles * 100).round(1) %>%
-              <% end %>
-            </p>
-          </div>
+  <div class="container mx-auto max-w-4xl px-4 sm:px-8">
+    <!-- 自分の戦歴 -->
+      <div class="mb-8">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-4">
+          <%= current_user.display_name %>の戦歴
+        </h2>
 
-          <!-- モバイル用戦歴表示 -->
-          <div class="mobile-stats" style="display: none;">
-            <p style="font-size: 1rem; margin-bottom: 1rem; text-align: center;">
-              総戦闘数: <%= @my_total_battles %>回
-            </p>
-            <p style="font-size: 1rem; margin-bottom: 1rem; text-align: center;">
-              勝ち: <%= @my_win_count %>回 ／ 負け: <%= @my_lose_count %>回
-            </p>
+        <!-- デスクトップ用戦歴 -->
+        <div class="hidden md:block">
+          <p class="text-base sm:text-lg text-gray-200">
+            総戦闘数: <%= @my_total_battles %>回 ／ 
+            勝ち: <%= @my_win_count %>回 ／ 
+            負け: <%= @my_lose_count %>回
             <% if @my_total_battles > 0 %>
-              <p style="font-size: 1rem; margin-bottom: 1rem; text-align: center;">
-                勝率: <%= (@my_win_count.to_f / @my_total_battles * 100).round(1) %>%
-              </p>
+              ／ 勝率: <%= (@my_win_count.to_f / @my_total_battles * 100).round(1) %>%
             <% end %>
-          </div>
-          <br><br>
+          </p>
+        </div>
+
+        <!-- モバイル用戦歴 -->
+        <div class="md:hidden text-center space-y-1">
+          <p class="text-sm text-gray-200">総戦闘数: <%= @my_total_battles %>回</p>
+          <p class="text-sm text-gray-200">勝ち: <%= @my_win_count %>回 ／ 負け: <%= @my_lose_count %>回</p>
+          <% if @my_total_battles > 0 %>
+            <p class="text-sm text-gray-200">
+              勝率: <%= (@my_win_count.to_f / @my_total_battles * 100).round(1) %>%
+            </p>
+          <% end %>
         </div>
       </div>
+
+    <!-- ソート切り替えボタン -->
+    <div class="text-center mb-8">
+      <div class="inline-flex gap-2 bg-white bg-opacity-10 p-2 rounded-xl border-2 border-yellow-300 border-opacity-50 flex-wrap justify-center">
+        <%= link_to "登録順", users_path,
+            class: sort_button_classes(active: params[:sort].blank?) %>
+        <%= link_to "エキスパート", users_path(sort: 'experienced_ranking'),
+            class: sort_button_classes(active: params[:sort] == 'experienced_ranking') %>
+      </div>
+
+      <p class="mt-4 text-base text-gray-300">
+        現在の表示: <span class="text-yellow-400 font-bold"><%= @sort_type %></span>
+      </p>
     </div>
-
-  <!-- ソート切り替えボタン -->
-  <div style="text-align: center; margin-bottom: 2rem;">
-    <div style="display: inline-flex; gap: 0.5rem; background-color: #ffffff1a; padding: 0.5rem; border-radius: 0.75rem; border: 2px solid #fde04780; flex-wrap: wrap;">
-
-      <%= link_to "登録順", users_path,
-          style: "padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; font-size: 0.9rem; #{params[:sort] ? 'background-color: #374151; color: white;' : 'background-color: #facc15; color: #1e3a8a;'}" %>
-      <!-- 新しく追加：エキスパートランキングボタン -->
-      <%= link_to "エキスパート", users_path(sort: 'experienced_ranking'),
-          style: "padding: 0.75rem 1rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; font-size: 0.9rem; #{params[:sort] == 'experienced_ranking' ? 'background-color: #facc15; color: #1e3a8a;' : 'background-color: #374151; color: white;'}" %>
-    </div>
-
-    <!-- 現在の表示状態を示すテキスト -->
-    <p style="margin-top: 1rem; font-size: 1rem; color: #d1d5db;">
-      現在の表示: <span style="color: #facc15; font-weight: bold;"><%= @sort_type %></span>
-      <% if params[:sort] == 'experienced_ranking' %>
-      <% end %>
-    </p>
-  </div>
 
     <!-- プレイヤー一覧 -->
-    <!-- デスクトップ用グリッド -->
-    <div class="desktop-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       <% @users.each_with_index do |user, index| %>
-        <div style="background-color: #ffffff1a; backdrop-filter: blur(4px); border-radius: 0.75rem; border: 2px solid #fde04780; box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000d; padding: 2.5rem; transition: all 0.3s ease; transform: scale(1);"
-            onmouseover="this.style.boxShadow='0 25px 50px -12px #0000001a'; this.style.transform='scale(1.05)';"
-            onmouseout="this.style.boxShadow='0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000d'; this.style.transform='scale(1)';">
-
-          <!-- ランキング表示（勝率順の場合のみ） -->
+        <div class="<%= user_card_classes %>">
+          <!-- ランキング表示 -->
           <% if params[:sort] == 'win_rate' %>
-            <div style="text-align: center; margin-bottom: 1rem;">
-              <div style="font-size: 1.25rem; font-weight: bold; color: #facc15;">
-                <% case index %>
-                <% when 0 %>
-                  🥇 1位
-                <% when 1 %>
-                  🥈 2位
-                <% when 2 %>
-                  🥉 3位
-                <% else %>
-                  <%= index + 1 %>位
-                <% end %>
+            <div class="text-center mb-4">
+              <div class="text-xl font-bold text-yellow-400">
+                <%= ranking_badge(index) %>
               </div>
             </div>
           <% end %>
 
           <!-- プレイヤー名 -->
-          <p style="font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: bold; margin-bottom: 1.5rem; text-align: center;">
+          <p class="text-xl sm:text-2xl font-bold mb-6 text-center">
             <%= user.display_name %>
           </p>
 
           <!-- 戦歴 -->
-          <div style="margin-bottom: 2rem; text-align: center;">
-            <p style="font-weight: 400; font-size: clamp(1rem, 2.5vw, 1.25rem); margin-bottom: 0.75rem;">
-              戦歴:
-              勝ち <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold;"><%= user.won_battles.count %></span>回
-              負け <span style="font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: bold;"><%= user.lost_battles.count %></span>回
+          <div class="mb-6 text-center">
+            <p class="text-base sm:text-lg mb-3">
+              戦歴: 
+              勝ち <span class="font-bold"><%= user.won_battles.count %></span>回
+              負け <span class="font-bold"><%= user.lost_battles.count %></span>回
             </p>
 
-            <!-- 勝率表示 -->
             <% total_battles = user.won_battles.count + user.lost_battles.count %>
             <% if total_battles > 0 %>
-              <p style="font-weight: 600; font-size: clamp(1rem, 2.5vw, 1.25rem); color: #facc15; margin-bottom: 0.5rem;">
+              <p class="text-lg sm:text-xl font-semibold text-yellow-400">
                 勝率: <%= user.win_rate %>%
               </p>
             <% else %>
-              <p style="font-weight: 400; font-size: clamp(0.9rem, 2vw, 1rem); color: #9ca3af; margin-bottom: 0.5rem;">
-                未対戦
-              </p>
+              <p class="text-base text-gray-400">未対戦</p>
             <% end %>
           </div>
 
           <!-- 対戦ボタン -->
-          <div style="text-align: center; margin-top: 1.5rem;">
+          <div class="text-center mt-6">
             <%= link_to "対戦する", new_battle_path(opponent_id: user.id),
-                style: "display: inline-block; background-color: #facc15; color: #1e3a8a; font-weight: 900; font-size: clamp(1rem, 3vw, 1.25rem); padding: 0.75rem 1.75rem; border-radius: 0.5rem; text-decoration: none; border: 2px solid #eab308; box-shadow: 0 10px 15px -3px #0000001a; transition: all 0.2s ease; transform: translateY(0);",
-                onmouseover: "this.style.backgroundColor='#f59e0b'; this.style.transform='translateY(-4px) scale(1.05)'; this.style.boxShadow='0 20px 25px -5px #00000033'; this.style.borderColor='#d97706';",
-                onmouseout: "this.style.backgroundColor='#facc15'; this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 15px -3px #0000001a'; this.style.borderColor='#eab308';",
-                onmousedown: "this.style.transform='translateY(-2px) scale(0.98)';",
-                onmouseup: "this.style.transform='translateY(-4px) scale(1.05)';" %>
+                class: button_classes(type: :primary) %>
           </div>
         </div>
       <% end %>
     </div>
 
-    <!-- ページネーション（もし使用している場合） -->
+    <!-- ページネーション -->
     <% if defined?(Kaminari) && @users.respond_to?(:current_page) %>
-      <div style="text-align: center; margin-top: 3rem;">
-        <div style="display: inline-block; background-color: #ffffff1a; padding: 1rem; border-radius: 0.75rem; border: 2px solid #fde04780;">
+      <div class="text-center mt-12">
+        <div class="inline-block bg-white bg-opacity-10 p-4 rounded-xl border-2 border-yellow-300 border-opacity-50">
           <%= paginate @users %>
         </div>
       </div>
     <% end %>
   </div>
 </div>
-
-<!-- レスポンシブ対応のCSS -->
-<style>
-  @media (max-width: 768px) {
-    .desktop-stats {
-      display: none !important;
-    }
-    .mobile-stats {
-      display: block !important;
-    }
-    .desktop-grid {
-      grid-template-columns: 1fr !important;
-      gap: 1rem !important;
-    }
-  }
-</style>
-
-<!-- 改良版スクロール位置記憶 -->
-  <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const SCROLL_KEY = 'usersIndexScrollPos';
-
-    // ページ読み込み時：保存された位置に戻る
-    function restoreScrollPosition() {
-      const scrollPos = localStorage.getItem(SCROLL_KEY);
-      if (scrollPos && scrollPos !== '0') {
-        setTimeout(() => {
-          window.scrollTo({
-            top: parseInt(scrollPos),
-            behavior: 'smooth' // スムーズスクロール
-          });
-          console.log(`スクロール位置を復元: ${scrollPos}px`);
-        }, 150);
-      }
-    }
-
-    // 初回読み込み時に実行
-    restoreScrollPosition();
-
-    // スクロール時：位置を保存
-    let ticking = false;
-    function saveScrollPosition() {
-      if (!ticking) {
-        requestAnimationFrame(function() {
-          const currentPos = window.scrollY;
-          localStorage.setItem(SCROLL_KEY, currentPos);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }
-
-    window.addEventListener('scroll', saveScrollPosition);
-
-    // ページ離脱時にも保存
-    window.addEventListener('beforeunload', function() {
-      localStorage.setItem(SCROLL_KEY, window.scrollY);
-    });
-
-    // 対戦申し込みボタンクリック時にスクロール位置を保存
-    document.querySelectorAll('a[href*="new_battle_path"]').forEach(button => {
-      button.addEventListener('click', function() {
-        localStorage.setItem(SCROLL_KEY, window.scrollY);
-      });
-    });
-  });
-  </script>
