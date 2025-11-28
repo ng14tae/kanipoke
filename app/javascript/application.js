@@ -1,6 +1,7 @@
 // Entry point for the build script in your package.json
 import "@hotwired/turbo-rails"
 import "./controllers"
+import "./scroll_position"
 
 if ('serviceWorker' in navigator) {
 window.addEventListener('load', () => {
