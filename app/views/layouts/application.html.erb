@@ -29,13 +29,12 @@
 
     <%= yield :head %>
 
-    <link rel="manifest" href="/manifest.json">
-
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload", preload: false %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-4BHLGX03DH"></script>
@@ -46,6 +45,7 @@
 
       gtag('config', 'G-4BHLGX03DH');
     </script>
+
     </head>
 
   <body class="min-h-screen flex flex-col [&_input]:text-black [&_textarea]:text-black [&_select]:text-black"

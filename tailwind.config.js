@@ -7,7 +7,11 @@ content: [
     './app/javascript/**/*.css'
 ],
 theme: {
-    extend: {},
+    extend: {
+        colors: {
+        customBlue: '#7CADED', // カスタムカラーを定義
+        },
+    },
 },
 plugins: [],
 }
