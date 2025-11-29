@@ -1,38 +1,53 @@
-// Add a service worker for processing Web Push notifications:
-//
-// self.addEventListener("push", async (event) => {
-//   const { title, options } = await event.data.json()
-//   event.waitUntil(self.registration.showNotification(title, options))
-// })
-//
-// self.addEventListener("notificationclick", function(event) {
-//   event.notification.close()
-//   event.waitUntil(
-//     clients.matchAll({ type: "window" }).then((clientList) => {
-//       for (let i = 0; i < clientList.length; i++) {
-//         let client = clientList[i]
-//         let clientPath = (new URL(client.url)).pathname
-//
-//         if (clientPath == event.notification.data.path && "focus" in client) {
-//           return client.focus()
-//         }
-//       }
-//
-//       if (clients.openWindow) {
-//         return clients.openWindow(event.notification.data.path)
-//       }
-//     })
-//   )
-// })
-
-self.addEventListener('install', function(event) {
+// Install イベント
+self.addEventListener('install', (event) => {
   console.log('Service Worker installing.');
+  self.skipWaiting(); // 新しい Service Worker を即座に有効化
 });
 
-self.addEventListener('activate', function(event) {
+// Activate イベント
+self.addEventListener('activate', (event) => {
   console.log('Service Worker activated.');
+  event.waitUntil(
+    (async () => {
+      await self.clients.claim(); // クライアントを制御
+    })()
+  );
 });
 
-self.addEventListener('fetch', function(event) {
+// Fetch イベント
+self.addEventListener('fetch', (event) => {
   console.log('Fetching:', event.request.url);
+
+  event.respondWith((async () => {
+    // GET リクエスト以外はキャッシュ処理をスキップ
+    if (event.request.method !== 'GET') {
+      console.log('Non-GET request, skipping cache:', event.request.url);
+      return fetch(event.request);
+    }
+
+    const cache = await caches.open('my-cache');
+
+    // キャッシュを確認
+    const cachedResponse = await cache.match(event.request);
+    if (cachedResponse) {
+      console.log('Cache hit:', event.request.url);
+      return cachedResponse;
+    }
+
+    // ネットワークから取得してキャッシュに保存
+    try {
+      const networkResponse = await fetch(event.request);
+      console.log('Cache miss, fetching from network:', event.request.url);
+
+      // GET リクエストのみキャッシュに保存
+      if (event.request.method === 'GET') {
+        cache.put(event.request, networkResponse.clone());
+      }
+
+      return networkResponse;
+    } catch (err) {
+      console.error('Fetch failed:', err);
+      return Response.error();
+    }
+  })());
 });
