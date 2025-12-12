@@ -1,7 +1,8 @@
 import "@hotwired/turbo-rails"
 import "./controllers"
-import "./scroll_position"
-import "./users_index_scroll"
+// import "./scroll_position"
+// import "./users_index_scroll"
+import "./fab_menu";
 
 document.addEventListener("turbo:load", function () {
     const btn = document.getElementById("menu-btn");

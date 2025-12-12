@@ -54,7 +54,7 @@
     </style>
     </head>
 
-  <body class="min-h-screen flex flex-col [&_input]:text-black [&_textarea]:text-black [&_select]:text-black"
+  <body class="[&_input]:text-black [&_textarea]:text-black [&_select]:text-black"
       style="background-color: #7CADED; font-family: DotGothic16, sans-serif; color: #FFF691;">
     <!-- ヘッダーナビゲーション -->
     <%= render 'shared/header' %>
@@ -64,10 +64,32 @@
       <%= yield %>
     </main>
 
-    <footer class="mt-auto">
+    <footer>
       <div class="text-center mb-4">
         <%= render 'shared/footer' %>
       </div>
     </footer>
+
+        <!-- FABメニュー -->
+      <%= render "shared/fab_menu" %>
+      <script>
+      document.addEventListener("turbo:load", () => {
+        const fabBtn = document.getElementById("fab-button");
+        const fabMenu = document.getElementById("fab-menu");
+
+        if (!fabBtn || !fabMenu) return;
+
+        fabBtn.addEventListener("click", () => {
+          fabMenu.classList.toggle("hidden");
+        });
+      });
+      </script>
+
+      <style>
+        html, body {
+          height: auto !important;
+          overflow-y: auto !important;
+        }
+      </style>
   </body>
 </html>
