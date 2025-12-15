@@ -1,26 +1,9 @@
 <div class="w-full fixed top-0 left-0 bg-customBlue z-50">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between w-full h-20">
-        <!-- 左端に寄せる -->
-        <div>
-            <%= link_to root_path, class: "text-white text-xl font-bold hover:text-gray-300" do %>
-                <%= image_tag "tittlelogo.png" %>
-            <% end %>
-        </div>
-
-        <!-- 右端に寄せる -->
-        <button id="menu-btn" class="text-white focus:outline-none">
-            <%= image_tag "kani.png", alt: "menu", class: "w-10 h-10 object-contain" %>
-        </button>
-    </div>
-
-    <div id="mobile-menu" class="text-center hidden flex-col space-y-2 bg-gray-900 rounded-lg px-4 py-4 mt-2">
-        <%= link_to "対戦相手一覧", users_index_path, class: "text-white hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium block" %>
-        <% if current_user %>
-            <%= link_to "マイページ", user_path(current_user), class: "text-white hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium block" %>
-        <% else %>
-            <%= link_to "ログイン", login_path, class: "text-white hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium block" %>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-center h-20">
+        <%= link_to root_path do %>
+            <%= image_tag "logo.jpeg", class: "h-12 w-auto" %>
         <% end %>
-        <%= link_to "ランキング", weekly_ranking_users_path, class: "text-white hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium block" %>
+        </div>
     </div>
-</div></div>
+</div>
