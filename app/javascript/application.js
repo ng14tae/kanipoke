@@ -12,6 +12,15 @@ document.addEventListener("turbo:load", function () {
             menu.classList.toggle("hidden"); // メニューの表示・非表示を切り替える
         });
     }
+    // FAB ボタンのバインド（layout のインラインスクリプトから移動）
+    const fabBtn = document.getElementById("fab-button");
+    const fabMenu = document.getElementById("fab-menu");
+
+    if (fabBtn && fabMenu) {
+        fabBtn.addEventListener("click", () => {
+            fabMenu.classList.toggle("hidden");
+        });
+    }
 });
 
 if ('serviceWorker' in navigator && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {

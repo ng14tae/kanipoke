@@ -54,10 +54,12 @@
     </style>
     </head>
 
-  <body class="[&_input]:text-black [&_textarea]:text-black [&_select]:text-black"
+    <body class="[&_input]:text-black [&_textarea]:text-black [&_select]:text-black"
       style="background-color: #7CADED; font-family: DotGothic16, sans-serif; color: #FFF691;">
+
     <!-- ヘッダーナビゲーション -->
     <%= render 'shared/header' %>
+    <%= render 'shared/flash' %>
 
     <!-- メインコンテンツエリア -->
     <main class="flex-grow">
@@ -72,18 +74,7 @@
 
         <!-- FABメニュー -->
       <%= render "shared/fab_menu" %>
-      <script>
-      document.addEventListener("turbo:load", () => {
-        const fabBtn = document.getElementById("fab-button");
-        const fabMenu = document.getElementById("fab-menu");
-
-        if (!fabBtn || !fabMenu) return;
-
-        fabBtn.addEventListener("click", () => {
-          fabMenu.classList.toggle("hidden");
-        });
-      });
-      </script>
+        <!-- FAB 用の JS は app/javascript/application.js に移動しました -->
 
   </body>
 </html>
