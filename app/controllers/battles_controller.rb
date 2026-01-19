@@ -25,14 +25,13 @@ class BattlesController < ApplicationController
 
     # 勝敗判定（引き分けは発生しない）
     winner_user = @battle.determine_winner
-    message = "戦闘が完了しました！#{winner_user.name}の勝利です！"
 
     # 勝敗を設定
     @battle.winner_id = winner_user.id
     @battle.loser_id = winner_user == @battle.user ? @battle.opponent.id : @battle.user.id
 
     if @battle.save
-      redirect_to @battle, notice: message
+      redirect_to @battle
     else
       @opponents = User.where.not(id: current_user.id)
       render :new
