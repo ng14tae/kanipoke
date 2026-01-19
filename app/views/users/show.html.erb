@@ -21,33 +21,26 @@
 
 <div class="max-w-4xl mx-auto px-6 py-4">
     <div class="bg-transparent border-2 border-white rounded-lg shadow-md p-6">
-        <h2 class="text-lg font-bold mb-3">戦歴（合計: <%= @battles.count %>）</h2>
+        <h2 class="text-lg font-bold mb-3">よく対戦する相手ランキング（TOP5）</h2>
 
-        <% if @most_opponent %>
-            <div class="mb-3">
-                <strong>最も多く戦った相手:</strong>
-                <%= link_to @most_opponent.name, user_path(@most_opponent), class: "underline" %>
-                （<%= @record_vs_most[:total] %>戦）
-            </div>
-            <div class="mb-4">
-                <strong>対戦成績:</strong>
-                勝ち <%= @record_vs_most[:wins] %> ／ 負け <%= @record_vs_most[:losses] %> ／ 引き分け <%= @record_vs_most[:draws] %>
-            </div>
+        <% if @top_opponents.present? %>
+            <ol class="list-decimal pl-5 space-y-3">
+                <% @top_opponents.each do |entry| %>
+                    <% opp = entry[:user] %>
+                    <li class="flex justify-between items-center">
+                        <div>
+                            <%= link_to opp.name, user_path(opp), class: "underline font-semibold" %>
+                            <span class="text-sm text-gray-200">（<%= entry[:total] %>戦）</span>
+                        </div>
+                        <div class="text-sm">
+                            勝ち <%= entry[:wins] %> ／ 負け <%= entry[:losses] %> ／ 引き分け <%= entry[:draws] %>
+                        </div>
+                    </li>
+                <% end %>
+            </ol>
+            <div class="mt-4 text-sm text-gray-300">総対戦数: <%= @total_battles %></div>
         <% else %>
-            <div class="mb-4">まだ対戦履歴がありません。</div>
+            <div>まだ対戦履歴がありません。</div>
         <% end %>
-
-        <ul class="space-y-2">
-            <% @battles.each do |b| %>
-                <% other = (b.user_id == @user.id) ? b.opponent : b.user %>
-                <% result = if b.winner_id.nil? then '引き分け' elsif b.winner_id == @user.id then '勝ち' else '負け' end %>
-                <li class="flex justify-between items-center">
-                    <div>
-                        <%= l(b.created_at, format: :short) %> — <%= link_to other.name, user_path(other) %>
-                    </div>
-                    <div class="text-sm text-gray-200"><%= result %></div>
-                </li>
-            <% end %>
-        </ul>
     </div>
 </div>
