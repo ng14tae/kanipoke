@@ -1,14 +1,15 @@
-<div class="max-w-4xl mx-auto px-6 py-8">
+<div class="max-w-4xl mx-auto px-6 py-8 text-center">
+            <h1 style="font-size: clamp(1.5rem, 4vw, 1.75rem); font-weight: bold; margin-bottom: 1.5rem;">
+            <%= @user.name %>のマイページ</h1>
     <div class="bg-transparent border-2 border-white rounded-lg shadow-md p-6 mb-6">
         <div class="flex justify-center items-center mb-4">
-        <h1 style="font-size: clamp(1.5rem, 4vw, 1.75rem); font-weight: bold; margin-bottom: 1.5rem;">
-            <%= @user.name %>のマイページ</h1>
+
         </div>
         <div class="flex justify-center items-center mb-4">
         <%= link_to "名前変更", edit_user_path(@user),
             class: "bg-blue-500 hover:bg-blue-700 text-gray font-bold py-2 px-4 rounded" %>
 
-        <%= link_to "削除", user_path(@user),
+        <%= link_to "アカウントの削除", user_path(@user),
         method: :delete,
         data: {
         turbo_confirm: "#{@user.first_name} #{@user.last_name}を削除します。本当に削除しますか？",
@@ -21,7 +22,7 @@
 
 <div class="max-w-4xl mx-auto px-6 py-4">
     <div class="bg-transparent border-2 border-white rounded-lg shadow-md p-6">
-        <h2 class="text-lg font-bold mb-3">よく対戦する相手ランキング（TOP5）</h2>
+        <h2 class="text-lg font-bold mb-3">よく対戦する相手（TOP5）</h2>
 
         <% if @top_opponents.present? %>
             <ol class="list-decimal pl-5 space-y-3">
@@ -29,7 +30,7 @@
                     <% opp = entry[:user] %>
                     <li class="flex justify-between items-center">
                         <div>
-                            <%= link_to opp.name, user_path(opp), class: "underline font-semibold" %>
+                            <%= link_to opp.name, new_battle_path(opponent_id: opp.id), class: "underline font-semibold" %>
                             <span class="text-sm text-gray-200">（<%= entry[:total] %>戦）</span>
                         </div>
                         <div class="text-sm">
