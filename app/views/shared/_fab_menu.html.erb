@@ -16,11 +16,13 @@
         class="hidden flex flex-col bg-gray-900 text-white rounded-xl p-4 shadow-xl space-y-3"
     >
         <%= link_to "対戦相手一覧", users_index_path, class: "hover:text-gray-300" %>
+        <%= link_to "ランキング", weekly_ranking_users_path, class: "hover:text-gray-300" %>
         <% if current_user %>
         <%= link_to "マイページ", user_path(current_user), class: "hover:text-gray-300" %>
+        <%= link_to "ログアウト", logout_path, method: :delete, data: { turbo_method: :delete }, class: "hover:text-gray-300" %>
         <% else %>
         <%= link_to "ログイン", login_path, class: "hover:text-gray-300" %>
         <% end %>
-        <%= link_to "ランキング", weekly_ranking_users_path, class: "hover:text-gray-300" %>
+
     </div>
 </div>
