@@ -1,11 +1,8 @@
 <div class="max-w-4xl mx-auto px-6 py-8 text-center">
-            <h1 style="font-size: clamp(1.5rem, 4vw, 1.75rem); font-weight: bold; margin-bottom: 1.5rem;">
-            <%= @user.name %>のマイページ</h1>
-    <div class="bg-transparent border-2 border-white rounded-lg shadow-md p-6 mb-6">
-        <div class="flex justify-center items-center mb-4">
+    <h1 style="font-size: clamp(1.5rem, 4vw, 1.75rem); font-weight: bold; margin-bottom: 1.5rem;">
+    <%= @user.name %>のマイページ</h1>
 
-        </div>
-        <div class="flex justify-center items-center mb-4">
+    <div class="flex justify-center items-center mb-4">
         <%= link_to "名前変更", edit_user_path(@user),
             class: "bg-blue-500 hover:bg-blue-700 text-gray font-bold py-2 px-4 rounded" %>
 
@@ -14,9 +11,8 @@
         data: {
         turbo_confirm: "#{@user.first_name} #{@user.last_name}を削除します。本当に削除しますか？",
         turbo_method: :delete
-    },
-    class: "px-4 py-2 bg-transparent text-white rounded hover:bg-red-600 transition-colors duration-200 text-center inline-block" %>
-        </div>
+        },
+        class: "px-4 py-2 bg-transparent text-white rounded hover:bg-red-600 transition-colors duration-200 text-center inline-block" %>
     </div>
 </div>
 
