@@ -41,6 +41,31 @@ class UsersController < ApplicationController
   end
 
   def show
+    @battles = Battle.where("user_id = ? OR opponent_id = ?", @user.id, @user.id).order(created_at: :desc)
+
+    opponent_counts = Hash.new(0)
+    @battles.each do |b|
+      other_id = (b.user_id == @user.id) ? b.opponent_id : b.user_id
+      opponent_counts[other_id] += 1 if other_id
+    end
+
+    if opponent_counts.any?
+      most_id = opponent_counts.max_by { |_id, cnt| cnt }[0]
+      @most_opponent = User.find_by(id: most_id)
+
+      vs_battles = @battles.select do |b|
+        ((b.user_id == @user.id) ? b.opponent_id : b.user_id) == most_id
+      end
+
+      wins = vs_battles.count { |b| b.winner_id == @user.id }
+      losses = vs_battles.count { |b| b.winner_id == most_id }
+      draws = vs_battles.count { |b| b.winner_id.nil? }
+
+      @record_vs_most = { wins: wins, losses: losses, draws: draws, total: vs_battles.size }
+    else
+      @most_opponent = nil
+      @record_vs_most = { wins: 0, losses: 0, draws: 0, total: 0 }
+    end
   end
 
   def edit
