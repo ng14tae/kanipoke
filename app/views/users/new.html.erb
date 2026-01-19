@@ -19,9 +19,9 @@
                 ユーザー登録
             </h1>
 
-            <%= form_with model: @user, class: "flex flex-col gap-3 sm:gap-4" do |f| %>
+            <%= form_with model: @user, class: "flex flex-col gap-3 sm:gap-4", data: { turbo: false } do |f| %>
                 <div>
-                <%= f.label :first_name, "名", class: form_label_classes %>
+                <%= f.label :first_name, "二つ名", class: form_label_classes %>
                 <%= f.text_field :first_name,
                     placeholder: "例：ほげがめ",
                     class: form_input_classes %>
@@ -30,7 +30,7 @@
                 <p class="text-gray-600 text-center text-sm sm:text-base my-0">の</p>
 
                 <div>
-                <%= f.label :last_name, "姓", class: form_label_classes %>
+                <%= f.label :last_name, "ニックネーム", class: form_label_classes %>
                 <%= f.text_field :last_name,
                     placeholder: "例：てー",
                     class: form_input_classes %>
