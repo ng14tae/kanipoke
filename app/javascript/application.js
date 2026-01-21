@@ -4,15 +4,7 @@ import "./controllers"
 // import "./users_index_scroll"
 
 document.addEventListener("turbo:load", function () {
-    const btn = document.getElementById("menu-btn");
-    const menu = document.getElementById("mobile-menu");
-
-    if (btn && menu) {
-        btn.addEventListener("click", () => {
-            menu.classList.toggle("hidden"); // メニューの表示・非表示を切り替える
-        });
-    }
-    // FAB ボタンのバインド（layout のインラインスクリプトから移動）
+    // FAB ボタンのバインド（モバイル・デスクトップ共通）
     const fabBtn = document.getElementById("fab-button");
     const fabMenu = document.getElementById("fab-menu");
 
