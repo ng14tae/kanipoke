@@ -47,10 +47,12 @@
       gtag('config', 'G-4BHLGX03DH');
     </script>
 
-    <!-- ヘッダー固定したので -->
+    <!-- ヘッダー固定したので（レスポンシブに調整） -->
     <style>
-      body {
-        padding-top: 5rem; /* ヘッダーの高さに合わせて調整 */
+      /* モバイルではヘッダー h-12 (3rem)、デスクトップでは h-16 (4rem) を想定 */
+      body { padding-top: 3rem; }
+      @media (min-width: 768px) {
+        body { padding-top: 4rem; }
       }
     </style>
     </head>
