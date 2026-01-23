@@ -1,4 +1,4 @@
-<div class="min-h-screen py-8 px-6">
+<div class="min-h-screen pt-12 px-6">
   <div class="container mx-auto max-w-4xl px-4 sm:px-8 text-center">
     <h1 class="text-2xl sm:text-2xl font-bold">
       結果発表
@@ -7,14 +7,16 @@
 
   <!-- カード比較セクション（横スクロールなし） -->
   <div class="battle-cards-reveal my-8 flex flex-row items-center justify-center gap-4 flex-wrap md:flex-nowrap">
-    <!-- プレイヤーカード -->
-    <div class="player-card-section text-center flex-1 min-w-0 max-w-[150px] sm:max-w-[180px]">
-      <h3 class="text-lg sm:text-xl font-medium mb-2 truncate">
-        <%= @battle.user.display_name || @battle.user.name %>
-      </h3>
-      <%= card_image_tag(@battle.user_card, class: "mx-auto w-full h-auto") %>
-      <p class="text-base sm:text-lg font-bold mt-2">カード: <%= @battle.user_card %></p>
-    </div>
+    <!-- 常に左右並びで表示 -->
+    <div class="flex justify-around items-center gap-4">
+      <!-- プレイヤーカード -->
+      <div class="player-card-section text-center flex-1 min-w-0 max-w-[150px] sm:max-w-[180px]">
+        <h3 class="text-lg sm:text-xl font-medium mb-2 leading-snug h-[3.2em]">
+          <%= @battle.user.display_name || @battle.user.name %>
+        </h3>
+        <%= card_image_tag(@battle.user_card, class: "mx-auto w-full h-auto") %>
+        <p class="text-base sm:text-lg font-bold mt-2">カード: <%= @battle.user_card %></p>
+      </div>
 
     <!-- VS表示 -->
     <div class="vs-section text-center flex-shrink-0 px-2">
@@ -23,7 +25,7 @@
 
     <!-- 相手カード -->
     <div class="opponent-card-section text-center flex-1 min-w-0 max-w-[150px] sm:max-w-[180px]">
-      <h3 class="text-lg sm:text-xl font-medium mb-2 truncate">
+      <h3 class="text-lg sm:text-xl font-medium mb-2 leading-snug h-[3.2em]">
         <%= @battle.opponent.display_name || @battle.opponent.name %>
       </h3>
       <%= card_image_tag(@battle.opponent_card, class: "mx-auto w-full h-auto") %>
@@ -35,7 +37,8 @@
   <div class="battle-result text-center my-8">
     <% winner = User.find(@battle.winner_id) %>
     <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold">
-      <%= winner.display_name || winner.name %> の勝利！
+      <span class="inline"><%= winner.display_name || winner.name %></span>
+      <span class="text-base sm:text-2xl md:text-2xl font-normal ml-2 align-baseline">の勝利！</span>
     </h2>
 
     <!-- アクションボタン -->
