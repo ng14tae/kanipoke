@@ -1,4 +1,6 @@
-<div class="flex flex-col items-center px-4 py-8 space-y-0 sm:px-6 lg:px-8">
+<div class="min-h-screen pt-12 px-6">
+  <div class="container mx-auto max-w-4xl px-4 sm:px-8 text-center">
+    <h1 class="text-2xl sm:text-2xl font-bold">
   <!-- タブ切り替え（均等配置） -->
   <div class="w-full max-w-4xl">
     <div class="flex">
@@ -10,7 +12,7 @@
   </div>
 
   <!-- メインコンテンツ（タブと一体化） -->
-  <div class="w-full max-w-4xl bg-white bg-opacity-10 rounded-b-lg shadow-lg p-6 space-y-6">
+  <div class="w-full max-w-4xl bg-white bg-opacity-10 rounded-b-lg shadow-lg p-8 space-y-6">
     <h1 class="text-3xl sm:text-4xl font-bold text-center">
       🏆 <%= @ranking_type || '週間ランキング' %> 🏆
     </h1>
